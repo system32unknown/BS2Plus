@@ -12,15 +12,16 @@
 
 // #define RANDOMNUMBER (rand() % 32768)
 #ifdef COMPILER_WINDOWS
-	#define RANDOMNUMBER rand()
+#define RANDOMNUMBER rand()
 #else
-	#define RANDOMNUMBER (rand() % 32768)
+#define RANDOMNUMBER (rand() % 32768)
 #endif
 #define SEEDRAND srand
 // #define SEEDRAND seedrand
 
-inline int myrand() {
-	static int randseed=0;
+inline int myrand()
+{
+	static int randseed = 0;
 	randseed = randseed * 43 + 777;
 	return randseed % 32768;
 }

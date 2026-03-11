@@ -9,52 +9,53 @@ char *path;
 #include "SDL_syswm.h"
 #include "config.h"
 
-void osinit(char* filename)
+void osinit(char *filename)
 {
-	path = new char[strlen(filename)+1];
-	strcpy(path,filename);
-	char* tmp = 0;
-	char* tmp2 = path;
-	while ((tmp = strchr(tmp2, '/')) || (tmp = strchr(tmp2, '\\'))) tmp2 = tmp+1;
+	path = new char[strlen(filename) + 1];
+	strcpy(path, filename);
+	char *tmp = 0;
+	char *tmp2 = path;
+	while ((tmp = strchr(tmp2, '/')) || (tmp = strchr(tmp2, '\\')))
+		tmp2 = tmp + 1;
 	*tmp2 = 0;
-	SetCurrentDirectory(path);
-	char* command = new char[strlen(filename)+20];
-	sprintf(command,"\"%s\" \"%s\"", filename, "%1");
-	if (strcmp(filename+strlen(filename)-4,".exe"))
+	SetCurrentDirectoryA(path);
+	char *command = new char[strlen(filename) + 20];
+	sprintf(command, "\"%s\" \"%s\"", filename, "%1");
+	if (strcmp(filename + strlen(filename) - 4, ".exe"))
 		return;
 	HKEY hKey;
-	RegCreateKey(HKEY_CLASSES_ROOT,"bs2mod\\shell\\open\\command",&hKey);
-	RegSetValueEx(hKey,"",0,REG_SZ,(BYTE*)command,strlen(command));
+	RegCreateKeyA(HKEY_CLASSES_ROOT, "bs2mod\\shell\\open\\command", &hKey);
+	RegSetValueExA(hKey, "", 0, REG_SZ, (BYTE *)command, strlen(command));
 	RegCloseKey(hKey);
-	RegCreateKey(HKEY_CLASSES_ROOT,"bs2mod\\DefaultIcon",&hKey);
-	RegSetValueEx(hKey,"",0,REG_SZ,(BYTE*)filename,strlen(filename));
+	RegCreateKeyA(HKEY_CLASSES_ROOT, "bs2mod\\DefaultIcon", &hKey);
+	RegSetValueExA(hKey, "", 0, REG_SZ, (BYTE *)filename, strlen(filename));
 	RegCloseKey(hKey);
-	RegCreateKey(HKEY_LOCAL_MACHINE,"SOFTWARE\\Classes\\bs2mod\\shell\\open\\command",&hKey);
-	RegSetValueEx(hKey,"",0,REG_SZ,(BYTE*)command,strlen(command));
+	RegCreateKeyA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2mod\\shell\\open\\command", &hKey);
+	RegSetValueExA(hKey, "", 0, REG_SZ, (BYTE *)command, strlen(command));
 	RegCloseKey(hKey);
-	RegCreateKey(HKEY_LOCAL_MACHINE,"SOFTWARE\\Classes\\bs2mod",&hKey);
-	RegSetValueEx(hKey,"",0,REG_SZ,(BYTE*)"URL: bs2mod Protocol",strlen("URL: bs2mod Protocol"));
-	RegSetValueEx(hKey,"URL Protocol",0,REG_SZ,(BYTE*)"",strlen(""));
+	RegCreateKeyA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2mod", &hKey);
+	RegSetValueExA(hKey, "", 0, REG_SZ, (BYTE *)"URL: bs2mod Protocol", strlen("URL: bs2mod Protocol"));
+	RegSetValueExA(hKey, "URL Protocol", 0, REG_SZ, (BYTE *)"", strlen(""));
 	RegCloseKey(hKey);
-	RegCreateKey(HKEY_LOCAL_MACHINE,"SOFTWARE\\Classes\\bs2mod\\DefaultIcon",&hKey);
-	RegSetValueEx(hKey,"",0,REG_SZ,(BYTE*)filename,strlen(filename));
+	RegCreateKeyA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2mod\\DefaultIcon", &hKey);
+	RegSetValueExA(hKey, "", 0, REG_SZ, (BYTE *)filename, strlen(filename));
 	RegCloseKey(hKey);
 
-	RegCreateKey(HKEY_CLASSES_ROOT,"bs2addon\\shell\\open\\command",&hKey);
-	RegSetValueEx(hKey,"",0,REG_SZ,(BYTE*)command,strlen(command));
+	RegCreateKeyA(HKEY_CLASSES_ROOT, "bs2addon\\shell\\open\\command", &hKey);
+	RegSetValueExA(hKey, "", 0, REG_SZ, (BYTE *)command, strlen(command));
 	RegCloseKey(hKey);
-	RegCreateKey(HKEY_CLASSES_ROOT,"bs2addon\\DefaultIcon",&hKey);
-	RegSetValueEx(hKey,"",0,REG_SZ,(BYTE*)filename,strlen(filename));
+	RegCreateKeyA(HKEY_CLASSES_ROOT, "bs2addon\\DefaultIcon", &hKey);
+	RegSetValueExA(hKey, "", 0, REG_SZ, (BYTE *)filename, strlen(filename));
 	RegCloseKey(hKey);
-	RegCreateKey(HKEY_LOCAL_MACHINE,"SOFTWARE\\Classes\\bs2addon\\shell\\open\\command",&hKey);
-	RegSetValueEx(hKey,"",0,REG_SZ,(BYTE*)command,strlen(command));
+	RegCreateKeyA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2addon\\shell\\open\\command", &hKey);
+	RegSetValueExA(hKey, "", 0, REG_SZ, (BYTE *)command, strlen(command));
 	RegCloseKey(hKey);
-	RegCreateKey(HKEY_LOCAL_MACHINE,"SOFTWARE\\Classes\\bs2addon",&hKey);
-	RegSetValueEx(hKey,"",0,REG_SZ,(BYTE*)"URL: bs2mod Protocol",strlen("URL: bs2addon Protocol"));
-	RegSetValueEx(hKey,"URL Protocol",0,REG_SZ,(BYTE*)"",strlen(""));
+	RegCreateKeyA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2addon", &hKey);
+	RegSetValueExA(hKey, "", 0, REG_SZ, (BYTE *)"URL: bs2mod Protocol", strlen("URL: bs2addon Protocol"));
+	RegSetValueExA(hKey, "URL Protocol", 0, REG_SZ, (BYTE *)"", strlen(""));
 	RegCloseKey(hKey);
-	RegCreateKey(HKEY_LOCAL_MACHINE,"SOFTWARE\\Classes\\bs2addon\\DefaultIcon",&hKey);
-	RegSetValueEx(hKey,"",0,REG_SZ,(BYTE*)filename,strlen(filename));
+	RegCreateKeyA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2addon\\DefaultIcon", &hKey);
+	RegSetValueExA(hKey, "", 0, REG_SZ, (BYTE *)filename, strlen(filename));
 	RegCloseKey(hKey);
 
 	DragAcceptFiles(GetActiveWindow(), true);
@@ -62,24 +63,24 @@ void osinit(char* filename)
 
 void sysmessage(SDL_SysWMmsg *msg)
 {
-	SDL_SysWMmsg* m = msg;
+	SDL_SysWMmsg *m = msg;
 	if (m->msg == WM_DROPFILES)
 	{
 		char tmp[256];
-		int count = DragQueryFile((HDROP__*)m->wParam,0xFFFFFFFF,0,0);
+		int count = DragQueryFile((HDROP__ *)m->wParam, 0xFFFFFFFF, 0, 0);
 		for (int i = 0; i < count; i++)
 		{
-			DragQueryFile((HDROP__*)m->wParam, i, tmp, 255);
-			parsefile(tmp,0);
+			DragQueryFileA((HDROP__ *)m->wParam, i, tmp, 255);
+			parsefile(tmp, 0);
 		}
 	}
 }
 
-void ossystem(char* cmd, char* parameters, bool wait, bool hidden)
+void ossystem(char *cmd, char *parameters, bool wait, bool hidden)
 {
 	if (parameters)
 	{
-		SHELLEXECUTEINFO t;
+		SHELLEXECUTEINFOA t;
 		ZeroMemory(&t, sizeof(SHELLEXECUTEINFO));
 		t.cbSize = sizeof(SHELLEXECUTEINFO);
 		t.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_FLAG_DDEWAIT;
@@ -91,8 +92,9 @@ void ossystem(char* cmd, char* parameters, bool wait, bool hidden)
 			t.nShow = SW_HIDE;
 		else
 			t.nShow = SW_SHOWNORMAL;
-		//long unsigned int h = (unsigned long)ShellExecute(GetActiveWindow(), 0, cmd, parameters, 0, SW_SHOWNORMAL);
-		if (ShellExecuteEx(&t) && wait) while (WaitForSingleObject(t.hProcess,INFINITE) != WAIT_OBJECT_0);
+
+		if (ShellExecuteExA(&t) && wait)
+			while (WaitForSingleObject(t.hProcess, INFINITE) != WAIT_OBJECT_0);
 	}
 	else
 	{
@@ -100,7 +102,7 @@ void ossystem(char* cmd, char* parameters, bool wait, bool hidden)
 		batchfile.open("tmp.bat", std::ios::out);
 		batchfile.write(cmd, strlen(cmd));
 		batchfile.close();
-		ossystem("tmp.bat","",true, hidden);
+		ossystem("tmp.bat", "", true, hidden);
 		remove("tmp.bat");
 	}
 }
@@ -110,50 +112,53 @@ void mousebuttonbug(bool mouseup)
 	static HWND hwnd = GetActiveWindow();
 	if (hwnd != GetActiveWindow() || mouseup)
 	{
-		SendMessage(hwnd,WM_LBUTTONUP,0,0);
-		SendMessage(hwnd,WM_MBUTTONUP,0,0);
-		SendMessage(hwnd,WM_RBUTTONUP,0,0);
+		SendMessage(hwnd, WM_LBUTTONUP, 0, 0);
+		SendMessage(hwnd, WM_MBUTTONUP, 0, 0);
+		SendMessage(hwnd, WM_RBUTTONUP, 0, 0);
 		for (int i = 0; i < 100; i++)
-			SendMessage(hwnd,WM_KEYUP,i,0);
+			SendMessage(hwnd, WM_KEYUP, i, 0);
 	}
 	hwnd = GetActiveWindow();
 }
 
-int copyStringToClipboard(char* source)
+int copyStringToClipboard(char *source)
 {
 	int ok = OpenClipboard(NULL);
-	if (!ok) return 0;
+	if (!ok)
+		return 0;
 	HGLOBAL clipbuffer;
-	char* buffer;
+	char *buffer;
 	EmptyClipboard();
-	clipbuffer = GlobalAlloc(GMEM_DDESHARE, strlen(source)+1);
-	buffer = (char*)GlobalLock(clipbuffer);
+	clipbuffer = GlobalAlloc(GMEM_DDESHARE, strlen(source) + 1);
+	buffer = (char *)GlobalLock(clipbuffer);
 	strcpy(buffer, source);
 	GlobalUnlock(clipbuffer);
-	SetClipboardData(CF_TEXT,clipbuffer);
+	SetClipboardData(CF_TEXT, clipbuffer);
 	CloseClipboard();
 	return 0;
 }
 
 char *getStringFromClipboard()
 {
-   int ok = OpenClipboard(NULL);
-   char *buffer = NULL;
-   if (!ok) return NULL;
-   HANDLE hData = GetClipboardData( CF_TEXT );
-   buffer = (char*)GlobalLock(hData);
-   GlobalUnlock( hData );
-   CloseClipboard();
-   return buffer;
+	int ok = OpenClipboard(NULL);
+	char *buffer = NULL;
+	if (!ok)
+		return NULL;
+	HANDLE hData = GetClipboardData(CF_TEXT);
+	buffer = (char *)GlobalLock(hData);
+	GlobalUnlock(hData);
+	CloseClipboard();
+	return buffer;
 }
 
-char *opendialog(char* filter, char* defaultname)
+char *opendialog(char *filter, char *defaultname)
 {
-	OPENFILENAME ofn;
+	OPENFILENAMEA ofn;
 	char *szFile = new char[260];
 	ZeroMemory(&ofn, sizeof(OPENFILENAME));
 	ZeroMemory(szFile, 260);
-	if (defaultname) strcpy(szFile,defaultname);
+	if (defaultname)
+		strcpy(szFile, defaultname);
 	ofn.lStructSize = sizeof(OPENFILENAME);
 	ofn.hwndOwner = GetActiveWindow();
 	ofn.lpstrFile = szFile;
@@ -164,7 +169,7 @@ char *opendialog(char* filter, char* defaultname)
 	ofn.nMaxFileTitle = 0;
 	ofn.lpstrInitialDir = NULL;
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
-	if (GetOpenFileName(&ofn)==TRUE);
+	if (GetOpenFileNameA(&ofn) == TRUE)
 	{
 		mousebuttonbug(true);
 		return szFile;
@@ -173,13 +178,14 @@ char *opendialog(char* filter, char* defaultname)
 	return 0;
 }
 
-char *savedialog(char* filter, char* defaultname)
+char *savedialog(char *filter, char *defaultname)
 {
-	OPENFILENAME ofn;
+	OPENFILENAMEA ofn;
 	char *szFile = new char[260];
 	ZeroMemory(&ofn, sizeof(OPENFILENAME));
 	ZeroMemory(szFile, 260);
-	if (defaultname) strcpy(szFile,defaultname);
+	if (defaultname)
+		strcpy(szFile, defaultname);
 	ofn.lStructSize = sizeof(OPENFILENAME);
 	ofn.hwndOwner = GetActiveWindow();
 	ofn.hInstance = (HINSTANCE)GetCurrentProcess();
@@ -193,7 +199,7 @@ char *savedialog(char* filter, char* defaultname)
 	ofn.lpstrInitialDir = NULL;
 	ofn.Flags = OFN_PATHMUSTEXIST;
 	ofn.lpstrDefExt = "";
-	if (GetSaveFileName(&ofn));
+	if (GetSaveFileNameA(&ofn))
 	{
 		mousebuttonbug(true);
 		if (strlen(szFile))
@@ -205,26 +211,32 @@ char *savedialog(char* filter, char* defaultname)
 	return 0;
 }
 
-bool yesnobox(char* text, char* title){
-	int i = MessageBox (GetActiveWindow(), text, title, MB_YESNO);
+bool yesnobox(char *text, char *title)
+{
+	int i = MessageBoxA(GetActiveWindow(), text, title, MB_YESNO);
 	mousebuttonbug(true);
 	if (i == IDYES) return true;
 	return false;
 }
 
-void messagebox(char* text, char* title){
-	MessageBox (GetActiveWindow(), text, title, MB_OK);
+void messagebox(char *text, char *title)
+{
+	MessageBoxA(GetActiveWindow(), text, title, MB_OK);
 	mousebuttonbug(true);
 }
 
-char *inputbox(){
+char *inputbox()
+{
 	return 0;
 }
 
-void screensavercheck() {
-	char* cmd = GetCommandLine();
-	if (strstr(cmd, "/p")) exit(0);
-	if (strstr(cmd, "/c")) {
+void screensavercheck()
+{
+	char *cmd = GetCommandLineA();
+	if (strstr(cmd, "/p"))
+		exit(0);
+	if (strstr(cmd, "/c"))
+	{
 		system("start %SystemRoot%\\notepad.exe %SystemRoot%\\config.bs2");
 		exit(0);
 	}
@@ -232,87 +244,100 @@ void screensavercheck() {
 
 #else
 
-void osinit(char* filename)
+void osinit(char *filename)
 {
-	path = new char[strlen(filename)+1];
-	strcpy(path,filename);
-	char* tmp = 0;
-	char* tmp2 = path;
-	while ((tmp = strchr(tmp2, '/')) || (tmp = strchr(tmp2, '\\'))) tmp2 = tmp+1;
+	path = new char[strlen(filename) + 1];
+	strcpy(path, filename);
+	char *tmp = 0;
+	char *tmp2 = path;
+	while ((tmp = strchr(tmp2, '/')) || (tmp = strchr(tmp2, '\\')))
+		tmp2 = tmp + 1;
 	*tmp2 = 0;
 }
 
 void sysmessage(SDL_SysWMmsg *msg)
-{}
-
-void ossystem(char* cmd, char* parameters, bool wait, bool hidden)
 {
-	#ifdef COMPILER_SYSTEM
+}
+
+void ossystem(char *cmd, char *parameters, bool wait, bool hidden)
+{
+#ifdef COMPILER_SYSTEM
 	system(cmd);
-	#endif
+#endif
 }
 
 void mousebuttonbug(bool mouseup)
-{}
+{
+}
 
-int copyStringToClipboard(char * source)
+int copyStringToClipboard(char *source)
 {
 	return 0;
 }
 
 char *getStringFromClipboard()
 {
-   char * buffer = new char[1];
-   buffer[0] = 0;
-   return buffer;
+	char *buffer = new char[1];
+	buffer[0] = 0;
+	return buffer;
 }
 
-char *opendialog(char* filter, char* defaultname)
+char *opendialog(char *filter, char *defaultname)
 {
-   char * buffer = new char[1];
-   buffer[0] = 0;
-   return buffer;
+	char *buffer = new char[1];
+	buffer[0] = 0;
+	return buffer;
 }
 
-char *savedialog(char* filter, char* defaultname)
+char *savedialog(char *filter, char *defaultname)
 {
-   char * buffer = new char[1];
-   buffer[0] = 0;
-   return buffer;
+	char *buffer = new char[1];
+	buffer[0] = 0;
+	return buffer;
 }
 
-bool yesnobox(char* text, char* title){
+bool yesnobox(char *text, char *title)
+{
 	return false;
 }
 
-void messagebox(char* text, char* title){
+void messagebox(char *text, char *title)
+{
 }
 
-char *inputbox(){
+char *inputbox()
+{
 	return 0;
 }
 
-void screensavercheck() {
+void screensavercheck()
+{
 }
 
 #endif
 
 #ifdef COMPILER_PPC
 
-char *checkfilename(char *filename) {
-	if (strlen(filename) == 0) return filename;
-	if (filename[0] == '/') return filename;
-	if (filename[0] == '\\') return filename;
-	if (strstr(filename,":")) return filename;
+char *checkfilename(char *filename)
+{
+	if (strlen(filename) == 0)
+		return filename;
+	if (filename[0] == '/')
+		return filename;
+	if (filename[0] == '\\')
+		return filename;
+	if (strstr(filename, ":"))
+		return filename;
 	char *t = new char[strlen(filename) + strlen(path) + 5];
-	sprintf(t,"%s%s",path,filename);
+	sprintf(t, "%s%s", path, filename);
 	std::cout << t << std::endl;
 	return t;
 };
 
 #else
 
-char *checkfilename(char *filename) {
+char *checkfilename(char *filename)
+{
 	return filename;
 };
 

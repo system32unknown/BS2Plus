@@ -56,7 +56,6 @@ void hideSubMenu();
 void scrollto(int x, int y);
 char* getmouseover();
 void autoresize(SDL_Surface* screen);
-SDL_Surface *TTF_RenderText_Solid_with_BG(TTF_Font *font, const char *text, SDL_Color fg);
 
 extern char status_text[4097];
 extern SDL_Surface* fglayer;

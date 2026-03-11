@@ -1,11 +1,11 @@
 #include "output.h"
 #include "network.h"
 
-int error(char* text, int owner)
+int error(char *text, int owner)
 {
 	if (owner)
 	{
-		sendowner(text,owner);
+		sendowner(text, owner);
 	}
 	else
 	{
@@ -15,11 +15,11 @@ int error(char* text, int owner)
 	return 0;
 }
 
-int print(char* text, int owner, int size)
+int print(char *text, int owner, int size)
 {
 	if (owner)
 	{
-		sendowner(text,owner,size);
+		sendowner(text, owner, size);
 	}
 	else
 	{
@@ -28,4 +28,3 @@ int print(char* text, int owner, int size)
 	}
 	return 0;
 }
-

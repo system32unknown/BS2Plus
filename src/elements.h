@@ -21,7 +21,7 @@ struct Interaction
 	Uint16 rate;
 	Uint16 except;
 	void *trigger;
-	char* toString(char* e);
+	char *toString(char *e);
 };
 
 struct Die
@@ -32,10 +32,10 @@ struct Die
 
 struct Element
 {
-	std::list<Interaction*> *interactions;
+	std::list<Interaction *> *interactions;
 	int interactioncount;
-	std::list<Die*> *dies;
-	char* name;
+	std::list<Die *> *dies;
+	char *name;
 	int weight;
 	int spray;
 	int slide;
@@ -51,7 +51,7 @@ struct Element
 
 struct Group
 {
-	char* name;
+	char *name;
 	Pic *icon;
 	std::list<int> elements;
 	std::list<int> elementorder;
@@ -70,24 +70,24 @@ int setElementR(Uint16 id, unsigned char r);
 int setElementG(Uint16 id, unsigned char g);
 int setElementB(Uint16 id, unsigned char b);
 int setElementCustomColor(Uint16 id, int i, int c, unsigned char b);
-int setElementIcon(Uint16 id, Pic* icon);
+int setElementIcon(Uint16 id, Pic *icon);
 int setElementBias(Uint16 id, bool b);
-Uint16 findElement(char* element, bool create = false);
-int addInteraction(Uint16 id, Uint16 elementid, Uint16 toself, Uint16 toother, Uint16 rate, Uint16 except, void* trigger, int pos=-1);
-void interactionTrigger(void* trigger, Uint16 element1, Uint16 element2, int x1, int y1, int x2, int y2);
+Uint16 findElement(char *element, bool create = false);
+int addInteraction(Uint16 id, Uint16 elementid, Uint16 toself, Uint16 toother, Uint16 rate, Uint16 except, void *trigger, int pos = -1);
+void interactionTrigger(void *trigger, Uint16 element1, Uint16 element2, int x1, int y1, int x2, int y2);
 int clearInteraction(Uint16 id);
 int removeInteraction(Uint16 id, Uint16 pos);
 int clearDie(Uint16 id);
 int addDie(Uint16 id, Uint16 dieto, Uint16 rate);
-Element* getElement(Uint16 id);
+Element *getElement(Uint16 id);
 
-int findGroup(char* name, bool create, int order);
-Group* getGroup(int value);
-int getGroupElement(char* name, int num);
-int getGroupElementOrder(char* name, int num);
-bool isElementInGroup(Group* group, int element);
-void addElementToGroup(Group* group, int element, int pos);
-void clearGroup(char* name);
+int findGroup(char *name, bool create, int order);
+Group *getGroup(int value);
+int getGroupElement(char *name, int num);
+int getGroupElementOrder(char *name, int num);
+bool isElementInGroup(Group *group, int element);
+void addElementToGroup(Group *group, int element, int pos);
+void clearGroup(char *name);
 void clearGroups();
 int countGroups();
 
