@@ -15,10 +15,10 @@ The CXX compiler identification is GNU, found in "C:/Users/op582/Documents/GitHu
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: C:/Users/op582/Documents/GitHub/BS2Plus/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):C:/msys64/usr/bin/make.exe -f Makefile cmTC_f1404/fast && /usr/bin/make  -f CMakeFiles/cmTC_f1404.dir/build.make CMakeFiles/cmTC_f1404.dir/build
+Run Build Command(s):C:/msys64/usr/bin/make.exe -f Makefile cmTC_298e4/fast && /usr/bin/make  -f CMakeFiles/cmTC_298e4.dir/build.make CMakeFiles/cmTC_298e4.dir/build
 make[1]: Entering directory '/c/Users/op582/Documents/GitHub/BS2Plus/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_f1404.dir/CMakeCXXCompilerABI.cpp.obj
-C:/msys64/mingw64/bin/g++.exe   -v -o CMakeFiles/cmTC_f1404.dir/CMakeCXXCompilerABI.cpp.obj -c "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.20/Modules/CMakeCXXCompilerABI.cpp"
+Building CXX object CMakeFiles/cmTC_298e4.dir/CMakeCXXCompilerABI.cpp.obj
+C:/msys64/mingw64/bin/g++.exe   -v -o CMakeFiles/cmTC_298e4.dir/CMakeCXXCompilerABI.cpp.obj -c "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.20/Modules/CMakeCXXCompilerABI.cpp"
 Using built-in specs.
 COLLECT_GCC=C:\msys64\mingw64\bin\g++.exe
 Target: x86_64-w64-mingw32
@@ -26,8 +26,8 @@ Configured with: ../gcc-13.2.0/configure --prefix=/mingw64 --with-local-prefix=/
 Thread model: posix
 Supported LTO compression algorithms: zlib zstd
 gcc version 13.2.0 (Rev5, Built by MSYS2 project) 
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f1404.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_f1404.dir/'
- C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/cc1plus.exe -quiet -v -iprefix C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/ -D_REENTRANT C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.20/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_f1404.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=nocona -version -o C:\Users\op582\AppData\Local\Temp\ccfI56tZ.s
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_298e4.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_298e4.dir/'
+ C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/cc1plus.exe -quiet -v -iprefix C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/ -D_REENTRANT C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.20/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_298e4.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=nocona -version -o C:\Users\op582\AppData\Local\Temp\ccZAJHn0.s
 GNU C++17 (Rev5, Built by MSYS2 project) version 13.2.0 (x86_64-w64-mingw32)
 	compiled by GNU C version 13.2.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
 
@@ -52,16 +52,16 @@ ignoring nonexistent directory "D:/a/msys64/mingw64/include"
  C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/include-fixed
 End of search list.
 Compiler executable checksum: b5c8bd7513928ca64822ec78aeb5fa1c
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f1404.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_f1404.dir/'
- C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_f1404.dir/CMakeCXXCompilerABI.cpp.obj C:\Users\op582\AppData\Local\Temp\ccfI56tZ.s
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_298e4.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_298e4.dir/'
+ C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_298e4.dir/CMakeCXXCompilerABI.cpp.obj C:\Users\op582\AppData\Local\Temp\ccZAJHn0.s
 GNU assembler version 2.42 (x86_64-w64-mingw32) using BFD version (GNU Binutils) 2.42
 COMPILER_PATH=C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/;C:/msys64/mingw64/bin/../lib/gcc/;C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/bin/
 LIBRARY_PATH=C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/;C:/msys64/mingw64/bin/../lib/gcc/;C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/lib/../lib/;C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../lib/;C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/lib/;C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f1404.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_f1404.dir/CMakeCXXCompilerABI.cpp.'
-Linking CXX executable cmTC_f1404.exe
-"C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe" -E rm -f CMakeFiles/cmTC_f1404.dir/objects.a
-C:/msys64/mingw64/bin/ar.exe cr CMakeFiles/cmTC_f1404.dir/objects.a @CMakeFiles/cmTC_f1404.dir/objects1.rsp
-C:/msys64/mingw64/bin/g++.exe  -v -Wl,--whole-archive CMakeFiles/cmTC_f1404.dir/objects.a -Wl,--no-whole-archive -o cmTC_f1404.exe -Wl,--out-implib,libcmTC_f1404.dll.a -Wl,--major-image-version,0,--minor-image-version,0 
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_298e4.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_298e4.dir/CMakeCXXCompilerABI.cpp.'
+Linking CXX executable cmTC_298e4.exe
+"C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe" -E rm -f CMakeFiles/cmTC_298e4.dir/objects.a
+C:/msys64/mingw64/bin/ar.exe cr CMakeFiles/cmTC_298e4.dir/objects.a @CMakeFiles/cmTC_298e4.dir/objects1.rsp
+C:/msys64/mingw64/bin/g++.exe  -v -Wl,--whole-archive CMakeFiles/cmTC_298e4.dir/objects.a -Wl,--no-whole-archive -o cmTC_298e4.exe -Wl,--out-implib,libcmTC_298e4.dll.a -Wl,--major-image-version,0,--minor-image-version,0 
 Using built-in specs.
 COLLECT_GCC=C:\msys64\mingw64\bin\g++.exe
 COLLECT_LTO_WRAPPER=C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/lto-wrapper.exe
@@ -72,9 +72,9 @@ Supported LTO compression algorithms: zlib zstd
 gcc version 13.2.0 (Rev5, Built by MSYS2 project) 
 COMPILER_PATH=C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/;C:/msys64/mingw64/bin/../lib/gcc/;C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/bin/
 LIBRARY_PATH=C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/;C:/msys64/mingw64/bin/../lib/gcc/;C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/lib/../lib/;C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../lib/;C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/lib/;C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f1404.exe' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_f1404.'
- C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/collect2.exe -plugin C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\Users\op582\AppData\Local\Temp\cc2CWNGH.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -m i386pep -Bdynamic -o cmTC_f1404.exe C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../lib/crt2.o C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/crtbegin.o -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0 -LC:/msys64/mingw64/bin/../lib/gcc -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../lib -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../.. --whole-archive CMakeFiles/cmTC_f1404.dir/objects.a --no-whole-archive --out-implib libcmTC_f1404.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -lkernel32 C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../lib/default-manifest.o C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/crtend.o
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f1404.exe' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_f1404.'
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_298e4.exe' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_298e4.'
+ C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/collect2.exe -plugin C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\Users\op582\AppData\Local\Temp\ccIhCjaB.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -m i386pep -Bdynamic -o cmTC_298e4.exe C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../lib/crt2.o C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/crtbegin.o -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0 -LC:/msys64/mingw64/bin/../lib/gcc -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../lib -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../.. --whole-archive CMakeFiles/cmTC_298e4.dir/objects.a --no-whole-archive --out-implib libcmTC_298e4.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -lkernel32 C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../lib/default-manifest.o C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/crtend.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_298e4.exe' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_298e4.'
 make[1]: Leaving directory '/c/Users/op582/Documents/GitHub/BS2Plus/build/CMakeFiles/CMakeTmp'
 
 
@@ -102,10 +102,10 @@ Parsed CXX implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld\.exe|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: C:/Users/op582/Documents/GitHub/BS2Plus/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command(s):C:/msys64/usr/bin/make.exe -f Makefile cmTC_f1404/fast && /usr/bin/make  -f CMakeFiles/cmTC_f1404.dir/build.make CMakeFiles/cmTC_f1404.dir/build]
+  ignore line: [Run Build Command(s):C:/msys64/usr/bin/make.exe -f Makefile cmTC_298e4/fast && /usr/bin/make  -f CMakeFiles/cmTC_298e4.dir/build.make CMakeFiles/cmTC_298e4.dir/build]
   ignore line: [make[1]: Entering directory '/c/Users/op582/Documents/GitHub/BS2Plus/build/CMakeFiles/CMakeTmp']
-  ignore line: [Building CXX object CMakeFiles/cmTC_f1404.dir/CMakeCXXCompilerABI.cpp.obj]
-  ignore line: [C:/msys64/mingw64/bin/g++.exe   -v -o CMakeFiles/cmTC_f1404.dir/CMakeCXXCompilerABI.cpp.obj -c "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.20/Modules/CMakeCXXCompilerABI.cpp"]
+  ignore line: [Building CXX object CMakeFiles/cmTC_298e4.dir/CMakeCXXCompilerABI.cpp.obj]
+  ignore line: [C:/msys64/mingw64/bin/g++.exe   -v -o CMakeFiles/cmTC_298e4.dir/CMakeCXXCompilerABI.cpp.obj -c "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.20/Modules/CMakeCXXCompilerABI.cpp"]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=C:\msys64\mingw64\bin\g++.exe]
   ignore line: [Target: x86_64-w64-mingw32]
@@ -113,8 +113,8 @@ Parsed CXX implicit link information from above output:
   ignore line: [Thread model: posix]
   ignore line: [Supported LTO compression algorithms: zlib zstd]
   ignore line: [gcc version 13.2.0 (Rev5  Built by MSYS2 project) ]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f1404.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_f1404.dir/']
-  ignore line: [ C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/cc1plus.exe -quiet -v -iprefix C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/ -D_REENTRANT C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.20/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_f1404.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=nocona -version -o C:\Users\op582\AppData\Local\Temp\ccfI56tZ.s]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_298e4.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_298e4.dir/']
+  ignore line: [ C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/cc1plus.exe -quiet -v -iprefix C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/ -D_REENTRANT C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.20/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_298e4.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=nocona -version -o C:\Users\op582\AppData\Local\Temp\ccZAJHn0.s]
   ignore line: [GNU C++17 (Rev5  Built by MSYS2 project) version 13.2.0 (x86_64-w64-mingw32)]
   ignore line: [	compiled by GNU C version 13.2.0  GMP version 6.3.0  MPFR version 4.2.1  MPC version 1.3.1  isl version isl-0.26-GMP]
   ignore line: []
@@ -139,8 +139,8 @@ Parsed CXX implicit link information from above output:
   ignore line: [ C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/include-fixed]
   ignore line: [End of search list.]
   ignore line: [Compiler executable checksum: b5c8bd7513928ca64822ec78aeb5fa1c]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f1404.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_f1404.dir/']
-  ignore line: [ C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_f1404.dir/CMakeCXXCompilerABI.cpp.obj C:\Users\op582\AppData\Local\Temp\ccfI56tZ.s]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_298e4.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_298e4.dir/']
+  ignore line: [ C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_298e4.dir/CMakeCXXCompilerABI.cpp.obj C:\Users\op582\AppData\Local\Temp\ccZAJHn0.s]
   ignore line: [GNU assembler version 2.42 (x86_64-w64-mingw32) using BFD version (GNU Binutils) 2.42]
   ignore line: [COMPILER_PATH=C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/]
   ignore line: [C:/msys64/mingw64/bin/../lib/gcc/]
@@ -151,11 +151,11 @@ Parsed CXX implicit link information from above output:
   ignore line: [C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../lib/]
   ignore line: [C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/lib/]
   ignore line: [C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f1404.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_f1404.dir/CMakeCXXCompilerABI.cpp.']
-  ignore line: [Linking CXX executable cmTC_f1404.exe]
-  ignore line: ["C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe" -E rm -f CMakeFiles/cmTC_f1404.dir/objects.a]
-  ignore line: [C:/msys64/mingw64/bin/ar.exe cr CMakeFiles/cmTC_f1404.dir/objects.a @CMakeFiles/cmTC_f1404.dir/objects1.rsp]
-  ignore line: [C:/msys64/mingw64/bin/g++.exe  -v -Wl --whole-archive CMakeFiles/cmTC_f1404.dir/objects.a -Wl --no-whole-archive -o cmTC_f1404.exe -Wl --out-implib libcmTC_f1404.dll.a -Wl --major-image-version 0 --minor-image-version 0 ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_298e4.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_298e4.dir/CMakeCXXCompilerABI.cpp.']
+  ignore line: [Linking CXX executable cmTC_298e4.exe]
+  ignore line: ["C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe" -E rm -f CMakeFiles/cmTC_298e4.dir/objects.a]
+  ignore line: [C:/msys64/mingw64/bin/ar.exe cr CMakeFiles/cmTC_298e4.dir/objects.a @CMakeFiles/cmTC_298e4.dir/objects1.rsp]
+  ignore line: [C:/msys64/mingw64/bin/g++.exe  -v -Wl --whole-archive CMakeFiles/cmTC_298e4.dir/objects.a -Wl --no-whole-archive -o cmTC_298e4.exe -Wl --out-implib libcmTC_298e4.dll.a -Wl --major-image-version 0 --minor-image-version 0 ]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=C:\msys64\mingw64\bin\g++.exe]
   ignore line: [COLLECT_LTO_WRAPPER=C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/lto-wrapper.exe]
@@ -173,13 +173,13 @@ Parsed CXX implicit link information from above output:
   ignore line: [C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../lib/]
   ignore line: [C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/lib/]
   ignore line: [C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f1404.exe' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_f1404.']
-  link line: [ C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/collect2.exe -plugin C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\Users\op582\AppData\Local\Temp\cc2CWNGH.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -m i386pep -Bdynamic -o cmTC_f1404.exe C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../lib/crt2.o C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/crtbegin.o -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0 -LC:/msys64/mingw64/bin/../lib/gcc -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../lib -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../.. --whole-archive CMakeFiles/cmTC_f1404.dir/objects.a --no-whole-archive --out-implib libcmTC_f1404.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -lkernel32 C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../lib/default-manifest.o C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/crtend.o]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_298e4.exe' '-shared-libgcc' '-mtune=generic' '-march=nocona' '-dumpdir' 'cmTC_298e4.']
+  link line: [ C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/collect2.exe -plugin C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/liblto_plugin.dll -plugin-opt=C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\Users\op582\AppData\Local\Temp\ccIhCjaB.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -m i386pep -Bdynamic -o cmTC_298e4.exe C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../lib/crt2.o C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/crtbegin.o -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0 -LC:/msys64/mingw64/bin/../lib/gcc -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../lib -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/lib -LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../.. --whole-archive CMakeFiles/cmTC_298e4.dir/objects.a --no-whole-archive --out-implib libcmTC_298e4.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -lkernel32 C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../lib/default-manifest.o C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/crtend.o]
     arg [C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/collect2.exe] ==> ignore
     arg [-plugin] ==> ignore
     arg [C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/liblto_plugin.dll] ==> ignore
     arg [-plugin-opt=C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/lto-wrapper.exe] ==> ignore
-    arg [-plugin-opt=-fresolution=C:\Users\op582\AppData\Local\Temp\cc2CWNGH.res] ==> ignore
+    arg [-plugin-opt=-fresolution=C:\Users\op582\AppData\Local\Temp\ccIhCjaB.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lmingw32] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
@@ -203,7 +203,7 @@ Parsed CXX implicit link information from above output:
     arg [i386pep] ==> ignore
     arg [-Bdynamic] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_f1404.exe] ==> ignore
+    arg [cmTC_298e4.exe] ==> ignore
     arg [C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../lib/crt2.o] ==> ignore
     arg [C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/crtbegin.o] ==> ignore
     arg [-LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0] ==> dir [C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0]
@@ -213,10 +213,10 @@ Parsed CXX implicit link information from above output:
     arg [-LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/lib] ==> dir [C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/lib]
     arg [-LC:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../..] ==> dir [C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../..]
     arg [--whole-archive] ==> ignore
-    arg [CMakeFiles/cmTC_f1404.dir/objects.a] ==> ignore
+    arg [CMakeFiles/cmTC_298e4.dir/objects.a] ==> ignore
     arg [--no-whole-archive] ==> ignore
     arg [--out-implib] ==> ignore
-    arg [libcmTC_f1404.dll.a] ==> ignore
+    arg [libcmTC_298e4.dll.a] ==> ignore
     arg [--major-image-version] ==> ignore
     arg [0] ==> ignore
     arg [--minor-image-version] ==> ignore
@@ -259,14 +259,14 @@ Parsed CXX implicit link information from above output:
 Determining if the include file pthread.h exists passed with the following output:
 Change Dir: C:/Users/op582/Documents/GitHub/BS2Plus/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):C:/msys64/usr/bin/make.exe -f Makefile cmTC_87420/fast && /usr/bin/make  -f CMakeFiles/cmTC_87420.dir/build.make CMakeFiles/cmTC_87420.dir/build
+Run Build Command(s):C:/msys64/usr/bin/make.exe -f Makefile cmTC_8cd47/fast && /usr/bin/make  -f CMakeFiles/cmTC_8cd47.dir/build.make CMakeFiles/cmTC_8cd47.dir/build
 make[1]: Entering directory '/c/Users/op582/Documents/GitHub/BS2Plus/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_87420.dir/CheckIncludeFile.cxx.obj
-C:/msys64/mingw64/bin/g++.exe   -std=gnu++17 -o CMakeFiles/cmTC_87420.dir/CheckIncludeFile.cxx.obj -c C:/Users/op582/Documents/GitHub/BS2Plus/build/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx
-Linking CXX executable cmTC_87420.exe
-"C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe" -E rm -f CMakeFiles/cmTC_87420.dir/objects.a
-C:/msys64/mingw64/bin/ar.exe cr CMakeFiles/cmTC_87420.dir/objects.a @CMakeFiles/cmTC_87420.dir/objects1.rsp
-C:/msys64/mingw64/bin/g++.exe -Wl,--whole-archive CMakeFiles/cmTC_87420.dir/objects.a -Wl,--no-whole-archive -o cmTC_87420.exe -Wl,--out-implib,libcmTC_87420.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles/cmTC_87420.dir/linklibs.rsp
+Building CXX object CMakeFiles/cmTC_8cd47.dir/CheckIncludeFile.cxx.obj
+C:/msys64/mingw64/bin/g++.exe   -std=gnu++17 -o CMakeFiles/cmTC_8cd47.dir/CheckIncludeFile.cxx.obj -c C:/Users/op582/Documents/GitHub/BS2Plus/build/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx
+Linking CXX executable cmTC_8cd47.exe
+"C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe" -E rm -f CMakeFiles/cmTC_8cd47.dir/objects.a
+C:/msys64/mingw64/bin/ar.exe cr CMakeFiles/cmTC_8cd47.dir/objects.a @CMakeFiles/cmTC_8cd47.dir/objects1.rsp
+C:/msys64/mingw64/bin/g++.exe -Wl,--whole-archive CMakeFiles/cmTC_8cd47.dir/objects.a -Wl,--no-whole-archive -o cmTC_8cd47.exe -Wl,--out-implib,libcmTC_8cd47.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles/cmTC_8cd47.dir/linklibs.rsp
 make[1]: Leaving directory '/c/Users/op582/Documents/GitHub/BS2Plus/build/CMakeFiles/CMakeTmp'
 
 
@@ -274,14 +274,14 @@ make[1]: Leaving directory '/c/Users/op582/Documents/GitHub/BS2Plus/build/CMakeF
 Performing C++ SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD succeeded with the following output:
 Change Dir: C:/Users/op582/Documents/GitHub/BS2Plus/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):C:/msys64/usr/bin/make.exe -f Makefile cmTC_8cedb/fast && /usr/bin/make  -f CMakeFiles/cmTC_8cedb.dir/build.make CMakeFiles/cmTC_8cedb.dir/build
+Run Build Command(s):C:/msys64/usr/bin/make.exe -f Makefile cmTC_0f4a1/fast && /usr/bin/make  -f CMakeFiles/cmTC_0f4a1.dir/build.make CMakeFiles/cmTC_0f4a1.dir/build
 make[1]: Entering directory '/c/Users/op582/Documents/GitHub/BS2Plus/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_8cedb.dir/src.cxx.obj
-C:/msys64/mingw64/bin/g++.exe -DCMAKE_HAVE_LIBC_PTHREAD  -std=gnu++17 -o CMakeFiles/cmTC_8cedb.dir/src.cxx.obj -c C:/Users/op582/Documents/GitHub/BS2Plus/build/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_8cedb.exe
-"C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe" -E rm -f CMakeFiles/cmTC_8cedb.dir/objects.a
-C:/msys64/mingw64/bin/ar.exe cr CMakeFiles/cmTC_8cedb.dir/objects.a @CMakeFiles/cmTC_8cedb.dir/objects1.rsp
-C:/msys64/mingw64/bin/g++.exe -Wl,--whole-archive CMakeFiles/cmTC_8cedb.dir/objects.a -Wl,--no-whole-archive -o cmTC_8cedb.exe -Wl,--out-implib,libcmTC_8cedb.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles/cmTC_8cedb.dir/linklibs.rsp
+Building CXX object CMakeFiles/cmTC_0f4a1.dir/src.cxx.obj
+C:/msys64/mingw64/bin/g++.exe -DCMAKE_HAVE_LIBC_PTHREAD  -std=gnu++17 -o CMakeFiles/cmTC_0f4a1.dir/src.cxx.obj -c C:/Users/op582/Documents/GitHub/BS2Plus/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_0f4a1.exe
+"C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe" -E rm -f CMakeFiles/cmTC_0f4a1.dir/objects.a
+C:/msys64/mingw64/bin/ar.exe cr CMakeFiles/cmTC_0f4a1.dir/objects.a @CMakeFiles/cmTC_0f4a1.dir/objects1.rsp
+C:/msys64/mingw64/bin/g++.exe -Wl,--whole-archive CMakeFiles/cmTC_0f4a1.dir/objects.a -Wl,--no-whole-archive -o cmTC_0f4a1.exe -Wl,--out-implib,libcmTC_0f4a1.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles/cmTC_0f4a1.dir/linklibs.rsp
 make[1]: Leaving directory '/c/Users/op582/Documents/GitHub/BS2Plus/build/CMakeFiles/CMakeTmp'
 
 
