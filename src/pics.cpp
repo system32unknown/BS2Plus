@@ -25,8 +25,7 @@ SDL_Surface *getBMP(char *file)
 
 SDL_Surface *Pic::getpic(int a)
 {
-	if (a > 127)
-		return SDL_CreateRGBSurface(SDL_SWSURFACE, 16, 32, 32, 0, 0, 0, 0);
+	if (a > 127) return SDL_CreateRGBSurface(SDL_SWSURFACE, 16, 32, 32, 0, 0, 0, 0);
 	if (!strcmp(type, "File") || !strcmp(type, "FILE"))
 	{
 		if (old == 0)

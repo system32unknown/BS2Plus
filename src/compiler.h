@@ -10,14 +10,13 @@
 #define COMPILER_SDL_NET
 // #define COMPILER_PPC
 
-// #define RANDOMNUMBER (rand() % 32768)
 #ifdef COMPILER_WINDOWS
 #define RANDOMNUMBER rand()
 #else
 #define RANDOMNUMBER (rand() % 32768)
 #endif
+
 #define SEEDRAND srand
-// #define SEEDRAND seedrand
 
 inline int myrand()
 {

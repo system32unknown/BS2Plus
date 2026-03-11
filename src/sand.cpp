@@ -795,7 +795,8 @@ void calc()
 									tmp2 = RANDOMNUMBER % tmp2;
 									INTERACTION(o + yr, 0, yr / abs(yr))
 									INTERACTION(o - yr, 0, -yr / abs(yr))
-										INTERACTION(o - r, -r / abs(r), 0) INTERACTION(o + r, r / abs(r), 0)
+									INTERACTION(o - r, -r / abs(r), 0)
+									INTERACTION(o + r, r / abs(r), 0)
 								}
 							}
 							else
@@ -880,7 +881,8 @@ void calc()
 									tmp2 = RANDOMNUMBER % tmp2;
 									INTERACTION_ALL(o - r, -r / abs(r), 0)
 									INTERACTION_ALL(o + r, r / abs(r), 0)
-										INTERACTION_ALL(o + yr, 0, yr / abs(yr)) INTERACTION_ALL(o - yr, 0, -yr / abs(yr))
+									INTERACTION_ALL(o + yr, 0, yr / abs(yr))
+									INTERACTION_ALL(o - yr, 0, -yr / abs(yr))
 								}
 							}
 						}
