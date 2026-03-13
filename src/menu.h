@@ -3,9 +3,9 @@
 
 #include "compiler.h"
 #ifdef __cplusplus
-	#include <cstdlib>
+#include <cstdlib>
 #else
-	#include <stdlib.h>
+#include <stdlib.h>
 #endif
 #include "SDL/SDL.h"
 #include <list>
@@ -25,8 +25,7 @@
 #define MENU_ALIGN_H 1
 #define MENU_ALIGN_V 2
 
-struct Button
-{
+struct Button {
 	Button();
 	Button(Button* b);
 	char* tiptext;
@@ -45,11 +44,11 @@ void drawmenu(SDL_Surface* screen);
 void clickmenu(SDL_Surface* screen, int x, int y, int b, int click);
 void showconsole(int visible);
 void redrawmenu(int i);
-void addButtonToMenuBar(int i,Button* button);
+void addButtonToMenuBar(int i, Button* button);
 void clearMenuBar(int i);
-int getmenuwidth (int i);
+int getmenuwidth(int i);
 void checkscroll();
-SDL_Surface* createmenu(std::list<Button*> *buttons, int align=0, int width=0, int height=0, int scroll=0, bool crop=false);
+SDL_Surface* createmenu(std::list<Button*>* buttons, int align = 0, int width = 0, int height = 0, int scroll = 0, bool crop = false);
 void showSubMenu(int stay, int align);
 void showSubMenu(int stay, int align, int x, int y);
 void hideSubMenu();

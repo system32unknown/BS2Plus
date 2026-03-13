@@ -20,12 +20,11 @@
 #define SHOWGUI
 
 unsigned int lastdrawtime, lastflip;
-SDL_Surface *screen;
+SDL_Surface* screen;
 unsigned int keydown[1024];
 unsigned int keylastexec[1024];
 
-void updatescreen()
-{
+void updatescreen() {
 	msectimer();
 	checknetwork();
 	findTrigger("STATUS", 0)->exec();
@@ -41,8 +40,7 @@ void updatescreen()
 #endif
 }
 
-int updatethread(void *i)
-{
+int updatethread(void* i) {
 	i = 0;
 	while (threadrun()) {
 		SDL_Delay(1);
@@ -53,7 +51,7 @@ int updatethread(void *i)
 	return 0;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
 	int mp = 0;
 
 	SDL_Init(SDL_INIT_VIDEO);
@@ -64,16 +62,16 @@ int main(int argc, char *argv[]) {
 			for (int i = 1; i < argc; i++)
 				if ((strstr(argv[i], "bs2addon://") == argv[i]))
 					showgui = false;
-	if (showgui)
-	{
+	if (showgui) {
+		std::array<int, 2> SRCSIZE;
 #ifdef COMPILER_WINDOWS
-		screen = SDL_SetVideoMode(486, 504, 16, SDL_RESIZABLE | SDL_HWSURFACE | SDL_DOUBLEBUF);
+		SRCSIZE = { 486, 504 };
 #else
-		screen = SDL_SetVideoMode(240, 320, 16, SDL_RESIZABLE | SDL_HWSURFACE | SDL_DOUBLEBUF);
+		SRCSIZE = { 240, 320 };
 #endif
+		screen = SDL_SetVideoMode(SRCSIZE[0], SRCSIZE[1], 16, SDL_RESIZABLE | SDL_HWSURFACE | SDL_DOUBLEBUF);
 		mousebuttonbug(true);
-	}
-	else
+	} else
 		screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 16, 0, 0, 0, 0);
 
 	osinit(*argv);
@@ -97,16 +95,16 @@ int main(int argc, char *argv[]) {
 	sandsem = SDL_CreateSemaphore(1);
 	screensem = SDL_CreateSemaphore(1);
 
-	stamps = new SDL_Surface *[MAX_STAMPS * 2];
+	stamps = new SDL_Surface * [MAX_STAMPS * 2];
 	for (int i2 = 0; i2 < MAX_STAMPS * 2; i2++)
 		stamps[i2] = 0;
 
-	debugparameter = (Var *)setVar("DEBUGPARAMETER", 0);
-	debugvar = (Var *)setVar("DEBUGVAR", 0);
-	debugframe = (Var *)setVar("DEBUGFRAME", 0);
+	debugparameter = (Var*)setVar("DEBUGPARAMETER", 0);
+	debugvar = (Var*)setVar("DEBUGVAR", 0);
+	debugframe = (Var*)setVar("DEBUGFRAME", 0);
 	msectimer();
 	frametimer();
-	int *nullparams = new int[10];
+	int* nullparams = new int[10];
 	for (int i3 = 0; i3 < 10; i3++)
 		nullparams[i3] = 0;
 	addparams(nullparams);
@@ -121,17 +119,16 @@ int main(int argc, char *argv[]) {
 	std::ifstream inp;
 	inp.open(checkfilename("myconfig.bs2"), std::ifstream::in);
 	inp.close();
-	char *defaultconfigfile = "config.bs2";
-	if (!inp.fail())
-	{
+	char* defaultconfigfile = "config.bs2";
+	if (!inp.fail()) {
 		defaultconfigfile = "myconfig.bs2";
 	}
 
 	initmenu(screen);
 
-	setVar("BSVERSION", 2000000);
+	setVar("BSVERSION", 1);
 	setVar("BSNIGHTLY", 1);
-	SDL_WM_SetCaption("Burning Sand 2+ By Altertoriel", "");
+	SDL_WM_SetCaption("Burning Sand 2+", "");
 	SDL_WM_SetIcon(SDL_LoadBMP(checkfilename("icon.bmp")), NULL);
 
 	int z = 1;
@@ -141,32 +138,32 @@ int main(int argc, char *argv[]) {
 	initsand(420 / z, 420 / z);
 
 	setVar("ZOOM", z);
-	static Var *update = (Var *)setVar("UPDATEVIEW", 20);
-	static Var *speed = (Var *)setVar("SPEED", 0);
-	static Var *lastfps = (Var *)setVar("FPS", 0);
-	(Var *)setVar("WINDOWS", 1);
-	static Var *keycode = (Var *)setVar("SHOWKEYCODE", 0);
-	static Var *keyrepeatdelay = (Var *)setVar("KEYREPEATDELAY", SDL_DEFAULT_REPEAT_DELAY / 10);
-	static Var *keyrepeatrate = (Var *)setVar("KEYREPEATRATE", SDL_DEFAULT_REPEAT_INTERVAL / 10);
-	static Var *vphysics = (Var *)setVar("PHYSICS", 1);
+	static Var* update = (Var*)setVar("UPDATEVIEW", 20);
+	static Var* speed = (Var*)setVar("SPEED", 0);
+	static Var* lastfps = (Var*)setVar("FPS", 0);
+	(Var*)setVar("WINDOWS", 1);
+	static Var* keycode = (Var*)setVar("SHOWKEYCODE", 0);
+	static Var* keyrepeatdelay = (Var*)setVar("KEYREPEATDELAY", SDL_DEFAULT_REPEAT_DELAY / 10);
+	static Var* keyrepeatrate = (Var*)setVar("KEYREPEATRATE", SDL_DEFAULT_REPEAT_INTERVAL / 10);
+	static Var* vphysics = (Var*)setVar("PHYSICS", 1);
 
-	static Var *vyear = (Var *)setVar("YEAR", 0);
-	static Var *vmonth = (Var *)setVar("MONTH", 0);
-	static Var *vday = (Var *)setVar("DAY", 0);
-	static Var *vwday = (Var *)setVar("WEEKDAY", 0);
-	static Var *vhour = (Var *)setVar("HOUR", 0);
-	static Var *vminute = (Var *)setVar("MINUTE", 0);
-	static Var *vsecond = (Var *)setVar("SECOND", 0);
-	static Var *vunixtime = (Var *)setVar("UNIXTIME", 0);
-	static Var *rclickmod = (Var *)setVar("RCLICK", 0);
-	static Var *mclickmod = (Var *)setVar("MCLICK", 0);
+	static Var* vyear = (Var*)setVar("YEAR", 0);
+	static Var* vmonth = (Var*)setVar("MONTH", 0);
+	static Var* vday = (Var*)setVar("DAY", 0);
+	static Var* vwday = (Var*)setVar("WEEKDAY", 0);
+	static Var* vhour = (Var*)setVar("HOUR", 0);
+	static Var* vminute = (Var*)setVar("MINUTE", 0);
+	static Var* vsecond = (Var*)setVar("SECOND", 0);
+	static Var* vunixtime = (Var*)setVar("UNIXTIME", 0);
+	static Var* rclickmod = (Var*)setVar("RCLICK", 0);
+	static Var* mclickmod = (Var*)setVar("MCLICK", 0);
 
-	Trigger *precalc = findTrigger("PREPHYSICS", 0);
-	Trigger *postcalc = findTrigger("POSTPHYSICS", 0);
-	Trigger *pretimer = findTrigger("PRETIMER", 0);
-	Trigger *posttimer = findTrigger("POSTTIMER", 0);
-	Trigger *preupdatescreen = findTrigger("PREUPDATESCREEN", 0);
-	Trigger *postupdatescreen = findTrigger("POSTUPDATESCREEN", 0);
+	Trigger* precalc = findTrigger("PREPHYSICS", 0);
+	Trigger* postcalc = findTrigger("POSTPHYSICS", 0);
+	Trigger* pretimer = findTrigger("PRETIMER", 0);
+	Trigger* posttimer = findTrigger("POSTTIMER", 0);
+	Trigger* preupdatescreen = findTrigger("PREUPDATESCREEN", 0);
+	Trigger* postupdatescreen = findTrigger("POSTUPDATESCREEN", 0);
 
 	setthreadrun(false);
 	showconsole(false);
@@ -184,20 +181,15 @@ int main(int argc, char *argv[]) {
 	SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
 
 	bool parsedefault = true;
-	if (argc > 1)
-	{
+	if (argc > 1) {
 		bool configloaded = false;
-		for (int i = 1; i < argc; i++)
-		{
-			if (argv[i][0] != '/')
-			{
-				if ((strstr(argv[i], "bs2mod://") == argv[i]) && !configloaded)
-				{
+		for (int i = 1; i < argc; i++) {
+			if (argv[i][0] != '/') {
+				if ((strstr(argv[i], "bs2mod://") == argv[i]) && !configloaded) {
 					parsefile(defaultconfigfile, 0);
 					configloaded = true;
 				}
-				if ((strstr(argv[i], "bs2addon://") == argv[i]))
-				{
+				if ((strstr(argv[i], "bs2addon://") == argv[i])) {
 					argv[i][0] = 'h';
 					argv[i][1] = 't';
 					argv[i][2] = 't';
@@ -208,16 +200,13 @@ int main(int argc, char *argv[]) {
 					for (unsigned int t = 7; t < strlen(argv[i]) - 4; t++)
 						argv[i][t] = argv[i][t + 4];
 					argv[i][strlen(argv[i]) - 4] = 0;
-					if (!isserver)
-					{
+					if (!isserver) {
 						int t = connect("localhost", 7777);
 
 						sendowner(argv[i], t, strlen(argv[i]));
 						disconnect(t);
 						exit(0);
-					}
-					else if (!configloaded)
-					{
+					} else if (!configloaded) {
 						parsefile(defaultconfigfile, 0);
 						configloaded = true;
 					}
@@ -236,20 +225,19 @@ int main(int argc, char *argv[]) {
 	int fps = 0;
 	float steps = 0;
 	lastdrawtime = (int)SDL_GetTicks();
-	while (lastdrawtime == (unsigned int)SDL_GetTicks())
-		;
+	while (lastdrawtime == (unsigned int)SDL_GetTicks());
 	int minTickTime = (int)SDL_GetTicks() - lastdrawtime;
 
 	lastflip = 0;
 
-	static Var *lastactionmsec = (Var *)setVar("LASTACTIONMSEC", 0);
-	static Var *lastactionmframe = (Var *)setVar("LASTACTIONFRAME", 0);
-	static Var *varframe = (Var *)setVar("FRAME", 0);
-	static Var *varmsec = (Var *)setVar("MSEC", 0);
+	static Var* lastactionmsec = (Var*)setVar("LASTACTIONMSEC", 0);
+	static Var* lastactionmframe = (Var*)setVar("LASTACTIONFRAME", 0);
+	static Var* varframe = (Var*)setVar("FRAME", 0);
+	static Var* varmsec = (Var*)setVar("MSEC", 0);
 
-	static Var *fullscreen = (Var *)setVar("FULLSCREEN", 0);
-	static Var *fullscreenx = (Var *)setVar("FULLSCREENX", 0);
-	static Var *fullscreeny = (Var *)setVar("FULLSCREENY", 0);
+	static Var* fullscreen = (Var*)setVar("FULLSCREEN", 0);
+	static Var* fullscreenx = (Var*)setVar("FULLSCREENX", 0);
+	static Var* fullscreeny = (Var*)setVar("FULLSCREENY", 0);
 	int lastfullscreen = 0;
 	int lastfullscreenx = 0;
 	int lastfullscreeny = 0;
@@ -259,14 +247,13 @@ int main(int argc, char *argv[]) {
 	if (mp)
 		SDL_CreateThread(updatethread, 0);
 
-	Trigger *secondtimer = findTrigger("SECOND", 0);
+	Trigger* secondtimer = findTrigger("SECOND", 0);
 
-	while (!done)
-	{
+	while (!done) {
 #ifdef COMPILER_WINDOWS
 		time_t now;
 		time(&now);
-		tm *ltime;
+		tm* ltime;
 		ltime = localtime(&now);
 		vunixtime->value = time(0);
 		vyear->value = ltime->tm_year + 1900;
@@ -279,14 +266,12 @@ int main(int argc, char *argv[]) {
 #endif
 		unsigned int delay = (int)SDL_GetTicks() - lastdrawtime;
 		lastdrawtime = SDL_GetTicks();
-		if (delay)
-		{
+		if (delay) {
 			steps += ((float)delay) * speed->value / 1000;
 		}
 		if ((steps < 0) && (1000 / minTickTime > speed->value))
 			SDL_Delay(1);
-		if ((fullscreen->value != lastfullscreen) || (fullscreenx->value != lastfullscreenx) || (fullscreeny->value != lastfullscreeny))
-		{
+		if ((fullscreen->value != lastfullscreen) || (fullscreenx->value != lastfullscreenx) || (fullscreeny->value != lastfullscreeny)) {
 #ifdef COMPILER_WINDOWS
 			if (!fullscreenx->value)
 				fullscreenx->value = GetSystemMetrics(SM_CXSCREEN);
@@ -310,8 +295,7 @@ int main(int argc, char *argv[]) {
 			hideSubMenu();
 			redrawmenu(3);
 		}
-		if ((steps > 0) && speed->value)
-		{
+		if ((steps > 0) && speed->value) {
 			steps--;
 			precalc->exec();
 			if (vphysics->value)
@@ -321,16 +305,13 @@ int main(int argc, char *argv[]) {
 			frametimer();
 			posttimer->exec();
 			fps++;
-			if (!mp && ((int)(SDL_GetTicks() - lastflip) > update->value))
-			{
+			if (!mp && ((int)(SDL_GetTicks() - lastflip) > update->value)) {
 				preupdatescreen->exec();
 				updatescreen();
 				postupdatescreen->exec();
 			}
-		}
-		else if (speed->value == 0)
-			if (!mp && ((int)(SDL_GetTicks() - lastflip) > update->value))
-			{
+		} else if (speed->value == 0)
+			if (!mp && ((int)(SDL_GetTicks() - lastflip) > update->value)) {
 				preupdatescreen->exec();
 				updatescreen();
 				postupdatescreen->exec();
@@ -338,46 +319,36 @@ int main(int argc, char *argv[]) {
 		if (steps > ((float)minTickTime) * speed->value / 1000)
 			steps = ((float)minTickTime) * speed->value / 1000;
 
-		if (second != SDL_GetTicks() / 1000)
-		{
+		if (second != SDL_GetTicks() / 1000) {
 			lastfps->value = fps;
 			fps = 0;
 			second = SDL_GetTicks() / 1000;
 			secondtimer->exec();
 		}
 
-		Uint8 *keystate = SDL_GetKeyState(NULL);
+		Uint8* keystate = SDL_GetKeyState(NULL);
 		SDL_Event event;
-		while (SDL_PollEvent(&event))
-		{
+		while (SDL_PollEvent(&event)) {
 			int k = event.key.keysym.sym;
-			switch (event.type)
-			{
+			switch (event.type) {
 			case SDL_QUIT:
 				findTrigger("QUIT", 0)->exec();
 				break;
 			case SDL_KEYDOWN:
-				if (keycode->value == 1)
-				{
+				if (keycode->value == 1) {
 					char keytmp[255];
 					sprintf(keytmp, "Pressed Key: %i", event.key.keysym.sym);
 					print(keytmp, 0);
 				}
 				k = event.key.keysym.sym;
-				if (keydown[k] == false)
-				{
+				if (keydown[k] == false) {
 					execkey("KEY_", k);
 					keydown[k] = keyrepeatdelay->value;
-				}
-				else
-				{
-					if (keydown[k] <= 1)
-					{
+				} else {
+					if (keydown[k] <= 1) {
 						execkey("KEYREPEAT_", k);
 						keydown[k] = keyrepeatrate->value;
-					}
-					else
-					{
+					} else {
 						keydown[k]--;
 					}
 				}
@@ -405,14 +376,10 @@ int main(int argc, char *argv[]) {
 			{
 				int width = event.resize.w + 1;
 				int height = event.resize.h + 1;
-				if (width < (200))
-					width = 200;
-				if (width > 2000)
-					width = 2000;
-				if (height < (200))
-					height = 200;
-				if (height > 2000)
-					height = 2000;
+				if (width < 200) width = 200;
+				if (width > 2000) width = 2000;
+				if (height < 200) height = 200;
+				if (height > 2000) height = 2000;
 				SDL_FreeSurface(screen);
 				screen = SDL_SetVideoMode(width - 1, height - 1, 16, SDL_RESIZABLE | SDL_HWSURFACE | SDL_DOUBLEBUF);
 				autoresize(screen);
@@ -426,16 +393,14 @@ int main(int argc, char *argv[]) {
 			}
 		}
 		int mousex, mousey, mousedown;
-		static Var *absx = (Var *)setVar("ABSX", 0);
-		static Var *absy = (Var *)setVar("ABSY", 0);
+		static Var* absx = (Var*)setVar("ABSX", 0);
+		static Var* absy = (Var*)setVar("ABSY", 0);
 		static int lastmousedown = 0;
-		if (mousedown = SDL_GetMouseState(&mousex, &mousey))
-		{
+		if (mousedown = SDL_GetMouseState(&mousex, &mousey)) {
 			lastactionmsec->value = varmsec->value;
 			lastactionmframe->value = varframe->value;
 			SDL_GetMouseState(&mousex, &mousey);
-			if (lastmousedown)
-			{
+			if (lastmousedown) {
 				if (keystate[rclickmod->value])
 					clickmenu(screen, mousex, mousey, 4, !lastmousedown);
 				else if (keystate[mclickmod->value])
@@ -443,36 +408,29 @@ int main(int argc, char *argv[]) {
 				else
 					clickmenu(screen, mousex, mousey, SDL_GetMouseState(&mousex, &mousey), !lastmousedown);
 			}
-		}
-		else
-		{
-			clickmenu(screen, mousex, mousey, SDL_GetMouseState(&mousex, &mousey), false);
-		}
+		} else clickmenu(screen, mousex, mousey, SDL_GetMouseState(&mousex, &mousey), false);
 		lastmousedown = mousedown;
-		if ((absx->value != mousex) || (absy->value != mousey))
-		{
+		if ((absx->value != mousex) || (absy->value != mousey)) {
 			lastactionmsec->value = varmsec->value;
 			lastactionmframe->value = varframe->value;
 		}
 		absx->value = mousex;
 		absy->value = mousey;
-		static Var *ctrl = (Var *)setVar("CTRL", 0);
-		static Var *shift = (Var *)setVar("SHIFT", 0);
-		static Var *alt = (Var *)setVar("ALT", 0);
-		static Var *lctrl = (Var *)setVar("LCTRL", 0);
-		static Var *lshift = (Var *)setVar("LSHIFT", 0);
-		static Var *lalt = (Var *)setVar("LALT", 0);
-		static Var *rctrl = (Var *)setVar("RCTRL", 0);
-		static Var *rshift = (Var *)setVar("RSHIFT", 0);
-		static Var *ralt = (Var *)setVar("RALT", 0);
-		static Var *capslock = (Var *)setVar("CAPSLOCK", 0);
-		static Var *numlock = (Var *)setVar("NUMLOCK", 0);
+		static Var* ctrl = (Var*)setVar("CTRL", 0);
+		static Var* shift = (Var*)setVar("SHIFT", 0);
+		static Var* alt = (Var*)setVar("ALT", 0);
+		static Var* lctrl = (Var*)setVar("LCTRL", 0);
+		static Var* lshift = (Var*)setVar("LSHIFT", 0);
+		static Var* lalt = (Var*)setVar("LALT", 0);
+		static Var* rctrl = (Var*)setVar("RCTRL", 0);
+		static Var* rshift = (Var*)setVar("RSHIFT", 0);
+		static Var* ralt = (Var*)setVar("RALT", 0);
+		static Var* capslock = (Var*)setVar("CAPSLOCK", 0);
+		static Var* numlock = (Var*)setVar("NUMLOCK", 0);
 		for (int i = 0; i < 333; i++)
-			if (keystate[i])
-			{
+			if (keystate[i]) {
 				execkey("HOLDKEY_", i);
-				if (i < 255)
-				{
+				if (i < 255) {
 					lastactionmsec->value = varmsec->value;
 					lastactionmframe->value = varframe->value;
 				}

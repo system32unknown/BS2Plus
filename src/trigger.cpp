@@ -256,16 +256,15 @@ void ActionRestart::exec()
 #ifdef COMPILER_SYSTEM
 	if (parameter)
 	{
-		ossystem("BurningSand2.exe", parameter);
+		ossystem("BS2Plus.exe", parameter);
 	}
 	else
-		ossystem("BurningSand2.exe", "");
+		ossystem("BS2Plus.exe", "");
 #endif
 	if (threadrunning)
 	{
 		threadrunning = false;
-		while (threadrunning == false)
-			;
+		while (threadrunning == false);
 	}
 	exit(0);
 }

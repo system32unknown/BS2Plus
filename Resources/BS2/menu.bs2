@@ -5,11 +5,9 @@ TRIGGER menutop {
 	MENU TOP ADD TEXT "Mainmenu" FILE home.bmp {
 		IF (BUTTON == 1) quitsandbox
 		IF ((BUTTON == 2) || (BUTTON == 4)) {
-			INCLUDE warning.bs2
-			FILE DELETE warning.bs2
-			FILE OPEN warning.bs2
-			FILE CLOSE
-			INCLUDE http://siebn.de/addonlist.php?basismod=Default!
+			MESSAGE CLEAR
+			MESSAGE ADDTEXT "Mods is Under Construction."
+			MESSAGE MESSAGEBOX
 		} 
 	}
 	MENU TOP ADD TEXT "Fullscreen" FILE resolution.bmp {

@@ -53,7 +53,7 @@ inline void addparams(int *params)
 	if (debugparameter->value && params)
 	{
 		char tmp[512];
-		sprintf(tmp, "setting parameters   : %i %i %i %i %i %i %i %i %i %i",
+		sprintf(tmp, "setting parameters: %i %i %i %i %i %i %i %i %i %i",
 				params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9]);
 		std::cout << tmp << std::endl;
 	}

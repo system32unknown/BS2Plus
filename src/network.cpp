@@ -93,7 +93,7 @@ void checknetwork()
 					datpos[free] = 0;
 					owners[free] = ++ownercount;
 					SDLNet_TCP_AddSocket(set, sock_client[free]);
-					sendowner("BurningSand2", ownercount);
+					sendowner("BS2Plus", ownercount);
 				}
 			}
 		}

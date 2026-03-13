@@ -108,10 +108,9 @@ extern char* strings[MAX_STRINGS];
 #include "loadsave.h"
 #include "elements.h"
 
-char* messageReplace(char *text);
+char* messageReplace(char* text);
 
-struct Action
-{
+struct Action {
 	virtual void exec();
 	virtual ~Action();
 	virtual char* toString();
@@ -123,16 +122,15 @@ void setthreadrun(bool b);
 void frametimer();
 void msectimer();
 
-void addAction (char* name, Action* trigger, int owner);
+void addAction(char* name, Action* trigger, int owner);
 
 extern Var* debugframe;
 extern long execcounter;
 extern bool setreturn;
 
-void deleteparams(Varint **v);
+void deleteparams(Varint** v);
 
-inline int* calcparams(Varint **v)
-{
+inline int* calcparams(Varint** v) {
 	if (v == NULL) return NULL;
 	int* r = new int[11];
 	if (v[0]) r[0] = v[0]->val();
@@ -148,18 +146,17 @@ inline int* calcparams(Varint **v)
 	return r;
 }
 
-struct Trigger
-{
+struct Trigger {
 	char* name;
 	int actioncount;
 	int execcount;
 	std::list<Action*> actions;
 	int exec();
 	inline void exec(int x, int y, int b, int c) {
-		static Var* vx = (Var*)setVar("X",0);
-		static Var* vy = (Var*)setVar("Y",0);
-		static Var* vb = (Var*)setVar("BUTTON",0);
-		static Var* vc = (Var*)setVar("CLICKED",0);
+		static Var* vx = (Var*)setVar("X", 0);
+		static Var* vy = (Var*)setVar("Y", 0);
+		static Var* vb = (Var*)setVar("BUTTON", 0);
+		static Var* vc = (Var*)setVar("CLICKED", 0);
 		vx->value = x;
 		vy->value = y;
 		vb->value = b;
@@ -174,49 +171,43 @@ struct Trigger
 
 Trigger* findTrigger(char* name, int owner);
 
-struct ActionReturn: Action
-{
-	Varint *var;
+struct ActionReturn : Action {
+	Varint* var;
 	void exec();
 	char* toString();
 	~ActionReturn();
 };
 
-struct ActionExit: Action
-{
+struct ActionExit : Action {
 	void exec();
 	char* toString();
 };
 
-struct ActionRestart: Action
-{
+struct ActionRestart : Action {
 	char* parameter;
 	void exec();
 	char* toString();
 };
 
-struct ActionSetVar: Action
-{
+struct ActionSetVar : Action {
 	char* var;
 	Varint* value;
-	int *t;
+	int* t;
 	void exec();
 	~ActionSetVar();
 	char* toString();
 };
 
-struct ActionInc: Action
-{
+struct ActionInc : Action {
 	char* var;
 	Varint* value;
-	int *t;
+	int* t;
 	void exec();
 	~ActionInc();
 	char* toString();
 };
 
-struct ActionCount: Action
-{
+struct ActionCount : Action {
 	char* var;
 	Varint* element;
 	Varint* x;
@@ -228,8 +219,7 @@ struct ActionCount: Action
 	char* toString();
 };
 
-struct ActionClosest: Action
-{
+struct ActionClosest : Action {
 	Varint* x;
 	Varint* y;
 	Varint* e;
@@ -240,47 +230,40 @@ struct ActionClosest: Action
 	char* toString();
 };
 
-struct ActionGetVar: Action
-{
+struct ActionGetVar : Action {
 	char* value;
 	void exec();
 	~ActionGetVar();
 	char* toString();
 };
 
-struct ActionGetFile: Action
-{
+struct ActionGetFile : Action {
 	char* filename;
 	void exec();
 	~ActionGetFile();
 	char* toString();
 };
 
-struct ActionResize: Action
-{
-	Varint *w, *h;
+struct ActionResize : Action {
+	Varint* w, * h;
 	void exec();
 	~ActionResize();
 	char* toString();
 };
 
-struct ActionScroll: Action
-{
-	Varint *x, *y;
+struct ActionScroll : Action {
+	Varint* x, * y;
 	void exec();
 	~ActionScroll();
 	char* toString();
 };
 
-struct ActionWhile: Action
-{
+struct ActionWhile : Action {
 	Varint* value;
 	Varint** params;
 	Trigger* trigger;
-	inline void exec()
-	{
-		while(value->val())
-		{
+	inline void exec() {
+		while (value->val()) {
 			if (params) addparams(calcparams(params));
 			trigger->exec();
 			if (params) removeparams();
@@ -290,8 +273,7 @@ struct ActionWhile: Action
 	char* toString();
 };
 
-struct ActionFor: Action
-{
+struct ActionFor : Action {
 	int function;
 	char* value;
 	Varint* fromvalue;
@@ -304,8 +286,7 @@ struct ActionFor: Action
 	char* toString();
 };
 
-struct ActionForEach: Action
-{
+struct ActionForEach : Action {
 	Varint* element;
 	Varint** params;
 	Trigger* trigger;
@@ -314,49 +295,40 @@ struct ActionForEach: Action
 	char* toString();
 };
 
-struct ActionSystem: Action
-{
-	char *cmd;
+struct ActionSystem : Action {
+	char* cmd;
 	void exec();
 	~ActionSystem();
 	char* toString();
 };
 
-struct ActionIf: Action
-{
+struct ActionIf : Action {
 	Varint* value;
 	Varint** params;
 	Trigger* trigger;
 	Trigger* elsetrigger;
-	inline void exec()
-	{
-	    static Var* messageid = (Var*)setVar("MESSAGEID",0);
+	inline void exec() {
+		static Var* messageid = (Var*)setVar("MESSAGEID", 0);
 		messageid->value = owner;
-		if(value->val())
-		{
-			if (params)
-			{
+		if (value->val()) {
+			if (params) {
 				addparams(calcparams(params));
 				trigger->exec();
 				removeparams();
-			}
-			else
+			} else
 				trigger->exec();
-		}
-		else if (elsetrigger)
-				elsetrigger->exec();
+		} else if (elsetrigger)
+			elsetrigger->exec();
 	}
 	~ActionIf();
 	char* toString();
 };
 
-struct ActionExec: Action
-{
+struct ActionExec : Action {
 	Varint** params;
 	Trigger* trigger;
-	inline void exec()
-	{
-		if(!trigger) return;
+	inline void exec() {
+		if (!trigger) return;
 		if (params) addparams(calcparams(params));
 		trigger->exec();
 		if (params) removeparams();
@@ -365,16 +337,14 @@ struct ActionExec: Action
 	char* toString();
 };
 
-struct ActionRemoveTrigger: Action
-{
-	char *trigger;
+struct ActionRemoveTrigger : Action {
+	char* trigger;
 	void exec();
 	~ActionRemoveTrigger();
 	char* toString();
 };
 
-struct ActionElement: Action
-{
+struct ActionElement : Action {
 	char* elementname;
 	int attribute;
 	Varint* value1;
@@ -385,8 +355,7 @@ struct ActionElement: Action
 	char* toString();
 };
 
-struct ActionElementBS1: Action
-{
+struct ActionElementBS1 : Action {
 	char* elementname;
 	char* group;
 	char* dieto;
@@ -405,8 +374,7 @@ struct ActionElementBS1: Action
 	char* toString();
 };
 
-struct ActionElementDie: Action
-{
+struct ActionElementDie : Action {
 	char* elementname;
 	char* dieto;
 	Varint* rate;
@@ -415,8 +383,7 @@ struct ActionElementDie: Action
 	char* toString();
 };
 
-struct ActionInteraction: Action
-{
+struct ActionInteraction : Action {
 	std::list<char*> elements1;
 	std::list<char*> elements2;
 	std::list<char*> toselfs;
@@ -430,8 +397,7 @@ struct ActionInteraction: Action
 	char* toString();
 };
 
-struct ActionRemoveInteraction: Action
-{
+struct ActionRemoveInteraction : Action {
 	char* element;
 	Varint* index;
 	void exec();
@@ -439,128 +405,115 @@ struct ActionRemoveInteraction: Action
 	char* toString();
 };
 
-struct ActionClearDie: Action
-{
+struct ActionClearDie : Action {
 	char* element;
 	void exec();
 	~ActionClearDie();
 	char* toString();
 };
 
-struct ActionClearElements: Action
-{
+struct ActionClearElements : Action {
 	void exec();
 	char* toString();
 };
 
-struct ActionSave: Action
-{
+struct ActionSave : Action {
 	char* filename;
 	int screenid;
-	Varint *id;
+	Varint* id;
 	void exec();
 	~ActionSave();
 	char* toString();
 };
 
-struct ActionFile: Action
-{
+struct ActionFile : Action {
 	int function;
-	char *filename;
-	char *param;
+	char* filename;
+	char* param;
 	void exec();
 	~ActionFile();
 	char* toString();
 };
 
-struct ActionLoad: Action
-{
+struct ActionLoad : Action {
 	char* filename;
 	int screenid;
-	Varint *id;
+	Varint* id;
 	void exec();
 	~ActionLoad();
 	char* toString();
 };
 
-struct ActionButton: Action
-{
+struct ActionButton : Action {
 	Varint** params;
 	void* button;
 	int bar;
 	int tiptype;
-	Varint *r, *g, *b;
+	Varint* r, * g, * b;
 	void exec();
 	char* toString();
 	~ActionButton();
 };
 
-struct ActionTrigger: Action
-{
+struct ActionTrigger : Action {
 	char* triggername;
 	Action* action;
-	inline void exec() { if (triggername) addAction(triggername, action ,owner); };
+	inline void exec() { if (triggername) addAction(triggername, action, owner); };
 	~ActionTrigger();
 	char* toString();
 };
 
-struct ActionStatus: Action
-{
-	char *text;
-	Varint *v;
+struct ActionStatus : Action {
+	char* text;
+	Varint* v;
 	int function;
 	void exec();
 	~ActionStatus();
 	char* toString();
 };
 
-struct ActionRemote: Action
-{
+struct ActionRemote : Action {
 	int type;
-	char *text;
-	Varint *val;
-	Varint *mid;
+	char* text;
+	Varint* val;
+	Varint* mid;
 	void exec();
 	~ActionRemote();
 	char* toString();
 };
 
-struct ActionConnect: Action
-{
-	char *host;
-	Varint *port;
-	char *var;
+struct ActionConnect : Action {
+	char* host;
+	Varint* port;
+	char* var;
 	void exec();
 	~ActionConnect();
 	char* toString();
 };
 
-struct ActionWrite: Action
-{
-	char *text;
+struct ActionWrite : Action {
+	char* text;
 	int type;
 	int align;
-	Varint *v;
-	Varint *element,*x,*y,*size;
+	Varint* v;
+	Varint* element, * x, * y, * size;
 	void exec();
 	~ActionWrite();
 	char* toString();
 };
 
-struct ActionDraw: Action
-{
-	Varint *element;
+struct ActionDraw : Action {
+	Varint* element;
 	int brush;
-	Varint *drawx,*drawy,*dx,*dy, *a1, *a2;
+	Varint* drawx, * drawy, * dx, * dy, * a1, * a2;
 	void exec();
 	~ActionDraw();
 	char* toString();
 };
 
-struct ActionDrawPoints: Action
-{
-	Varint *element;
-	Varint *xoffset,*yoffset;
+struct ActionDrawPoints : Action {
+	Varint* element;
+	Varint* xoffset, * yoffset;
 	std::list<int> x;
 	std::list<int> y;
 	void exec();
@@ -568,19 +521,17 @@ struct ActionDrawPoints: Action
 	char* toString();
 };
 
-struct ActionDrawObject: Action
-{
-	Varint *xoffset,*yoffset;
-	Varint *elements[256];
-	Varint *sizex, *sizey;
+struct ActionDrawObject : Action {
+	Varint* xoffset, * yoffset;
+	Varint* elements[256];
+	Varint* sizex, * sizey;
 	std::list<char*> data;
 	void exec();
 	~ActionDrawObject();
 	char* toString();
 };
 
-struct ActionTimer: Action
-{
+struct ActionTimer : Action {
 	int type;
 	Varint* value;
 	Trigger* trigger;
@@ -590,28 +541,25 @@ struct ActionTimer: Action
 	char* toString();
 };
 
-struct ActionClearTimer: Action
-{
+struct ActionClearTimer : Action {
 	Trigger* trigger;
 	int removeall;
 	void exec();
 	char* toString();
 };
 
-struct ActionGroup: Action
-{
+struct ActionGroup : Action {
 	char* groupname;
 	Varint* order;
 	int function;
-	char *element;
-	Pic *icon;
+	char* element;
+	Pic* icon;
 	void exec();
 	~ActionGroup();
 	char* toString();
 };
 
-struct ActionKey: Action
-{
+struct ActionKey : Action {
 	Varint* v;
 	char* keyname;
 	void exec();
@@ -619,36 +567,32 @@ struct ActionKey: Action
 	char* toString();
 };
 
-struct ActionList: Action
-{
+struct ActionList : Action {
 	int function;
-	char *element;
+	char* element;
 	void exec();
 	~ActionList();
 	char* toString();
 };
 
-struct ActionMessage: Action
-{
+struct ActionMessage : Action {
 	int function;
-	char *message;
-	Varint *varint;
+	char* message;
+	Varint* varint;
 	void exec();
 	~ActionMessage();
 	char* toString();
 };
 
-struct ActionInclude: Action
-{
-	char *filename;
-	char *param;
+struct ActionInclude : Action {
+	char* filename;
+	char* param;
 	void exec();
 	~ActionInclude();
 	char* toString();
 };
 
-struct ActionWind: Action
-{
+struct ActionWind : Action {
 	Varint* x;
 	Varint* y;
 	Varint* d;
@@ -656,16 +600,14 @@ struct ActionWind: Action
 	char* toString();
 };
 
-struct ActionNoBias: Action
-{
+struct ActionNoBias : Action {
 	Varint* e;
 	void exec();
 	char* toString();
 	~ActionNoBias();
 };
 
-struct ActionMenu: Action
-{
+struct ActionMenu : Action {
 	int bar;
 	int action;
 	void exec();
@@ -673,8 +615,7 @@ struct ActionMenu: Action
 	~ActionMenu();
 };
 
-struct ActionSubMenu: Action
-{
+struct ActionSubMenu : Action {
 	void exec();
 	Varint* x;
 	Varint* y;
@@ -685,10 +626,9 @@ struct ActionSubMenu: Action
 	~ActionSubMenu();
 };
 
-struct Timer
-{
+struct Timer {
 	Uint32 value;
-	Trigger *trigger;
+	Trigger* trigger;
 	int* params;
 	char* toString();
 };

@@ -1,0 +1,20 @@
+var doc = new ActiveXObject("FastXML.DOMDocument");
+doc.async = false;
+doc.load("file:xml2bs2.xml");
+
+var xsl = new ActiveXObject("FastXML.FreeThreadedDOMDocument");
+xsl.async = false;
+xsl.load("file:xml2bs2.xsl");
+
+var template = new ActiveXObject("FastXML.XSLTemplate");
+template.stylesheet = xsl;
+
+var processor = template.createProcessor();
+processor.input = doc;
+processor.transform();
+
+var t = processor.output;
+var fso = new ActiveXObject("Scripting.FileSystemObject");
+var s = fso.CreateTextFile("xml2bs2.bs2", true);
+s.writeline("" + t);
+s.Close();

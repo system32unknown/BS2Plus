@@ -11,14 +11,13 @@ MENU BOTTOM ADD TEXT "" SEPERATOR 0 <>
 MENU BOTTOM ADD TEXT "Sandbox" FILE sandbox.bmp sandboxmenu
 MENU BOTTOM ADD TEXT "" SEPERATOR 0 <>
 MENU BOTTOM ADD TEXT "Mods" FILE mods.bmp {
-	INCLUDE warning.bs2
-	FILE DELETE warning.bs2
-	FILE OPEN warning.bs2
-	FILE CLOSE
-	INCLUDE http://siebn.de/modlist.php!
+	MESSAGE CLEAR
+	MESSAGE ADDTEXT "Mods is Under Construction."
+	MESSAGE MESSAGEBOX
 }
+
 MENU BOTTOM ADD TEXT "" SEPERATOR 0 <>
-MENU BOTTOM ADD TEXT "Leves" FILE levels.bmp {
+MENU BOTTOM ADD TEXT "Levels" FILE levels.bmp {
 	MENU SUB CLEAR
 	MENU SUB ADD TEXT "Saltwater" TEXT " Saltwater " <INCLUDE level1.bs2>
 	MENU SUB ADD TEXT "LemmingSand Level 1" TEXT " LemmingSand 1 " <INCLUDE lemmings1.bs2>
@@ -26,13 +25,12 @@ MENU BOTTOM ADD TEXT "Leves" FILE levels.bmp {
 }
 MENU BOTTOM ADD TEXT "" SEPERATOR 0 <>
 
-
 TRIGGER startanimation {
 	SET startanimationx (startanimationx + 1)
 	IF (startanimationx > 640) <SET startanimationx 0>
-	WRITE ELEMENT:Clear (startanimationx - 202) 150 40 TEXT "welcome to"
-	WRITE ELEMENT:Wall (startanimationx - 200) 150 40 TEXT "welcome to"
-	WRITE ELEMENT:Fire (435 - (startanimationx * 4 / 3)) 300 60 TEXT "Burning Sand 2"
+	WRITE ELEMENT:Clear (startanimationx - 202) 150 40 TEXT "Welcome to"
+	WRITE ELEMENT:Wall (startanimationx - 200) 150 40 TEXT "Welcome to"
+	WRITE ELEMENT:Fire (435 - (startanimationx * 4 / 3)) 300 60 TEXT "Burning Sand 2+"
 	TIMER 2 FRAMES startanimation
 }
 

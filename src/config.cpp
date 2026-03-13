@@ -481,7 +481,7 @@ int parseline(char *text, int linenum, int owner, char *filename)
 	if (debugparser->value)
 	{
 		tmp = new char[strlen(text) + 512];
-		sprintf(tmp, "parsing line:  messageid: %i, filename: %s, line: %i, line  : %s", owner, filename, linenum, text);
+		sprintf(tmp, "parsing line: messageid: %i, filename: %s, line: %i, line: %s", owner, filename, linenum, text);
 		if (!secretcode)
 			std::cout << tmp << std::endl;
 		delete (tmp);
@@ -623,7 +623,7 @@ Action *parseaction(Token *tokens, int owner)
 		parseenc(function + 1, owner, "Encrypted");
 		action = new Action;
 	}
-	else if (!strcmp(function, "BurningSand2"))
+	else if (!strcmp(function, "BS2Plus"))
 	{
 		action = new Action;
 	}

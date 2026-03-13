@@ -124,8 +124,7 @@ void mousebuttonbug(bool mouseup)
 int copyStringToClipboard(char *source)
 {
 	int ok = OpenClipboard(NULL);
-	if (!ok)
-		return 0;
+	if (!ok) return 0;
 	HGLOBAL clipbuffer;
 	char *buffer;
 	EmptyClipboard();
@@ -142,8 +141,7 @@ char *getStringFromClipboard()
 {
 	int ok = OpenClipboard(NULL);
 	char *buffer = NULL;
-	if (!ok)
-		return NULL;
+	if (!ok) return NULL;
 	HANDLE hData = GetClipboardData(CF_TEXT);
 	buffer = (char *)GlobalLock(hData);
 	GlobalUnlock(hData);

@@ -249,8 +249,6 @@ int load(char *filename)
 					dif = 0xFFFFFFFF;
 					for (int i = 0; i < max; i++)
 					{
-						// FIX #12: Cast to int before subtraction to avoid unsigned wrap-around
-						// which would corrupt nearest-color matching when r/g/b > element value.
 						int dr = (int)elements[i].r - (int)r;
 						int dg = (int)elements[i].g - (int)g;
 						int db = (int)elements[i].b - (int)b;
@@ -264,8 +262,7 @@ int load(char *filename)
 						}
 					}
 
-					if (t == 1)
-						t = 0;
+					if (t == 1) t = 0;
 					*((Uint16 *)screen->pixels + y * screen->pitch / 2 + x) = t;
 				}
 		}

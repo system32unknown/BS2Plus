@@ -123,6 +123,7 @@ file(GLOB_RECURSE SOURCES
     "src/*.c"
 )
 
+# Fallback: create a dummy main if no sources exist yet
 if(NOT SOURCES)
     message(WARNING "No source files found in src/. Add .cpp files to src/")
     set(SOURCES "src/main.cpp")
@@ -187,12 +188,21 @@ if(WIN32 AND DEFINED MSYS2_PREFIX)
         SDL_ttf.dll
         zlib1.dll
         libpng16-16.dll
-        libfreetype-6.dll      # SDL_ttf dependency
-        libbz2-1.dll           # freetype dependency
-        libgraphite2.dll       # freetype/harfbuzz dependency
-        libharfbuzz-0.dll      # freetype dependency
-        libc++.dll             # Clang C++ runtime
-        libunwind.dll          # Clang unwind
+        libfreetype-6.dll       # SDL_ttf dependency
+        libbz2-1.dll            # freetype dependency
+        libgraphite2.dll        # freetype/harfbuzz dependency
+        libharfbuzz-0.dll       # freetype dependency
+        libc++.dll              # Clang C++ runtime
+        libunwind.dll           # Clang unwind
+        # Brotli (freetype font compression dependency)
+        libbrotlidec.dll
+        libbrotlicommon.dll
+        # GLib (harfbuzz dependency)
+        libglib-2.0-0.dll
+        libgobject-2.0-0.dll    # GLib object system
+        libintl-8.dll           # GLib i18n dependency
+        libiconv-2.dll          # iconv (intl dependency)
+        libpcre2-8-0.dll        # GLib regex dependency
     )
 
     foreach(DLL_FILE ${COPY_DLLS})
@@ -215,6 +225,28 @@ install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
+)
+
+# ─────────────────────────────────────────────
+#  Copy Assets (img and bs2 folder) to build output
+# ─────────────────────────────────────────────
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/Resources/img"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/img"
+    COMMENT "Copying img/ folder to build directory"
+)
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/Resources/bs2"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+    COMMENT "Copying bs2/ folder to build directory"
+)
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/Resources/misc"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+    COMMENT "Copying misc/ folder to build directory"
 )
 
 # ─────────────────────────────────────────────

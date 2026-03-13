@@ -1,6 +1,6 @@
 #define MAX_CURSORS 11
 
-static const char *cursors[] = {
+static const char* cursors[] = {
 
     "    32    32        3            1",
     "X c #000000",
