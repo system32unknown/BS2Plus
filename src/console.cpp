@@ -4,16 +4,15 @@
 #include "win.h"
 
 #ifdef COMPILER_SDL_TTF
-TTF_Font *console_font;
+TTF_Font* console_font;
 #endif
-SDL_Surface *console_surface;
-char *console_text;
-char *currentFilename;
+SDL_Surface* console_surface;
+char* console_text;
+char* currentFilename;
 std::ofstream file;
 bool consolenews;
 
-void initConsole()
-{
+void initConsole() {
 #ifdef COMPILER_SDL_TTF
 	console_font = TTF_OpenFont(checkfilename("font.ttf"), 12);
 #endif
@@ -21,10 +20,8 @@ void initConsole()
 	file.open(checkfilename("console.txt"), std::ios::out);
 }
 
-void addConsoleTextLine(char *txt)
-{
-	if (txt == NULL)
-		return;
+void addConsoleTextLine(char* txt) {
+	if (txt == NULL) return;
 #ifdef COMPILER_SDL_TTF
 	SDL_CopyRect16(console_surface, 0, 14, console_surface->w, console_surface->h - 14, 0, 0);
 	SDL_DrawFilledRect16(console_surface, 0, console_surface->h - 14, 10000, 10000, SDL_MapRGB(console_surface->format, 0, 0, 0));
@@ -36,7 +33,6 @@ void addConsoleTextLine(char *txt)
 	consolenews = true;
 }
 
-SDL_Surface *getConsoleSurface()
-{
+SDL_Surface* getConsoleSurface() {
 	return console_surface;
 }

@@ -11,7 +11,7 @@
 extern bool consolenews;
 
 void initConsole();
-void addConsoleTextLine(char *txt);
-SDL_Surface *getConsoleSurface();
+void addConsoleTextLine(char* txt);
+SDL_Surface* getConsoleSurface();
 
 #endif

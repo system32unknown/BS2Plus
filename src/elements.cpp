@@ -2,42 +2,38 @@
 #include "trigger.h"
 #include <cstring>
 
-Element *elements;
-std::list<Group *> groups;
+Element* elements;
+std::list<Group*> groups;
 std::list<int> grouporder;
-Pic *clearpic, *nopic;
+Pic* clearpic, * nopic;
 int elementsmax;
 
-char *Interaction::toString(char *e)
-{
-	char *tmp = new char[4096];
+char* Interaction::toString(char* e) {
+	char* tmp = new char[4096];
 	if (trigger == NULL)
 		sprintf(tmp, "INTERACTION \"%s\" \"%s\" \"%s\" \"%s\" %i", e, getElement(element)->name, getElement(toself)->name, getElement(toother)->name, rate);
 	else
-		sprintf(tmp, "INTERACTIONTRIGGER \"%s\" \"%s\" \"%s\" %i", e, getElement(element)->name, ((Trigger *)trigger)->name, rate);
+		sprintf(tmp, "INTERACTIONTRIGGER \"%s\" \"%s\" \"%s\" %i", e, getElement(element)->name, ((Trigger*)trigger)->name, rate);
 	return tmp;
 }
 
-void initelements()
-{
+void initelements() {
 	elementsmax = 500;
 	elements = new Element[elementsmax];
 	clearpic = getPic("Clear", "0");
-	for (Uint16 i = 0; i < elementsmax; i++)
-	{
-		elements[i].interactions = new std::list<Interaction *>();
-		elements[i].dies = new std::list<Die *>();
+	for (Uint16 i = 0; i < elementsmax; i++) {
+		elements[i].interactions = new std::list<Interaction*>();
+		elements[i].dies = new std::list<Die*>();
 		elements[i].icon = clearpic;
 	}
 	setprecalc(3);
 	clearelements();
 }
 
-void clearelements()
-{
-	std::list<Interaction *>::iterator it;
-	std::list<Die *>::iterator it2;
-	std::list<Group *>::iterator it3;
+void clearelements() {
+	std::list<Interaction*>::iterator it;
+	std::list<Die*>::iterator it2;
+	std::list<Group*>::iterator it3;
 	elements[0].name = "Clear";
 	elements[0].weight = 1;
 	elements[0].spray = 1;
@@ -67,8 +63,7 @@ void clearelements()
 	elements[1].cg3 = 0;
 	elements[1].cb3 = 0;
 	elements[1].interactioncount = 0;
-	for (Uint16 i = 2; i < elementsmax; i++)
-	{
+	for (Uint16 i = 2; i < elementsmax; i++) {
 		elements[i].name = NULL;
 		elements[i].weight = 0;
 		elements[i].spray = 1;
@@ -96,32 +91,28 @@ void clearelements()
 			delete (*it2);
 		elements[i].dies->clear();
 	}
-	for (it3 = groups.begin(); it3 != groups.end(); it3++)
-	{
+	for (it3 = groups.begin(); it3 != groups.end(); it3++) {
 		(*it3)->elements.clear();
 		(*it3)->elementorder.clear();
 	}
 	setprecalc(3);
 }
 
-int getelementsmax()
-{
+int getelementsmax() {
 	return elementsmax;
 }
 
-int getelementscount()
-{
+int getelementscount() {
 	int i = 0;
 	while (elements[++i].name)
 		;
 	return i;
 }
 
-Uint16 findElement(char *elementname, bool create)
-{
+Uint16 findElement(char* elementname, bool create) {
 	if (elementname == 0)
 		return 0;
-	char *element = messageReplace(elementname);
+	char* element = messageReplace(elementname);
 	if (!strcmp(element, "CLEAR"))
 		return 0;
 	if (!strcmp(element, "Clear"))
@@ -132,15 +123,13 @@ Uint16 findElement(char *elementname, bool create)
 		return 1;
 	Uint16 i = 0;
 	for (i = 0; i < strlen(element); i++)
-		if (element[i] == ':')
-		{
+		if (element[i] == ':') {
 			element[i] = 0;
 			int n;
 			getVar((element + i + 1), &n);
 			unsigned int i2 = n;
-			Group *g = getGroup(findGroup(element, create, -1));
-			if ((g->elements.size() >= i2) && (i2 > 0))
-			{
+			Group* g = getGroup(findGroup(element, create, -1));
+			if ((g->elements.size() >= i2) && (i2 > 0)) {
 				std::list<int>::iterator it = g->elements.begin();
 				for (int ii = 1; ii < n; ii++)
 					it++;
@@ -149,37 +138,31 @@ Uint16 findElement(char *elementname, bool create)
 		}
 	i = 0;
 	for (; elements[i].name; i++)
-		if (!strcmp(element, elements[i].name))
-		{
+		if (!strcmp(element, elements[i].name)) {
 			return i;
 		}
-	if (create == true)
-	{
-		if (i > elementsmax - 2)
-		{
+	if (create == true) {
+		if (i > elementsmax - 2) {
 			if (i > 32000)
 				return 1;
 			int elementsmaxold = elementsmax;
 			elementsmax += 1500;
-			Element *oldelements = elements;
+			Element* oldelements = elements;
 			elements = new Element[elementsmax];
 			Uint16 i2 = 0;
-			for (; i2 < elementsmaxold; i2++)
-			{
+			for (; i2 < elementsmaxold; i2++) {
 				elements[i2].interactions = oldelements[i2].interactions;
 				elements[i2].dies = oldelements[i2].dies;
 				elements[i2].icon = oldelements[i2].icon;
 			}
-			for (; i2 < elementsmax; i2++)
-			{
-				elements[i2].interactions = new std::list<Interaction *>();
-				elements[i2].dies = new std::list<Die *>();
+			for (; i2 < elementsmax; i2++) {
+				elements[i2].interactions = new std::list<Interaction*>();
+				elements[i2].dies = new std::list<Die*>();
 				elements[i2].icon = getPic("Clear", "0");
 				;
 			}
 			i2 = 0;
-			for (; i2 < elementsmaxold; i2++)
-			{
+			for (; i2 < elementsmaxold; i2++) {
 				elements[i2].name = oldelements[i2].name;
 				elements[i2].weight = oldelements[i2].weight;
 				elements[i2].spray = oldelements[i2].spray;
@@ -201,8 +184,7 @@ Uint16 findElement(char *elementname, bool create)
 				elements[i2].dietotalrate = oldelements[i2].dietotalrate;
 				elements[i2].interactioncount = oldelements[i2].interactioncount;
 			}
-			for (; i2 < elementsmax; i2++)
-			{
+			for (; i2 < elementsmax; i2++) {
 				elements[i2].name = NULL;
 				elements[i2].weight = 0;
 				elements[i2].spray = 1;
@@ -235,13 +217,12 @@ Uint16 findElement(char *elementname, bool create)
 	return 0;
 }
 
-int addInteraction(Uint16 id, Uint16 elementid, Uint16 toself, Uint16 toother, Uint16 rate, Uint16 except, void *trigger, int pos)
-{
+int addInteraction(Uint16 id, Uint16 elementid, Uint16 toself, Uint16 toother, Uint16 rate, Uint16 except, void* trigger, int pos) {
 	if (elements[id].interactioncount > 32000)
 		return 0;
 	if (id == 1)
 		return 0;
-	Interaction *i = new Interaction();
+	Interaction* i = new Interaction();
 	i->element = elementid;
 	i->toself = toself;
 	i->toother = toother;
@@ -250,9 +231,8 @@ int addInteraction(Uint16 id, Uint16 elementid, Uint16 toself, Uint16 toother, U
 	i->trigger = trigger;
 	if (pos == -1)
 		elements[id].interactions->push_back(i);
-	else
-	{
-		std::list<Interaction *>::iterator it;
+	else {
+		std::list<Interaction*>::iterator it;
 		for (it = elements[id].interactions->begin(); (it != elements[id].interactions->end()) && (pos); it++)
 			pos--;
 		elements[id].interactions->insert(it, i);
@@ -262,11 +242,10 @@ int addInteraction(Uint16 id, Uint16 elementid, Uint16 toself, Uint16 toother, U
 	return 0;
 }
 
-int clearInteraction(Uint16 id)
-{
+int clearInteraction(Uint16 id) {
 	if (id == 1)
 		return 0;
-	std::list<Interaction *>::iterator it;
+	std::list<Interaction*>::iterator it;
 	for (it = elements[id].interactions->begin(); it != elements[id].interactions->end(); it++)
 		delete (*it);
 	elements[id].interactions->clear();
@@ -275,16 +254,13 @@ int clearInteraction(Uint16 id)
 	return 0;
 }
 
-int removeInteraction(Uint16 id, Uint16 pos)
-{
+int removeInteraction(Uint16 id, Uint16 pos) {
 	if (id == 1)
 		return 0;
-	std::list<Interaction *>::iterator it;
+	std::list<Interaction*>::iterator it;
 	Uint16 tmp = 0;
-	for (it = elements[id].interactions->begin(); it != elements[id].interactions->end(); it++)
-	{
-		if (tmp == pos)
-		{
+	for (it = elements[id].interactions->begin(); it != elements[id].interactions->end(); it++) {
+		if (tmp == pos) {
 			elements[id].interactions->erase(it);
 			elements[id].interactioncount--;
 			delete (*it);
@@ -296,11 +272,10 @@ int removeInteraction(Uint16 id, Uint16 pos)
 	return 0;
 }
 
-int clearDie(Uint16 id)
-{
+int clearDie(Uint16 id) {
 	if (id == 1)
 		return 0;
-	std::list<Die *>::iterator it;
+	std::list<Die*>::iterator it;
 	for (it = elements[id].dies->begin(); it != elements[id].dies->end(); it++)
 		delete (*it);
 	elements[id].dies->clear();
@@ -308,29 +283,27 @@ int clearDie(Uint16 id)
 	return 0;
 }
 
-void interactionTrigger(void *trigger, Uint16 element1, Uint16 element2, int x1, int y1, int x2, int y2)
-{
+void interactionTrigger(void* trigger, Uint16 element1, Uint16 element2, int x1, int y1, int x2, int y2) {
 	if (element1 == 1)
 		return;
 	if (element2 == 1)
 		return;
-	static Var *vari1 = (Var *)setVar("INTERACTION1", 0);
-	static Var *vari2 = (Var *)setVar("INTERACTION2", 0);
-	static Var *varx1 = (Var *)setVar("X1", 0);
-	static Var *vary1 = (Var *)setVar("Y1", 0);
-	static Var *varx2 = (Var *)setVar("X2", 0);
-	static Var *vary2 = (Var *)setVar("Y2", 0);
+	static Var* vari1 = (Var*)setVar("INTERACTION1", 0);
+	static Var* vari2 = (Var*)setVar("INTERACTION2", 0);
+	static Var* varx1 = (Var*)setVar("X1", 0);
+	static Var* vary1 = (Var*)setVar("Y1", 0);
+	static Var* varx2 = (Var*)setVar("X2", 0);
+	static Var* vary2 = (Var*)setVar("Y2", 0);
 	vari1->value = element1;
 	vari2->value = element2;
 	varx1->value = x1;
 	vary1->value = y1;
 	varx2->value = x2;
 	vary2->value = y2;
-	((Trigger *)trigger)->exec();
+	((Trigger*)trigger)->exec();
 }
 
-int addDie(Uint16 id, Uint16 dieto, Uint16 rate)
-{
+int addDie(Uint16 id, Uint16 dieto, Uint16 rate) {
 	if (id == 1)
 		return 0;
 	if (dieto == 1)
@@ -340,7 +313,7 @@ int addDie(Uint16 id, Uint16 dieto, Uint16 rate)
 	if (elements[id].dies->size() > MAX_DIES - 3)
 		return 0;
 	setprecalc(3);
-	Die *i = new Die();
+	Die* i = new Die();
 	i->dieto = dieto;
 	i->rate = rate;
 	elements[id].dies->push_back(i);
@@ -351,8 +324,7 @@ int addDie(Uint16 id, Uint16 dieto, Uint16 rate)
 	return 0;
 }
 
-int setElementWeight(Uint16 id, int weight)
-{
+int setElementWeight(Uint16 id, int weight) {
 	if (id == 1)
 		return 0;
 	elements[id].weight = weight;
@@ -360,15 +332,12 @@ int setElementWeight(Uint16 id, int weight)
 	return 0;
 }
 
-int setElementSpray(Uint16 id, int spray)
-{
+int setElementSpray(Uint16 id, int spray) {
 	if (id == 1)
 		return 0;
 	static int showerror = 1;
-	if (!spray)
-	{
-		if (showerror)
-		{
+	if (!spray) {
+		if (showerror) {
 			addConsoleTextLine("Spray cannot be set to 0. Using 1. This will only be shown once.");
 			showerror = 0;
 		}
@@ -379,8 +348,7 @@ int setElementSpray(Uint16 id, int spray)
 	return 0;
 }
 
-int setElementSlide(Uint16 id, int slide)
-{
+int setElementSlide(Uint16 id, int slide) {
 	if (id == 1)
 		return 0;
 	elements[id].slide = slide;
@@ -388,12 +356,10 @@ int setElementSlide(Uint16 id, int slide)
 	return 0;
 }
 
-int setElementViscousity(Uint16 id, int viscousity)
-{
+int setElementViscousity(Uint16 id, int viscousity) {
 	if (id == 1)
 		return 0;
-	if (!viscousity)
-	{
+	if (!viscousity) {
 		addConsoleTextLine("Viscousity cannot be set to 0. Using 1.");
 		viscousity = 1;
 	}
@@ -402,8 +368,7 @@ int setElementViscousity(Uint16 id, int viscousity)
 	return 0;
 }
 
-int setElementColor(Uint16 id, unsigned char r, unsigned char g, unsigned char b)
-{
+int setElementColor(Uint16 id, unsigned char r, unsigned char g, unsigned char b) {
 	if (id == 1)
 		return 0;
 	elements[id].r = r;
@@ -413,8 +378,7 @@ int setElementColor(Uint16 id, unsigned char r, unsigned char g, unsigned char b
 	return 0;
 }
 
-int setElementR(Uint16 id, unsigned char r)
-{
+int setElementR(Uint16 id, unsigned char r) {
 	if (id == 1)
 		return 0;
 	elements[id].r = r;
@@ -422,8 +386,7 @@ int setElementR(Uint16 id, unsigned char r)
 	return 0;
 }
 
-int setElementG(Uint16 id, unsigned char g)
-{
+int setElementG(Uint16 id, unsigned char g) {
 	if (id == 1)
 		return 0;
 	elements[id].g = g;
@@ -431,8 +394,7 @@ int setElementG(Uint16 id, unsigned char g)
 	return 0;
 }
 
-int setElementB(Uint16 id, unsigned char b)
-{
+int setElementB(Uint16 id, unsigned char b) {
 	if (id == 1)
 		return 0;
 	elements[id].b = b;
@@ -440,8 +402,7 @@ int setElementB(Uint16 id, unsigned char b)
 	return 0;
 }
 
-int setElementBias(Uint16 id, bool b)
-{
+int setElementBias(Uint16 id, bool b) {
 	if (id == 1)
 		return 0;
 	elements[id].nobias = b;
@@ -449,8 +410,7 @@ int setElementBias(Uint16 id, bool b)
 	return 0;
 }
 
-int setElementCustomColor(Uint16 id, int i, int c, unsigned char b)
-{
+int setElementCustomColor(Uint16 id, int i, int c, unsigned char b) {
 	if (id == 1)
 		return 0;
 	if ((i == 1) && (c == 1))
@@ -475,16 +435,14 @@ int setElementCustomColor(Uint16 id, int i, int c, unsigned char b)
 	return 0;
 }
 
-int setElementIcon(Uint16 id, Pic *icon)
-{
+int setElementIcon(Uint16 id, Pic* icon) {
 	if (id == 1)
 		return 0;
 	elements[id].icon = icon;
 	return 0;
 }
 
-Element *getElement(Uint16 id)
-{
+Element* getElement(Uint16 id) {
 	if (!id)
 		return elements;
 	if ((id < elementsmax) && (elements[id].name))
@@ -492,33 +450,28 @@ Element *getElement(Uint16 id)
 	return 0;
 }
 
-int findGroup(char *groupname, bool create, int order)
-{
-	char *name = messageReplace(groupname);
+int findGroup(char* groupname, bool create, int order) {
+	char* name = messageReplace(groupname);
 	if (order == -1)
 		order = 65535;
-	std::list<Group *>::iterator it;
+	std::list<Group*>::iterator it;
 	int i = 0;
-	for (it = groups.begin(); it != groups.end(); it++)
-	{
-		if (!strcmp(name, (*it)->name))
-		{
+	for (it = groups.begin(); it != groups.end(); it++) {
+		if (!strcmp(name, (*it)->name)) {
 			return i;
 		}
 		i++;
 	}
 	if (!create)
 		return 0;
-	Group *g = new Group();
+	Group* g = new Group();
 	g->name = new char[strlen(name) + 1];
 	strcpy(g->name, name);
 	g->icon = 0;
 	std::list<int>::iterator it2 = grouporder.begin();
 	i = 0;
-	for (it = groups.begin(); it != groups.end();)
-	{
-		if (*it2 > order)
-		{
+	for (it = groups.begin(); it != groups.end();) {
+		if (*it2 > order) {
 			groups.insert(it, g);
 			grouporder.insert(it2, order);
 			return i;
@@ -532,24 +485,22 @@ int findGroup(char *groupname, bool create, int order)
 	return i;
 }
 
-Group *getGroup(int value)
-{
+Group* getGroup(int value) {
 	unsigned int v = value;
 	if (v >= groups.size())
 		return 0;
-	std::list<Group *>::iterator it = groups.begin();
+	std::list<Group*>::iterator it = groups.begin();
 	for (int i = 0; i < value; i++)
 		it++;
 	return (*it);
 }
 
-int getGroupElement(char *name, int num)
-{
+int getGroupElement(char* name, int num) {
 	int i = 0;
 	unsigned int n = num;
 	if (!getVar(name, &i))
 		i = findGroup(name, false, -1);
-	Group *g = getGroup(i);
+	Group* g = getGroup(i);
 	if (!g)
 		return 0;
 	if (g->elements.size() < n)
@@ -560,13 +511,12 @@ int getGroupElement(char *name, int num)
 	return *it;
 }
 
-int getGroupElementOrder(char *name, int num)
-{
+int getGroupElementOrder(char* name, int num) {
 	int i = 0;
 	unsigned int n = num;
 	if (!getVar(name, &i))
 		i = findGroup(name, false, -1);
-	Group *g = getGroup(i);
+	Group* g = getGroup(i);
 	if (!g)
 		return 0;
 	if (g->elements.size() < n)
@@ -577,8 +527,7 @@ int getGroupElementOrder(char *name, int num)
 	return *it;
 }
 
-bool isElementInGroup(Group *group, int element)
-{
+bool isElementInGroup(Group* group, int element) {
 	std::list<int>::iterator it;
 	std::list<int>::iterator it2 = group->elements.end();
 	for (it = group->elements.begin(); it != it2; it++)
@@ -587,8 +536,7 @@ bool isElementInGroup(Group *group, int element)
 	return false;
 }
 
-void addElementToGroup(Group *group, int element, int pos)
-{
+void addElementToGroup(Group* group, int element, int pos) {
 	if (element == 1)
 		return;
 	std::list<int>::iterator it;
@@ -597,10 +545,8 @@ void addElementToGroup(Group *group, int element, int pos)
 	for (it = group->elements.begin(); it != group->elements.end(); it++)
 		if (*it == element)
 			return;
-	for (it = group->elements.begin(); it != group->elements.end();)
-	{
-		if (*it2 > pos)
-		{
+	for (it = group->elements.begin(); it != group->elements.end();) {
+		if (*it2 > pos) {
 			group->elements.insert(it, element);
 			group->elementorder.insert(it2, pos);
 			return;
@@ -612,23 +558,20 @@ void addElementToGroup(Group *group, int element, int pos)
 	group->elementorder.push_back(pos);
 }
 
-void clearGroup(char *name)
-{
+void clearGroup(char* name) {
 	int i = 0;
 	if (!getVar(name, &i))
 		i = findGroup(name, false, -1);
-	Group *g = getGroup(i);
+	Group* g = getGroup(i);
 	if (!g)
 		return;
 	g->elements.clear();
 	g->elementorder.clear();
 }
 
-void clearGroups()
-{
-	std::list<Group *>::iterator it3;
-	for (it3 = groups.begin(); it3 != groups.end(); it3++)
-	{
+void clearGroups() {
+	std::list<Group*>::iterator it3;
+	for (it3 = groups.begin(); it3 != groups.end(); it3++) {
 		(*it3)->elements.clear();
 		(*it3)->elementorder.clear();
 	}
@@ -637,7 +580,6 @@ void clearGroups()
 	findGroup("None", true, 0);
 }
 
-int countGroups()
-{
+int countGroups() {
 	return groups.size();
 }

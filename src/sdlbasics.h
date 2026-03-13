@@ -4,9 +4,9 @@
 #include "compiler.h"
 
 #ifdef __cplusplus
-	#include <cstdlib>
+#include <cstdlib>
 #else
-	#include <stdlib.h>
+#include <stdlib.h>
 #endif
 #include "SDL/SDL.h"
 #ifdef COMPILER_SDL_TTF
@@ -39,23 +39,23 @@
 
 #define MAX_STAMPS 100000
 
-void SDL_DrawPoint16(SDL_Surface *screen, int x, int y, Uint16 color);
-void SDL_DrawSavePoint16(SDL_Surface *screen, int x, int y, Uint16 color);
-void SDL_DrawLine16(SDL_Surface *screen, int x, int y, int dx, int dy, Uint16 color);
-void SDL_ReplaceLine16(SDL_Surface *screen, int x, int y, int dx, int dy, Uint16 color, Sint32 replace);
-void SDL_DrawRect16(SDL_Surface *screen, int x, int y, int dx, int dy, Uint16 color);
-void SDL_DrawFilledRect16(SDL_Surface *screen, int x, int y, int dx, int dy, Uint16 color);
-void SDL_DrawCircle16(SDL_Surface *screen, int x, int y, int rx, int ry, Uint16 color);
-void SDL_DrawFilledCircle16(SDL_Surface *screen, int x, int y, int rx, int ry, Uint16 color);
-void SDL_DrawRandomFilledCircle16(SDL_Surface *screen, int x, int y, int rx, int ry, int rate, Uint16 color);
-void SDL_ReplaceFilledCircle16(SDL_Surface *screen, int x, int y, int rx, int ry, Uint16 color, Sint32 replace);
-void SDL_CopyRect16(SDL_Surface *screen, int x, int y, int dx, int dy, int tox, int toy);
-void SDL_DrawText16(SDL_Surface *screen, void* f, char* t, int x, int y, Uint16 color, int *width = 0, int *height = 0, int align = 0);
-void SDL_Fill16(SDL_Surface *screen, int x, int y, Uint16 color);
-void SDL_RotateRect16(SDL_Surface *screen, int x, int y, int dx, int dy, int direction);
-void SDL_CopyStamp16(SDL_Surface *screen, int x, int y, int dx, int dy, int stamp);
-void SDL_PasteStamp16(SDL_Surface *screen, int x, int y, int dx, int dy, int stamp, Uint16 transparent);
-void SDL_SwapPoints16(SDL_Surface *screen, int x, int y, int x2, int y2, bool sand);
+void SDL_DrawPoint16(SDL_Surface* screen, int x, int y, Uint16 color);
+void SDL_DrawSavePoint16(SDL_Surface* screen, int x, int y, Uint16 color);
+void SDL_DrawLine16(SDL_Surface* screen, int x, int y, int dx, int dy, Uint16 color);
+void SDL_ReplaceLine16(SDL_Surface* screen, int x, int y, int dx, int dy, Uint16 color, Sint32 replace);
+void SDL_DrawRect16(SDL_Surface* screen, int x, int y, int dx, int dy, Uint16 color);
+void SDL_DrawFilledRect16(SDL_Surface* screen, int x, int y, int dx, int dy, Uint16 color);
+void SDL_DrawCircle16(SDL_Surface* screen, int x, int y, int rx, int ry, Uint16 color);
+void SDL_DrawFilledCircle16(SDL_Surface* screen, int x, int y, int rx, int ry, Uint16 color);
+void SDL_DrawRandomFilledCircle16(SDL_Surface* screen, int x, int y, int rx, int ry, int rate, Uint16 color);
+void SDL_ReplaceFilledCircle16(SDL_Surface* screen, int x, int y, int rx, int ry, Uint16 color, Sint32 replace);
+void SDL_CopyRect16(SDL_Surface* screen, int x, int y, int dx, int dy, int tox, int toy);
+void SDL_DrawText16(SDL_Surface* screen, void* f, char* t, int x, int y, Uint16 color, int* width = 0, int* height = 0, int align = 0);
+void SDL_Fill16(SDL_Surface* screen, int x, int y, Uint16 color);
+void SDL_RotateRect16(SDL_Surface* screen, int x, int y, int dx, int dy, int direction);
+void SDL_CopyStamp16(SDL_Surface* screen, int x, int y, int dx, int dy, int stamp);
+void SDL_PasteStamp16(SDL_Surface* screen, int x, int y, int dx, int dy, int stamp, Uint16 transparent);
+void SDL_SwapPoints16(SDL_Surface* screen, int x, int y, int x2, int y2, bool sand);
 
-extern SDL_Surface **stamps;
+extern SDL_Surface** stamps;
 #endif

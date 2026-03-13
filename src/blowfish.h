@@ -12,24 +12,19 @@
 // #define BIG_ENDIAN
 #define LITTLE_ENDIAN
 
-
-#ifdef BIG_ENDIAN
 struct WordByte {
+	#ifdef BIG_ENDIAN
 	unsigned int zero : 8;
 	unsigned int one : 8;
 	unsigned int two : 8;
 	unsigned int three : 8;
-};
-#endif
-
-#ifdef LITTLE_ENDIAN
-struct WordByte {
+	#elif defined(LITTLE_ENDIAN)
 	unsigned int three : 8;
 	unsigned int two : 8;
 	unsigned int one : 8;
 	unsigned int zero : 8;
+	#endif
 };
-#endif
 
 union Word {
 	unsigned int word;
@@ -40,7 +35,6 @@ struct DWord {
 	Word word0;
 	Word word1;
 };
-
 
 class Blowfish {
 private:
@@ -60,6 +54,4 @@ public:
 	void Encrypt(void*, unsigned int);
 	void Decrypt(void*, unsigned int);
 };
-
-
 #endif

@@ -3,13 +3,12 @@
 
 #include <list>
 
-struct Key
-{
+struct Key {
 	int code;
-	char *name;
+	char* name;
 };
 
-void addkey(char *name, int keycode);
-void execkey(char *type, int keycode);
+void addkey(char* name, int keycode);
+void execkey(char* type, int keycode);
 
 #endif

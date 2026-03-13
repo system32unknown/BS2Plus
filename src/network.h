@@ -7,7 +7,7 @@
 extern bool isserver;
 void initnetwork();
 void checknetwork();
-void sendowner(char* text, int owner, int size=-1);
+void sendowner(char* text, int owner, int size = -1);
 int connect(char* address, int port);
 void disconnect(int owner);
 

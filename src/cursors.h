@@ -1,7 +1,6 @@
 #define MAX_CURSORS 11
 
 static const char* cursors[] = {
-
     "    32    32        3            1",
     "X c #000000",
     ". c #ffffff",
@@ -243,5 +242,4 @@ static const char* cursors[] = {
     "     .....      ",
     "                ",
     "7,12",
-
 };

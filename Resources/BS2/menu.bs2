@@ -197,19 +197,12 @@ TRIGGER menutop {
 		MENU TOP ADD TEXT "Load Game" FILE load.bmp {
 			IF ((BUTTON == 1) && (WINDOWS == 1)) <LOAD SAND FILEDIALOG>
 			IF ((BUTTON == 1) && (WINDOWS == 0)) <LOAD SAND quicksave.png>
-			IF ((BUTTON == 2) || (BUTTON == 4)) {
-				INCLUDE warning.bs2
-				FILE DELETE warning.bs2
-				FILE OPEN warning.bs2
-				FILE CLOSE
-				INCLUDE http://siebn.de/savegamelist.php?mod=Default!
-			} 
 		}
 		MENU TOP ADD TEXT "Save Game" FILE save.bmp {
 			IF ((BUTTON == 1) && (WINDOWS == 1)) <SAVE SAND FILEDIALOG>
 			IF ((BUTTON == 1) && (WINDOWS == 0)) <SAVE SAND quicksave.png>
-			IF ( BUTTON == 2 ) savesubmenu2
-			IF ( BUTTON == 4 ) savesubmenu
+			IF (BUTTON == 2) savesubmenu2
+			IF (BUTTON == 4) savesubmenu
 		}
 	}
 	IF (rotatetool == 0) <MENU TOP ADD TEXT "Rotate clockwise" FILE rotateright.bmp rotatemenu>

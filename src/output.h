@@ -18,6 +18,6 @@
 // LOGLEVEL 9:
 
 int error(char* text, int owner);
-int print(char* text, int owner, int size=-1);
+int print(char* text, int owner, int size = -1);
 
 #endif
