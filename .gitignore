@@ -5,6 +5,7 @@
 # Prerequisites
 *.d
 
+
 # Compiled Object files
 *.slo
 *.lo
@@ -19,6 +20,9 @@
 *.so
 *.dylib
 *.dll
+
+!dl.dll
+!unzip.dll
 
 # Fortran module files
 *.mod
