@@ -1,0 +1,7 @@
+MESSAGE CLEAR
+MESSAGE ADDTEXT "Mods can contain trojans or viruses."
+MESSAGE ADDLINE
+MESSAGE ADDTEXT "Use at you own risk."
+MESSAGE ADDLINE
+MESSAGE ADDTEXT "This message is only displayed once."
+MESSAGE MESSAGEBOX

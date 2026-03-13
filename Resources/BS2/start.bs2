@@ -1,0 +1,43 @@
+EXEC clearall
+INCLUDE elements.bs2
+
+SET MENULEFT 0
+SET MENURIGHT 0
+
+MENU TOP ADD TEXT "" SEPERATOR 0 <>
+MENU TOP ADD TEXT "Burning Sand" FILE burningsand2.bmp <>
+MENU TOP ADD TEXT "" SEPERATOR 0 <>
+MENU BOTTOM ADD TEXT "" SEPERATOR 0 <>
+MENU BOTTOM ADD TEXT "Sandbox" FILE sandbox.bmp sandboxmenu
+MENU BOTTOM ADD TEXT "" SEPERATOR 0 <>
+MENU BOTTOM ADD TEXT "Mods" FILE mods.bmp {
+	INCLUDE warning.bs2
+	FILE DELETE warning.bs2
+	FILE OPEN warning.bs2
+	FILE CLOSE
+	INCLUDE http://siebn.de/modlist.php!
+}
+MENU BOTTOM ADD TEXT "" SEPERATOR 0 <>
+MENU BOTTOM ADD TEXT "Leves" FILE levels.bmp {
+	MENU SUB CLEAR
+	MENU SUB ADD TEXT "Saltwater" TEXT " Saltwater " <INCLUDE level1.bs2>
+	MENU SUB ADD TEXT "LemmingSand Level 1" TEXT " LemmingSand 1 " <INCLUDE lemmings1.bs2>
+	SUBMENU
+}
+MENU BOTTOM ADD TEXT "" SEPERATOR 0 <>
+
+
+TRIGGER startanimation {
+	SET startanimationx (startanimationx + 1)
+	IF (startanimationx > 640) <SET startanimationx 0>
+	WRITE ELEMENT:Clear (startanimationx - 202) 150 40 TEXT "welcome to"
+	WRITE ELEMENT:Wall (startanimationx - 200) 150 40 TEXT "welcome to"
+	WRITE ELEMENT:Fire (435 - (startanimationx * 4 / 3)) 300 60 TEXT "Burning Sand 2"
+	TIMER 2 FRAMES startanimation
+}
+
+SET startanimationx 0
+EXEC startanimation
+
+SET VIEW 0
+SET ALPHA1 50
