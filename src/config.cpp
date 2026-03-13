@@ -565,7 +565,7 @@ Action* parseaction(Token* tokens, int owner) {
 			action->exec();
 			if (extend) {
 				Trigger* oldtrigger = findTrigger(extend, owner);
-				;
+
 				std::list<Action*>::iterator it = oldtrigger->actions.begin();
 				while (it != oldtrigger->actions.end()) {
 					addAction(triggername, *it, owner);

@@ -6,7 +6,7 @@
 
 void quicksave(int slot);
 void quickload(int slot);
-int save(SDL_Surface *screen, char* filename);
+int save(SDL_Surface* screen, char* filename);
 int load(char* filename);
 
 #endif

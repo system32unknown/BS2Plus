@@ -16,26 +16,25 @@
 #define TOKEN_ATOM_BRACKET1 2
 #define TOKEN_ATOM_BRACKET2 3
 
-class Token
-{
+class Token {
 private:
 	long pos, length;
 
 public:
-	char *text;
+	char* text;
 	int atom;
-	Token(char *text);
-	char *getToken(bool math = false);
-	char *getRest();
+	Token(char* text);
+	char* getToken(bool math = false);
+	char* getRest();
 	void reset();
-	char *getuntillast();
+	char* getuntillast();
 };
 
-bool checkfile(char *text, bool doexit = true);
-int parsefile(char *filename, int owner);
-int parsechar(char *text, int owner, char *filename = 0);
-int parseline(char *text, int linenum, int owner, char *filename = 0);
-Varint **getParameters(Token *tokens, char *exception = 0);
-Action *parseaction(Token *tokens, int owner);
+bool checkfile(char* text, bool doexit = true);
+int parsefile(char* filename, int owner);
+int parsechar(char* text, int owner, char* filename = 0);
+int parseline(char* text, int linenum, int owner, char* filename = 0);
+Varint** getParameters(Token* tokens, char* exception = 0);
+Action* parseaction(Token* tokens, int owner);
 
 #endif

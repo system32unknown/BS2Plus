@@ -3,5 +3,5 @@
 
 #include <string>
 
-char *bf_exec(const std::string& bfcode);
+char* bf_exec(const std::string& bfcode);
 #endif

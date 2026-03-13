@@ -781,13 +781,10 @@ void calc() {
 			{                                                                                                           \
 				if (*(nobias + t))                                                                                      \
 				{                                                                                                       \
-					if (rl)                                                                                             \
-					{                                                                                                   \
+					if (rl) {																							\
 						if (*(o - 1) != 1)                                                                              \
 							o--;                                                                                        \
-					}                                                                                                   \
-					else                                                                                                \
-					{                                                                                                   \
+					} else {																							\
 						if (*(o + 1) != 1)                                                                              \
 							o++;                                                                                        \
 					}                                                                                                   \
@@ -846,8 +843,7 @@ void calc() {
 						(nospray || ((random % *(spray + t)) && (*(op + *(directionypitch + t)) == t)) ||
 							((random = (random * 7) % 32768) < w) && (*(o + dontp) != y)) ||
 						((*(weight + t) > *(weight + *op)) && (*(o + dontp) != y) && ((random = (random * 7) % 32768) < ((*(weight + t) - *(weight + *op)) / (*(viscousity + t) + *(viscousity + *op))))))) {
-					if (*(nobias + t))
-						*(o + dontp) = y - reverse;
+					if (*(nobias + t)) *(o + dontp) = y - reverse;
 					*(o + doutSurface) = *(color + (*(o) = *(op)));
 					*(op + doutSurface) = *(color + (*(op) = t));
 				} else if (((*(o + 1) != t) || (*(o - 1) != t)) && ((random++) % *(side + t))) {

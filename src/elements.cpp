@@ -104,8 +104,7 @@ int getelementsmax() {
 
 int getelementscount() {
 	int i = 0;
-	while (elements[++i].name)
-		;
+	while (elements[++i].name);
 	return i;
 }
 
@@ -159,7 +158,6 @@ Uint16 findElement(char* elementname, bool create) {
 				elements[i2].interactions = new std::list<Interaction*>();
 				elements[i2].dies = new std::list<Die*>();
 				elements[i2].icon = getPic("Clear", "0");
-				;
 			}
 			i2 = 0;
 			for (; i2 < elementsmaxold; i2++) {

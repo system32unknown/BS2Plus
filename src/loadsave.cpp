@@ -14,13 +14,11 @@
 #include <string.h>
 #include <stdio.h>
 
-// FIX #17: Zero-initialize the array at definition instead of using a fragile firstquick flag.
 SDL_Surface* quicksaves[MAX_QUICKSAVES] = {};
 
 void quicksave(int slot) {
-	if ((slot >= MAX_QUICKSAVES) || (slot < 0))
-		return;
-	// FIX #1: Null-check getRealSandSurface() before dereferencing.
+	if ((slot >= MAX_QUICKSAVES) || (slot < 0)) return;
+
 	SDL_Surface* screen = getRealSandSurface();
 	if (!screen) return;
 	if (quicksaves[slot])
@@ -104,8 +102,7 @@ int save(SDL_Surface* screen, char* filename) {
 #ifdef USE_PNG
 		// FIX #6: Check fopen result before proceeding.
 		FILE* fp = fopen(checkfilename(filename), "wb");
-		if (!fp)
-			return -1;
+		if (!fp) return -1;
 
 		png_structp png_ptr;
 		png_infop info_ptr;
