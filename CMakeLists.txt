@@ -230,24 +230,29 @@ install(TARGETS ${PROJECT_NAME}
 # ─────────────────────────────────────────────
 #  Copy Assets (img and bs2 folder) to build output
 # ─────────────────────────────────────────────
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/Resources/img"
-        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/img"
-    COMMENT "Copying img/ folder to build directory"
-)
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/Resources/bs2"
-        "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
-    COMMENT "Copying bs2/ folder to build directory"
-)
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/Resources/misc"
-        "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
-    COMMENT "Copying misc/ folder to build directory"
-)
+foreach(ASSET_DIR img bs2 misc)
+    if(EXISTS "${CMAKE_SOURCE_DIR}/Resources/${ASSET_DIR}")
+        if("${ASSET_DIR}" STREQUAL "img")
+            # img goes into its own subfolder
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    "${CMAKE_SOURCE_DIR}/Resources/${ASSET_DIR}"
+                    "$<TARGET_FILE_DIR:${PROJECT_NAME}>/${ASSET_DIR}"
+                COMMENT "Copying ${ASSET_DIR}/ to build directory"
+            )
+        else()
+            # bs2 and misc go directly into bin/
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    "${CMAKE_SOURCE_DIR}/Resources/${ASSET_DIR}"
+                    "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+                COMMENT "Copying ${ASSET_DIR}/ to build directory"
+            )
+        endif()
+    else()
+        message(STATUS "Asset folder Resources/${ASSET_DIR} not found, skipping.")
+    endif()
+endforeach()
 
 # ─────────────────────────────────────────────
 #  Summary
