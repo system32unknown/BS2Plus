@@ -327,15 +327,13 @@ void sandwrite(Uint16 element, int x, int y, int size, char* text, int align) {
 #ifdef COMPILER_SDL_TTF
 	static Var* ww = (Var*)setVar("WRITEWIDTH", 0);
 	static Var* wh = (Var*)setVar("WRITEHEIGHT", 0);
-	if (size <= 0)
-		return;
+	if (size <= 0) return;
+
 	static TTF_Font* font = 0;
 	if (lastfontsize != size) {
-		if (font != 0)
-			TTF_CloseFont(font);
+		if (font != 0) TTF_CloseFont(font);
 		font = TTF_OpenFont(checkfilename(fontname), size);
-		if (!font)
-			return;
+		if (!font) return;
 		lastfontsize = size;
 	}
 	SDL_DrawText16(sandSurface, font, text, x, y, element, &(ww->value), &(wh->value), align);
@@ -355,8 +353,7 @@ void recalccolors(bool b) {
 		mustredraw = false;
 		Uint16* end = bufp + ypitch * (height - 1) + (width - 1);
 		Uint16* t = bufp - 1;
-		while (end != ++t)
-			*(t + doutSurface) = *(color + *t);
+		while (end != ++t) *(t + doutSurface) = *(color + *t);
 		SDL_SemPost(sandsem);
 	}
 }
@@ -368,8 +365,7 @@ void recalcused() {
 	used[1] = true;
 	Uint16* end = bufp + ypitch * (height - 1) + (width - 1);
 	Uint16* t = bufp - 1;
-	while (end != ++t)
-		used[*t] = true;
+	while (end != ++t) used[*t] = true;
 }
 
 void setprecalc(int p) {
@@ -378,51 +374,53 @@ void setprecalc(int p) {
 
 void precalc(int p) {
 	int t;
-	std::list<Interaction*>::iterator it, end;
-	std::list<Die*>::iterator it2, end2;
 	Element* elements = getElement(0);
-	int elementsmaxnew = getelementsmax();
+	const int elementsmaxnew = getelementsmax();
 
 	if (sandelements < elementsmaxnew + 5) {
 		SDL_SemWait(sandsem);
+
 		if (sandelements) {
-			delete (color);
-			delete (weight);
-			delete (aweight);
-			delete (weightreverse);
-			delete (directionypitch);
-			delete (spray);
-			delete (slide);
-			delete (side);
-			delete (viscousity);
-			delete (direction);
-			delete (used);
-			delete (oldused);
-			delete (skip);
-			delete (dierate);
-			delete (nobias);
+			delete[] color;
+			delete[] weight;
+			delete[] aweight;
+			delete[] weightreverse;
+			delete[] directionypitch;
+			delete[] spray;
+			delete[] slide;
+			delete[] side;
+			delete[] viscousity;
+			delete[] direction;
+			delete[] used;
+			delete[] oldused;
+			delete[] skip;
+			delete[] dierate;
+			delete[] nobias;
+			delete[] eatmax;
+
 			for (int i = 0; i < sandelements; i++) {
-				delete (eatspeed[i]);
-				delete (eatelement[i]);
-				delete (eattoself[i]);
-				delete (eattrigger[i]);
-				delete (eattoother[i]);
-				delete (eatnot[i]);
-				delete (doeseatelement[i]);
-				delete (life[i]);
-				delete (dieto[i]);
+				delete[] eatspeed[i];
+				delete[] eatelement[i];
+				delete[] eattoself[i];
+				delete[] eattrigger[i];
+				delete[] eattoother[i];
+				delete[] eatnot[i];
+				delete[] doeseatelement[i];
+				delete[] life[i];
+				delete[] dieto[i];
 			}
-			delete (eat);
-			delete (eatspeed);
-			delete (eatelement);
-			delete (eattoself);
-			delete (eattrigger);
-			delete (eattoother);
-			delete (eatnot);
-			delete (doeseatelement);
-			delete (life);
-			delete (dieto);
+			delete[] eat;
+			delete[] eatspeed;
+			delete[] eatelement;
+			delete[] eattoself;
+			delete[] eattrigger;
+			delete[] eattoother;
+			delete[] eatnot;
+			delete[] doeseatelement;
+			delete[] life;
+			delete[] dieto;
 		}
+
 		sandelements = elementsmaxnew + 10;
 		color = new Uint16[sandelements];
 		weight = new int[sandelements];
@@ -450,11 +448,9 @@ void precalc(int p) {
 		dierate = new Uint16[sandelements];
 		eatmax = new Uint16[sandelements];
 		nobias = new bool[sandelements];
+
 		for (int i = 0; i < sandelements; i++) {
-			if (i < elementsmaxnew)
-				eatmax[i] = elements[i].interactioncount + 10;
-			else
-				eatmax[i] = 10;
+			eatmax[i] = static_cast<Uint16>((i < elementsmaxnew ? elements[i].interactioncount : 0) + 10);
 			eatspeed[i] = new Uint16[eatmax[i]];
 			eatelement[i] = new Uint16[eatmax[i]];
 			eattoself[i] = new Uint16[eatmax[i]];
@@ -465,42 +461,39 @@ void precalc(int p) {
 			life[i] = new Uint16[MAX_DIES];
 			dieto[i] = new Uint16[MAX_DIES];
 		}
+
 		recalcused();
 		p = 3;
 		SDL_SemPost(sandsem);
 	}
 
-	int gravityfactor = 1000000;
-	if (oldgravity)
-		gravityfactor = 10000 / oldgravity;
+	const int gravityfactor = oldgravity ? (10000 / oldgravity) : 1000000;
+
 	if (p >= 2) {
 		for (int i = elementsmaxnew - 1; i >= 0; i--) {
 			color[i] = SDL_MapRGB(outSurface->format, elements[i].r, elements[i].g, elements[i].b);
-			weight[i] = ((long)elements[i].weight * 328) / gravityfactor;
-			if (elements[i].weight == 0)
-				weight[i] = 999999;
-			if (weight[i] > 999999)
-				weight[i] = 999998;
-			if (!weight[i])
-				if (i == 0)
-					weight[i] = 1;
-				else
-					weight[i] = 2;
+
+			weight[i] = (static_cast<long>(elements[i].weight) * 328) / gravityfactor;
+			if (elements[i].weight == 0) weight[i] = 999999;
+			if (weight[i] > 999999) weight[i] = 999998;
+			if (!weight[i])  weight[i] = (i == 0) ? 1 : 2;
+
 			weightreverse[i] = weight[i] * reverse;
 			aweight[i] = abs(weight[i]);
 			slide[i] = elements[i].slide;
 			side[i] = slide[i] * 2 + 1;
 			spray[i] = elements[i].spray;
 			viscousity[i] = elements[i].viscousity;
-			direction[i] = weightreverse[i] / abs(weightreverse[i]) * reverse;
+			direction[i] = (weightreverse[i] / abs(weightreverse[i])) * reverse;
 			directionypitch[i] = ypitch * abs(weight[i]) / weight[i] * reverse;
-			end2 = elements[i].dies->end();
+
 			dierate[i] = elements[i].dietotalrate;
 			nobias[i] = elements[i].nobias;
 			t = 0;
+
 			if (olddeath) {
-				for (it2 = elements[i].dies->begin(); it2 != end2; it2++) {
-					life[i][t] = 32768 * (*it2)->rate / dierate[i];
+				for (auto it2 = elements[i].dies->begin(); it2 != elements[i].dies->end(); ++it2) {
+					life[i][t] = static_cast<Uint16>(32768 * (*it2)->rate / dierate[i]);
 					dieto[i][t] = (*it2)->dieto;
 					t++;
 				}
@@ -513,16 +506,17 @@ void precalc(int p) {
 		}
 		weight[1] = 9999999;
 	}
-	if (p >= 2)
+
+	if (p >= 2) {
 		for (int i = elementsmaxnew - 1; i >= 0; i--) {
 			if (eatmax[i] < elements[i].interactioncount + 1) {
-				eatmax[i] = elements[i].interactioncount + 5;
-				delete (eatspeed[i]);
-				delete (eatelement[i]);
-				delete (eattoself[i]);
-				delete (eattrigger[i]);
-				delete (eattoother[i]);
-				delete (eatnot[i]);
+				eatmax[i] = static_cast<Uint16>(elements[i].interactioncount + 5);
+				delete[] eatspeed[i];
+				delete[] eatelement[i];
+				delete[] eattoself[i];
+				delete[] eattrigger[i];
+				delete[] eattoother[i];
+				delete[] eatnot[i];
 				eatspeed[i] = new Uint16[eatmax[i]];
 				eatelement[i] = new Uint16[eatmax[i]];
 				eattoself[i] = new Uint16[eatmax[i]];
@@ -530,52 +524,62 @@ void precalc(int p) {
 				eattoother[i] = new uintptr_t[eatmax[i]];
 				eatnot[i] = new Uint16[eatmax[i]];
 			}
-			end = elements[i].interactions->end();
+
 			for (int iiii = 0; iiii < DOESEATELEMENTSMAX; iiii++)
 				doeseatelement[i][iiii] = false;
+
 			t = 0;
 			bool all = false;
+
 			if (oldinteractions) {
-				for (it = elements[i].interactions->begin(); it != end; it++) {
+				for (auto it = elements[i].interactions->begin();
+					it != elements[i].interactions->end(); ++it) {
 					if (used[(*it)->element]) {
-						if ((eatelement[i][t] = (*it)->element) == 1)
-							all = true;
+						if ((eatelement[i][t] = (*it)->element) == 1) all = true;
 						eatspeed[i][t] = (*it)->rate;
 						eattoself[i][t] = (*it)->toself;
-						eattoother[i][t] = (*it)->toother;
-						if ((*it)->trigger == 0) {
+
+						if ((*it)->trigger == nullptr) {
 							eattrigger[i][t] = true;
+							eattoother[i][t] = (*it)->toother;
 						} else {
 							eattrigger[i][t] = false;
-							eattoother[i][t] = (uintptr_t)(*it)->trigger;
+							eattoother[i][t] = reinterpret_cast<uintptr_t>((*it)->trigger);
 						}
+
 						eatnot[i][t] = (*it)->except;
 						doeseatelement[i][eatelement[i][t] % DOESEATELEMENTSMAX] = true;
 						t++;
 					}
 				}
+
 				if (all)
 					for (int iiii = 0; iiii < DOESEATELEMENTSMAX; iiii++)
 						doeseatelement[i][iiii] = true;
+
 				eatspeed[i][t] = 0;
 				eat[i] = (t != 0);
-			} else {
-				eatspeed[i][0] = 0;
-			}
+			} else eatspeed[i][0] = 0;
+
 			skip[i] = (weight[i] == 999999) && !t && !dierate[i];
 		}
+	}
+
 	if (p >= 1) {
 		for (int y = height - 1; y >= 0; y--) {
 			*(bufp + ypitch * y + width) = 1;
 			*(bufp + ypitch * y) = 1;
 		}
 	}
+
 	skip[0] = true;
 	skip[1] = false;
+
 	if (p >= 2) {
 		recalccolors(false);
 		recalccolors(true);
 	}
+
 	recalc = 0;
 }
 
@@ -624,8 +628,7 @@ void calc() {
 			if (oldused[i] != used[i]) recalc = 2;
 	for (int i2 = 0; i2 < sandelements; i2++)
 		oldused[i2] = used[i2];
-	if (recalc)
-		precalc(recalc);
+	if (recalc) precalc(recalc);
 
 	static int y, start;
 	static int r, yr, w;
@@ -671,7 +674,7 @@ void calc() {
 		end = rl ? ybuf : (ybuf + width) - 1;
 		*end = 1;
 
-		o = reinterpret_cast<Uint16*>(ybuf + start);  // FIX: C-style cast -> reinterpret_cast
+		o = reinterpret_cast<Uint16*>(ybuf + start);
 		dontp = dont + width + 5 - o;
 
 		do {
@@ -693,9 +696,9 @@ void calc() {
     if ((tmp == *(x)) && !(tmp2--)) {                                                                   \
         if (*(*(eattrigger + t) + eatcounter)) {                                                        \
             *(used + (*(x) = *(*(eattoother + t) + eatcounter))) = true;                                \
-            *(used + (*o   = *(*(eattoself + t) + eatcounter))) = true;                                \
+            *(used + (*o = *(*(eattoself + t) + eatcounter))) = true;                                \
             *(o + doutSurface) = *(color + *o);                                                   \
-            *((x) + doutSurface)= *(color + *(x));                                                 \
+            *((x) + doutSurface) = *(color + *(x));                                                 \
             t = 1;                                                                                      \
             goto next;                                                                                  \
         } else {                                                                                        \
@@ -816,11 +819,11 @@ void calc() {
 						goto next;
 					}
 				} while (*(*(life + t) + ++diecounter));
-			} else if ((w = *(aweight + (t))) != 999999) {
+			} else if ((w = *(aweight + t)) != 999999) {
 				if ((*(op = o + *(directionypitch + t)) != t) &&
-					(!(*op) &&
+					((!(*op) &&
 						(nospray || ((random % *(spray + t)) && (*(op + *(directionypitch + t)) == t)) ||
-							((random = (random * 7) % 32768) < w) && (*(o + dontp) != y)) ||
+							(((random = (random * 7) % 32768) < w) && (*(o + dontp) != y)))) ||
 						((*(weight + t) > *(weight + *op)) && (*(o + dontp) != y) && ((random = (random * 7) % 32768) < ((*(weight + t) - *(weight + *op)) / (*(viscousity + t) + *(viscousity + *op))))))) {
 					if (*(nobias + t)) *(o + dontp) = y - reverse;
 					*(o + doutSurface) = *(color + (*o = *op));
@@ -868,9 +871,7 @@ void calc() {
 							*(o + doutSurface) = *(color + (*o = *(o + i)));
 							*(o + doutSurface + i) = *(color + (*(o + i) = t));
 						}
-					} else {
-						goleft = goright = true;
-					}
+					} else goleft = goright = true;
 				}
 			}
 

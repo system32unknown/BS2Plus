@@ -22,7 +22,7 @@ jobs:
 
       # ── Set up MSYS2 CLANG64 ────────────────────────────────────
       - name: Set up MSYS2
-        uses: msys2/setup-msys2@main
+        uses: msys2/setup-msys2@v2
         with:
           msystem: CLANG64
           update: true
