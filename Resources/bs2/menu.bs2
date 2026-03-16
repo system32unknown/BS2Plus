@@ -2,14 +2,7 @@
 
 TRIGGER menutop {
 	MENU TOP CLEAR
-	MENU TOP ADD TEXT "Mainmenu" FILE home.bmp {
-		IF (BUTTON == 1) quitsandbox
-		IF ((BUTTON == 2) || (BUTTON == 4)) {
-			MESSAGE CLEAR
-			MESSAGE ADDTEXT "Mods is Under Construction."
-			MESSAGE MESSAGEBOX
-		} 
-	}
+	MENU TOP ADD TEXT "Mainmenu" FILE home.bmp quitsandbox
 	MENU TOP ADD TEXT "Fullscreen" FILE resolution.bmp {
 		IF (BUTTON == 1) sandresolutionmenu
 		IF (BUTTON == 2) {
@@ -850,9 +843,9 @@ TRIGGER menubottom {
 	IF (specialdrawingtool == 6) <MENU BOTTOM ADD TEXT "Rotate clockwise" FILE rotateright.bmp specialtools>
 	IF (specialdrawingtool == 7) <MENU BOTTOM ADD TEXT "Rotate anticlockwise" FILE rotateleft.bmp specialtools>
 	IF (specialdrawingtool == 8) <MENU BOTTOM ADD TEXT "Rotate 180°" FILE rotate.bmp specialtools>
-	IF (specialdrawingtool == 9) <MENU BOTTOM ADD TEXT "Point Reflection°" FILE pointreflection.bmp specialtools>
-	IF (specialdrawingtool == 10) <MENU BOTTOM ADD TEXT "Flip horizontally°" FILE fliph.bmp specialtools>
-	IF (specialdrawingtool == 11) <MENU BOTTOM ADD TEXT "Flip vertically°" FILE flipv.bmp specialtools>
+	IF (specialdrawingtool == 9) <MENU BOTTOM ADD TEXT "Point Reflection" FILE pointreflection.bmp specialtools>
+	IF (specialdrawingtool == 10) <MENU BOTTOM ADD TEXT "Flip horizontally" FILE fliph.bmp specialtools>
+	IF (specialdrawingtool == 11) <MENU BOTTOM ADD TEXT "Flip vertically" FILE flipv.bmp specialtools>
 	IF (specialdrawingtool == 12) <MENU BOTTOM ADD TEXT "Random Circle" FILE randomcircle.bmp specialtools>
 	MENU BOTTOM ADD TEXT "Write" FILE text.bmp usewrite
 	MENU BOTTOM ADD TEXT "" SEPERATOR 0 <>
@@ -1036,10 +1029,24 @@ TRIGGER specialtools {
 	IF (BUTTON == 4) {
 		MENU SUB CLEAR
 		MENU SUB ADD TEXT "Fill" FILE fill.bmp specialtoolsmenuselected 0
-		MENU SUB ADD TEXT "Replace" FILE replace.bmp specialtoolsmenuselected 1
-		MENU SUB ADD TEXT "Copy Square" FILE copy.bmp specialtoolsmenuselected 2
-		MENU SUB ADD TEXT "Hand Movetool" FILE hand.bmp specialtoolsmenuselected 3
-		MENU SUB ADD TEXT "Hand Copytool" FILE handcopy.bmp specialtoolsmenuselected 4
+		MENU SUB ADD TEXT "Replace" FILE replace.bmp {
+			EXEC specialtoolsmenuselected 1
+			IF (BUTTON == 4) {
+				MENU SUB CLEAR
+				MENU SUB ADD TEXT "Copy Square" FILE copy.bmp specialtoolsmenuselected 2
+				SUBMENU
+			}
+		}
+		
+		MENU SUB ADD TEXT "Hand Movetool" FILE hand.bmp {
+			EXEC specialtoolsmenuselected 3
+			IF (BUTTON == 4) {
+				MENU SUB CLEAR
+				MENU SUB ADD TEXT "Hand Copytool" FILE handcopy.bmp specialtoolsmenuselected 4
+				SUBMENU
+			}
+		}
+		
 		MENU SUB ADD TEXT "Stamptool" FILE stamp.bmp {
 			EXEC specialtoolsmenuselected 5
 			IF (BUTTON == 4) {
@@ -1057,12 +1064,26 @@ TRIGGER specialtools {
 				SUBMENU
 			}
 		}
-		MENU SUB ADD TEXT "Rotate clockwise" FILE rotateright.bmp specialtoolsmenuselected 6
-		MENU SUB ADD TEXT "Rotate anticlockwise" FILE rotateleft.bmp specialtoolsmenuselected 7
-		MENU SUB ADD TEXT "Rotate 180°" FILE rotate.bmp specialtoolsmenuselected 8
-		MENU SUB ADD TEXT "Point Reflection" FILE pointreflection.bmp specialtoolsmenuselected 9
-		MENU SUB ADD TEXT "Flip horizontally" FILE fliph.bmp specialtoolsmenuselected 10
-		MENU SUB ADD TEXT "Flip vertically" FILE flipv.bmp specialtoolsmenuselected 11
+		MENU SUB ADD TEXT "Rotate clockwise" FILE rotateright.bmp {
+			EXEC specialtoolsmenuselected 6
+			IF (BUTTON == 4) {
+				MENU SUB CLEAR
+				MENU SUB ADD TEXT "Rotate anticlockwise" FILE rotateleft.bmp specialtoolsmenuselected 7
+				MENU SUB ADD TEXT "Rotate 180°" FILE rotate.bmp specialtoolsmenuselected 8
+				SUBMENU
+			}
+		}
+
+		MENU SUB ADD TEXT "Point Reflection" FILE pointreflection.bmp {
+			EXEC specialtoolsmenuselected 9
+			IF (BUTTON == 4) {
+				MENU SUB CLEAR
+				MENU SUB ADD TEXT "Flip horizontally" FILE fliph.bmp specialtoolsmenuselected 10
+				MENU SUB ADD TEXT "Flip vertically" FILE flipv.bmp specialtoolsmenuselected 11
+				SUBMENU
+			}
+		}
+
 		MENU SUB ADD TEXT "Random Circle" FILE randomcircle.bmp {
 			EXEC specialtoolsmenuselected 12
 			IF (BUTTON == 4) {
