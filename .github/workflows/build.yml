@@ -1,0 +1,103 @@
+name: Build BS2Plus
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-windows:
+    name: Windows (MSYS2 CLANG64)
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      # ── Checkout ────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Set up MSYS2 CLANG64 ────────────────────────────────────
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: CLANG64
+          update: true
+          install: >-
+            mingw-w64-clang-x86_64-clang
+            mingw-w64-clang-x86_64-cmake
+            mingw-w64-clang-x86_64-ninja
+            mingw-w64-clang-x86_64-SDL
+            mingw-w64-clang-x86_64-SDL_net
+            mingw-w64-clang-x86_64-SDL_ttf
+            mingw-w64-clang-x86_64-zlib
+            mingw-w64-clang-x86_64-libpng
+
+      # ── Configure ───────────────────────────────────────────────
+      - name: Configure CMake
+        run: |
+          cmake -B build -S . \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DMSYS2_PREFIX=/clang64
+
+      # ── Build ───────────────────────────────────────────────────
+      - name: Build
+        run: cmake --build build --config Release
+
+      # ── Upload Artifact ─────────────────────────────────────────
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BS2Plus-windows
+          path: build/bin/
+          retention-days: 7
+
+  build-linux:
+    name: Linux (Clang + apt)
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── Checkout ────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Install dependencies ─────────────────────────────────────
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            clang \
+            cmake \
+            ninja-build \
+            libsdl1.2-dev \
+            libsdl-net1.2-dev \
+            libsdl-ttf1.2-dev \
+            zlib1g-dev \
+            libpng-dev
+
+      # ── Configure ───────────────────────────────────────────────
+      - name: Configure CMake
+        run: |
+          cmake -B build -S . \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++
+
+      # ── Build ───────────────────────────────────────────────────
+      - name: Build
+        run: cmake --build build --config Release
+
+      # ── Upload Artifact ─────────────────────────────────────────
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BS2Plus-linux
+          path: build/bin/
+          retention-days: 7

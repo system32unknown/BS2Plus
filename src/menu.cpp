@@ -631,7 +631,6 @@ void drawmenu(SDL_Surface* screen) {
 	}
 
 #ifdef COMPILER_SDL_TTF
-
 	if (vconsole->value) {
 		consolenews = false;
 		dstrect.x = 0;
@@ -677,10 +676,8 @@ void showconsole(int visible) {
 	if (visible == -1)
 		if (console_visible != false)
 			console_visible = false;
-		else
-			console_visible = true;
-	else
-		console_visible = visible;
+		else console_visible = true;
+	else console_visible = visible;
 	redrawmenu(2);
 }
 
@@ -713,8 +710,7 @@ void clickmenu(SDL_Surface* screen, int x, int y, int b, int click) {
 	else
 		drawy = (y - MENU_TOP + scroll_top - 2) / zoomvar->value + 2;
 	if (nomousedown == true) {
-		if (b != 0)
-			return;
+		if (b != 0) return;
 		nomousedown = false;
 	}
 	if (nomousedownbutton && !b) {
@@ -766,21 +762,15 @@ void clickmenu(SDL_Surface* screen, int x, int y, int b, int click) {
 		SDL_Surface* console = getConsoleSurface();
 		if (y < console->h) {
 			if (b && click && MENU_TOP && MENU_RIGHT && (x > screen->w - 14) && (y > console->h - 7))
-				if (b == 1)
-					vconsole->value = !vconsole->value;
-				else if (b == 2)
-					ossystem("telnet", "localhost 7777", false);
-				else if (b == 4)
-					ossystem("notepad", "console.txt", false);
+				if (b == 1) vconsole->value = !vconsole->value;
+				else if (b == 2) ossystem("telnet", "localhost 7777", false);
+				else if (b == 4) ossystem("notepad", "console.txt", false);
 			return;
 		}
 	} else if (b && click && MENU_TOP && MENU_RIGHT && (x > screen->w - 14) && (y < 7)) {
-		if (b == 1)
-			vconsole->value = !vconsole->value;
-		else if (b == 2)
-			ossystem("telnet", "localhost 7777", false);
-		else if (b == 4)
-			ossystem("notepad", "console.txt", false);
+		if (b == 1) vconsole->value = !vconsole->value;
+		else if (b == 2) ossystem("telnet", "localhost 7777", false);
+		else if (b == 4) ossystem("notepad", "console.txt", false);
 		return;
 	}
 	int inmenu = 0;
@@ -904,8 +894,7 @@ void clickmenu(SDL_Surface* screen, int x, int y, int b, int click) {
 					findTrigger("DRAW", 0)->exec(lastx + dx * i / dist, lasty + dy * i / dist, b, click);
 					click = false;
 				}
-			} else
-				findTrigger("DRAW", 0)->exec(drawx, drawy, b, click);
+			} else findTrigger("DRAW", 0)->exec(drawx, drawy, b, click);
 			nomousedownbutton = 1;
 		}
 	}

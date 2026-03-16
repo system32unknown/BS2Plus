@@ -5,7 +5,7 @@ SET MENULEFT 0
 SET MENURIGHT 0
 
 MENU TOP ADD TEXT "" SEPERATOR 0 <>
-MENU TOP ADD TEXT "Burning Sand" FILE burningsand2.bmp <>
+MENU TOP ADD TEXT "BS2CE" FILE burningsand2.bmp <>
 MENU TOP ADD TEXT "" SEPERATOR 0 <>
 MENU BOTTOM ADD TEXT "" SEPERATOR 0 <>
 MENU BOTTOM ADD TEXT "Sandbox" FILE sandbox.bmp sandboxmenu
@@ -30,7 +30,7 @@ TRIGGER startanimation {
 	IF (startanimationx > 640) <SET startanimationx 0>
 	WRITE ELEMENT:Clear (startanimationx - 202) 150 40 TEXT "Welcome to"
 	WRITE ELEMENT:Wall (startanimationx - 200) 150 40 TEXT "Welcome to"
-	WRITE ELEMENT:Fire (435 - (startanimationx * 4 / 3)) 300 60 TEXT "Burning Sand 2+"
+	WRITE ELEMENT:Fire (435 - (startanimationx * 4 / 3)) 300 60 TEXT "BS2CE"
 	TIMER 2 FRAMES startanimation
 }
 

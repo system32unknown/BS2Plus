@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <cstring>
 
-#define get_e int e = 0; if (!getVar(tmp, &e)) e = findElement(tmp,true);
+#define get_e int e = 0; if (!getVar(tmp, &e)) e = findElement(tmp, true);
 
 std::list<Var*> vars;
 int* parameters[MAXPARAMETERS + 1];
@@ -512,6 +512,7 @@ int Varint::val() {
 		delete(tmp);
 		return v;
 	}
+
 	if (!ok) return 0;
 	if (function) {
 		int i;

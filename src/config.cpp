@@ -54,131 +54,138 @@ void replacehtmlstrings(char* c) {
 	replaceall(c, "<br />", '\n');
 }
 
+static const char* const BLOCKED_SUBSTRINGS[] = {
+	"dl.dll", "wget", "notepad", nullptr
+};
+static const char* const BLOCKED_EXACT[] = {
+	"start", "start.bat", nullptr
+};
+
+struct PercentEncoding { const char* token; char value; };
+static const PercentEncoding PERCENT_ENCODINGS[] = {
+	{"%20", 0x20}, {"%26", 0x26}, {"%27", 0x27},
+	{"%28", 0x28}, {"%29", 0x29}, {"%2A", 0x2A},
+	{"%2B", 0x2B}, {"%2C", 0x2C}, {"%2D", 0x2D},
+	{"%5F", 0x5F},
+	{nullptr, 0}
+};
+
+static void unzipInPlace(char* text) {
+	const size_t len = strlen(text);
+	if (len < 4 || strcmp(text + len - 4, ".zip") != 0) return;
+
+	// Build a copy so we can extract the directory portion.
+	std::string path(text, len);
+	size_t lastSep = path.find_last_of("/\\");
+	std::string dir = (lastSep != std::string::npos) ? path.substr(0, lastSep) : ".";
+
+	char cmd[1024];
+	snprintf(cmd, sizeof(cmd), "unzip.dll -o \"%s\" -d\"%s\"", text, dir.c_str());
+	ossystem(cmd, nullptr, true, true);
+	mousebuttonbug(true);
+
+	text[len - 4] = '\0'; // Strip the ".zip" extension from the caller's buffer in-place.
+}
+
 bool checkfile(char* text, bool doexit) {
-	if (text == 0)
+	if (!text) return false;
+
+	// ---- Path traversal guard ----
+	if (strstr(text, "..")) {
+		if (doexit) exit(1);
 		return false;
-	if (strstr(text, ".."))
-		if (doexit)
-			exit(1);
-	if (strstr(text, "dl.dll"))
-		exit(1);
-	if (strstr(text, "wget"))
-		exit(1);
-	if (strstr(text, "notepad"))
-		exit(1);
-	if (!strcmp(text, "start"))
-		exit(1);
-	if (!strcmp(text, "start.bat"))
-		exit(1);
-	replaceall(text, "%20", 0x20, 0);
-	replaceall(text, "%26", 0x26, 0);
-	replaceall(text, "%27", 0x27, 0);
-	replaceall(text, "%27", 0x27, 0);
-	replaceall(text, "%28", 0x28, 0);
-	replaceall(text, "%29", 0x29, 0);
-	replaceall(text, "%2A", 0x2A, 0);
-	replaceall(text, "%2B", 0x2B, 0);
-	replaceall(text, "%2C", 0x2C, 0);
-	replaceall(text, "%2D", 0x2D, 0);
-	replaceall(text, "%5F", 0x5F, 0);
-	replaceall(text, "%2B", 0x2B, 0);
-	replaceall(text, "%2D", 0x2D, 0);
-	if (strstr(text, "bs2mod://") == text) {
-		text[0] = 'h';
-		text[1] = 't';
-		text[2] = 't';
-		text[3] = 'p';
-		text[4] = ':';
-		text[5] = '/';
-		text[6] = '/';
-		for (unsigned int t = 7; t < strlen(text) - 2; t++)
-			text[t] = text[t + 2];
-		text[strlen(text) - 2] = 0;
-		char* tmp;
-		tmp = new char[1024 + strlen(text)];
-		sprintf(tmp, "Would you like to run this mod?\n%s\nIt could contain viruses.", text);
-		if (!yesnobox(tmp, "Download and run mod?")) {
-			delete (tmp);
-			return false;
-		}
-		delete (tmp);
 	}
-	if (strstr(text, "http://") == text) {
-		char tmp[1024];
-		bool refresh = false;
-		if (text[strlen(text) - 1] == '!') {
-			text[strlen(text) - 1] = '\0';
-			refresh = true;
-		}
+
+	// ---- Blocked substrings ----
+	for (int i = 0; BLOCKED_SUBSTRINGS[i]; ++i)
+		if (strstr(text, BLOCKED_SUBSTRINGS[i]))
+			exit(1);
+
+	// ---- Blocked exact names ----
+	for (int i = 0; BLOCKED_EXACT[i]; ++i)
+		if (strcmp(text, BLOCKED_EXACT[i]) == 0)
+			exit(1);
+
+	// ---- Decode percent-encoded characters ----
+	for (int i = 0; PERCENT_ENCODINGS[i].token; ++i)
+	    replaceall(text, const_cast<char*>(PERCENT_ENCODINGS[i].token), PERCENT_ENCODINGS[i].value, 0);
+
+	// ---- Custom protocol: bs2mod:// → http:// ----
+	if (strncmp(text, "bs2mod://", 9) == 0) {
+		// Replace "bs2mod://" (9 chars) with "http://" (7 chars).
+		// Shift the rest of the string left by 2.
+		const size_t len = strlen(text);
+		memmove(text + 7, text + 9, len - 9 + 1);   // +1 for null terminator
+		memcpy(text, "http://", 7);
+
+		// Confirm with the user before proceeding.
+        std::string msg = std::string("Would you like to run this mod?\n")
+                        + text
+                        + "\nIt could contain viruses.";
+        std::vector<char> msgBuf(msg.begin(), msg.end());
+        msgBuf.push_back('\0');
+        if (!yesnobox(msgBuf.data(), "Download and run mod?"))  return false;
+	}
+
+	// ---- HTTP download ----
+	if (strncmp(text, "http://", 7) == 0) {
+		const size_t len = strlen(text);
+
+		// Trailing '!' means force-refresh even if already cached.
+		bool refresh = (len > 0 && text[len - 1] == '!');
+		if (refresh) text[len - 1] = '\0';
+
+		// Build the download command.
+		char dlCmd[1024];
 #ifdef COMPILER_WINDOWS
-		sprintf(tmp, "@dl.dll -x -P \"webdls\" \"%s\"", text);
+		snprintf(dlCmd, sizeof(dlCmd), "@dl.dll -x -P \"webdls\" \"%s\"", text);
 #else
-		sprintf(tmp, "wget -x -P \"webdls\" \"%s\"", text);
+		snprintf(dlCmd, sizeof(dlCmd), "wget -x -P \"webdls\" \"%s\"", text);
 #endif
-		text[0] = 'w';
-		text[1] = 'e';
-		text[2] = 'b';
-		text[3] = 'd';
-		text[4] = 'l';
-		text[5] = 's';
-		char* pos = 0;
-		while (pos = strstr(text, "?"))
-			*pos = '@';
-		if (strstr(text, "?"))
-			*(strstr(text, "?")) = '\0';
-		std::ifstream inp;
-		inp.open(checkfilename(text), std::ifstream::in);
+
+		// Rewrite the URL into the local path it will be saved to:
+		// "http://example.com/foo?bar" → "webdls/example.com/foo"
+		memmove(text + 6, text + 7, strlen(text + 7) + 1); // shift left 1 to fit "webdls"
+		memcpy(text, "webdls", 6);
+
+		// Strip query string.
+		char* q = strstr(text, "?");
+		if (q) *q = '\0';
+
+		// Download if not already cached (or refresh forced).
+		std::ifstream inp(checkfilename(text));
+		const bool cached = inp.good();
 		inp.close();
+
 #ifdef COMPILER_SYSTEM
-		if (inp.fail() || refresh) {
-			ossystem(tmp, 0, true, false);
+		if (!cached || refresh) {
+			ossystem(dlCmd, nullptr, true, false);
 			mousebuttonbug(true);
 		}
 #endif
+
 		replaceall(text, "%20", ' ');
+
 #ifdef COMPILER_SYSTEM
-		if (!strcmp(text + strlen(text) - 4, ".zip")) {
-			char tmp2[1024];
-			char* tmp = new char[strlen(text) + 1];
-			strcpy(tmp, text);
-			int p = 0;
-			for (unsigned int i = 0; i < strlen(tmp); i++)
-				if ((tmp[i] == '/') || (tmp[i] == '\\'))
-					p = i;
-			tmp[p] = 0;
-			sprintf(tmp2, "unzip.dll -o \"%s\" -d\"%s\"", text, tmp);
-			ossystem(tmp2, 0, true, true);
-			mousebuttonbug(true);
-			delete (tmp);
-			text[strlen(text) - 4] = 0;
-		}
+		unzipInPlace(text);
 #endif
 		return true;
-	} else if (strstr(text, ":") == text + 1)
-		if (doexit)
-			exit(1);
-	if (text[0] == '/')
-		if (doexit)
-			exit(0);
-	if (text[0] == '\\')
-		if (doexit)
-			exit(0);
-#ifdef COMPILER_SYSTEM
-	if (!strcmp(text + strlen(text) - 4, ".zip")) {
-		char tmp2[1024];
-		char* tmp = new char[strlen(text) + 1];
-		strcpy(tmp, text);
-		int p = 0;
-		for (unsigned int i = 0; i < strlen(tmp); i++)
-			if ((tmp[i] == '/') || (tmp[i] == '\\'))
-				p = i;
-		tmp[p] = 0;
-		sprintf(tmp2, "unzip.dll -o \"%s\" -d\"%s\"", text, tmp);
-		ossystem(tmp2, 0, true, true);
-		mousebuttonbug(true);
-		delete (tmp);
-		text[strlen(text) - 4] = 0;
 	}
+
+	// ---- Block absolute Windows drive paths (e.g. "C:...") ----
+	if (strlen(text) >= 2 && text[1] == ':') {
+		if (doexit) exit(1);
+		return false;
+	}
+
+	// ---- Block absolute Unix/UNC paths ----
+	if (text[0] == '/' || text[0] == '\\') {
+		if (doexit) exit(0);
+		return false;
+	}
+
+#ifdef COMPILER_SYSTEM
+	unzipInPlace(text);
 #endif
 	return true;
 }
@@ -1242,8 +1249,7 @@ Action* parseaction(Token* tokens, int owner) {
 				step = new Varint(tokens->getToken());
 				delete (dochar);
 				dochar = tokens->getToken();
-			} else
-				step = new Varint(1);
+			} else step = new Varint(1);
 			char* trigger = tokens->getToken();
 			Varint** param = getParameters(tokens);
 			Trigger* t = parseTrigger(trigger, owner);
@@ -1313,8 +1319,7 @@ Action* parseaction(Token* tokens, int owner) {
 				f = MESSAGE_ADDGROUP;
 			else if (!strcmp(function2, "SEND")) {
 				f = MESSAGE_SEND;
-				if (!message)
-					message = "";
+				if (!message) message = "";
 			} else if (!strcmp(function2, "SAVE")) {
 				f = MESSAGE_SAVE;
 				message = "";
@@ -1323,8 +1328,7 @@ Action* parseaction(Token* tokens, int owner) {
 				message = "";
 			} else if (!strcmp(function2, "EXEC")) {
 				f = MESSAGE_EXEC;
-				if (!message)
-					message = "";
+				if (!message) message = "";
 			} else if (!strcmp(function2, "SENDTEXT")) {
 				f = MESSAGE_SENDTEXT;
 				tmp = new Varint(tokens->getToken());
@@ -1636,8 +1640,7 @@ Action* parseaction(Token* tokens, int owner) {
 			delete (equals);
 		}
 	}
-	if (action)
-		action->owner = owner;
+	if (action) action->owner = owner;
 	return action;
 }
 

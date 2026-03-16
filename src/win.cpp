@@ -20,8 +20,8 @@ void osinit(char* filename) {
 	SetCurrentDirectoryA(path);
 	char* command = new char[strlen(filename) + 20];
 	sprintf(command, "\"%s\" \"%s\"", filename, "%1");
-	if (strcmp(filename + strlen(filename) - 4, ".exe"))
-		return;
+	if (strcmp(filename + strlen(filename) - 4, ".exe")) return;
+
 	HKEY hKey;
 	RegCreateKeyA(HKEY_CLASSES_ROOT, "bs2mod\\shell\\open\\command", &hKey);
 	RegSetValueExA(hKey, "", 0, REG_SZ, (BYTE*)command, strlen(command));
@@ -82,10 +82,8 @@ void ossystem(char* cmd, char* parameters, bool wait, bool hidden) {
 		t.lpVerb = "open";
 		t.lpFile = cmd;
 		t.lpParameters = parameters;
-		if (hidden)
-			t.nShow = SW_HIDE;
-		else
-			t.nShow = SW_SHOWNORMAL;
+		if (hidden) t.nShow = SW_HIDE;
+		else t.nShow = SW_SHOWNORMAL;
 
 		if (ShellExecuteExA(&t) && wait)
 			while (WaitForSingleObject(t.hProcess, INFINITE) != WAIT_OBJECT_0);
@@ -184,10 +182,8 @@ char* savedialog(char* filter, char* defaultname) {
 	ofn.lpstrDefExt = "";
 	if (GetSaveFileNameA(&ofn)) {
 		mousebuttonbug(true);
-		if (strlen(szFile))
-			return szFile;
-		else
-			return 0;
+		if (strlen(szFile)) return szFile;
+		else return 0;
 	}
 	mousebuttonbug(true);
 	return 0;

@@ -24,6 +24,8 @@ SDL_Surface* screen;
 unsigned int keydown[1024];
 unsigned int keylastexec[1024];
 
+char* TITLE_GAME = "BS2CE";
+
 void updatescreen() {
 	msectimer();
 	checknetwork();
@@ -71,8 +73,7 @@ int main(int argc, char* argv[]) {
 #endif
 		screen = SDL_SetVideoMode(SRCSIZE[0], SRCSIZE[1], 16, SDL_RESIZABLE | SDL_HWSURFACE | SDL_DOUBLEBUF);
 		mousebuttonbug(true);
-	} else
-		screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 16, 0, 0, 0, 0);
+	} else screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 16, 0, 0, 0, 0);
 
 	osinit(*argv);
 
@@ -128,7 +129,8 @@ int main(int argc, char* argv[]) {
 
 	setVar("BSVERSION", 1);
 	setVar("BSNIGHTLY", 1);
-	SDL_WM_SetCaption("Burning Sand 2+", "");
+	setVar("MODDED", 1);
+	SDL_WM_SetCaption(TITLE_GAME, "");
 	SDL_WM_SetIcon(SDL_LoadBMP(checkfilename("icon.bmp")), NULL);
 
 	int z = 1;
@@ -175,50 +177,49 @@ int main(int argc, char* argv[]) {
 	parsechar("KEYCODE 27 ESC\n", 0);
 	parsechar("KEYCODE 32 SPACE\n", 0);
 
-	print("Welcome to Burning Sand 2+", 0);
+	std::string welcome = "Welcome to ";
+	welcome += TITLE_GAME;
+	print(welcome.data(), 0);
 	consolenews = false;
 
 	SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
 
 	bool parsedefault = true;
-	if (argc > 1) {
-		bool configloaded = false;
-		for (int i = 1; i < argc; i++) {
-			if (argv[i][0] != '/') {
-				if ((strstr(argv[i], "bs2mod://") == argv[i]) && !configloaded) {
-					parsefile(defaultconfigfile, 0);
-					configloaded = true;
-				}
-				if ((strstr(argv[i], "bs2addon://") == argv[i])) {
-					argv[i][0] = 'h';
-					argv[i][1] = 't';
-					argv[i][2] = 't';
-					argv[i][3] = 'p';
-					argv[i][4] = ':';
-					argv[i][5] = '/';
-					argv[i][6] = '/';
-					for (unsigned int t = 7; t < strlen(argv[i]) - 4; t++)
-						argv[i][t] = argv[i][t + 4];
-					argv[i][strlen(argv[i]) - 4] = 0;
-					if (!isserver) {
-						int t = connect("localhost", 7777);
+	bool configloaded = false;
 
-						sendowner(argv[i], t, strlen(argv[i]));
-						disconnect(t);
-						exit(0);
-					} else if (!configloaded) {
-						parsefile(defaultconfigfile, 0);
-						configloaded = true;
-					}
-				}
-				checkfile(argv[i], false);
-				parsefile(argv[i], 0);
-				parsedefault = false;
+	for (int i = 1; i < argc; ++i) {
+		if (argv[i][0] == '/') continue;
+
+		const size_t argLen = strlen(argv[i]);
+
+		if (strncmp(argv[i], "bs2mod://", 9) == 0 && !configloaded) {
+			parsefile(defaultconfigfile, 0);
+			configloaded = true;
+		}
+
+		if (strncmp(argv[i], "bs2addon://", 11) == 0) {
+			memmove(argv[i] + 7, argv[i] + 11, argLen - 11 + 1); // +1 for null terminator
+			memcpy(argv[i], "http://", 7);
+
+			if (!isserver) {
+				int sock = connect("localhost", 7777);
+				sendowner(argv[i], sock, strlen(argv[i]));
+				disconnect(sock);
+				exit(0);
+			}
+
+			if (!configloaded) {
+				parsefile(defaultconfigfile, 0);
+				configloaded = true;
 			}
 		}
+
+		checkfile(argv[i], false);
+		parsefile(argv[i], 0);
+		parsedefault = false;
 	}
-	if (parsedefault)
-		parsefile(defaultconfigfile, 0);
+
+	if (parsedefault) parsefile(defaultconfigfile, 0);
 	bool done = false;
 
 	unsigned int second = SDL_GetTicks() / 1000;
@@ -244,8 +245,7 @@ int main(int argc, char* argv[]) {
 
 	lastfps->value = 0;
 
-	if (mp)
-		SDL_CreateThread(updatethread, 0);
+	if (mp) SDL_CreateThread(updatethread, 0);
 
 	Trigger* secondtimer = findTrigger("SECOND", 0);
 
@@ -266,9 +266,8 @@ int main(int argc, char* argv[]) {
 #endif
 		unsigned int delay = (int)SDL_GetTicks() - lastdrawtime;
 		lastdrawtime = SDL_GetTicks();
-		if (delay) {
-			steps += ((float)delay) * speed->value / 1000;
-		}
+		if (delay) steps += ((float)delay) * speed->value / 1000;
+
 		if ((steps < 0) && (1000 / minTickTime > speed->value))
 			SDL_Delay(1);
 		if ((fullscreen->value != lastfullscreen) || (fullscreenx->value != lastfullscreenx) || (fullscreeny->value != lastfullscreeny)) {
@@ -287,10 +286,8 @@ int main(int argc, char* argv[]) {
 			lastfullscreenx = fullscreenx->value;
 			lastfullscreeny = fullscreeny->value;
 			SDL_FreeSurface(screen);
-			if (lastfullscreen)
-				screen = SDL_SetVideoMode(lastfullscreenx, lastfullscreeny, 16, SDL_FULLSCREEN | SDL_RESIZABLE | SDL_HWSURFACE | SDL_DOUBLEBUF);
-			else
-				screen = SDL_SetVideoMode(483, 505, 16, SDL_RESIZABLE | SDL_HWSURFACE | SDL_DOUBLEBUF);
+			if (lastfullscreen) screen = SDL_SetVideoMode(lastfullscreenx, lastfullscreeny, 16, SDL_FULLSCREEN | SDL_RESIZABLE | SDL_HWSURFACE | SDL_DOUBLEBUF);
+			else screen = SDL_SetVideoMode(483, 505, 16, SDL_RESIZABLE | SDL_HWSURFACE | SDL_DOUBLEBUF);
 			autoresize(screen);
 			hideSubMenu();
 			redrawmenu(3);
@@ -298,8 +295,7 @@ int main(int argc, char* argv[]) {
 		if ((steps > 0) && speed->value) {
 			steps--;
 			precalc->exec();
-			if (vphysics->value)
-				calc();
+			if (vphysics->value) calc();
 			postcalc->exec();
 			pretimer->exec();
 			frametimer();
