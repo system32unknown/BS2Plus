@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <array>
 #include "SDL/SDL.h"
 #include "SDL/SDL_syswm.h"
 #include "SDL/SDL_net.h"
