@@ -44,132 +44,137 @@ void quickload(int slot) {
 }
 
 int save(SDL_Surface* screen, char* filename) {
-	Element* elements = getElement(0);
-	int elementsmaxnew = getelementsmax();
-	if ((strlen(filename) > 4) && ((!strcmp(filename + strlen(filename) - 4, ".bs2")) || (!strcmp(filename + strlen(filename) - 4, ".BS2")))) {
-		char tmp[512];
-		FILE* fp = fopen(checkfilename(filename), "wb");
-		if (!fp) return -1;
-		snprintf(tmp, sizeof(tmp), "RESIZE %i %i\n", screen->w - 2, screen->h - 2);
-		fputs(tmp, fp);
-		snprintf(tmp, sizeof(tmp), "DRAW 0 FILLEDRECT 0 0 %i %i\n", screen->w, screen->h);
-		fputs(tmp, fp);
-		for (int i = 2; i < elementsmaxnew; i++) {
-			if (elements[i].name) {
-				bool first = true;
-				for (int y = 0; y < screen->h; y++)
-					for (int x = 0; x < screen->w; x++)
-						if (*((Uint16*)screen->pixels + y * screen->pitch / 2 + x) == i) {
-							if (first) {
-								fputs("DRAW \"ELEMENT:", fp);
-								fputs(elements[i].name, fp);
-								fputs("\" POINTS 0 0 ", fp);
-								first = false;
-							}
-							snprintf(tmp, sizeof(tmp), "%i %i ", x, y);
-							fputs(tmp, fp);
-						}
-				if (!first) fputs("\n", fp);
-			}
-		}
-		fclose(fp);
-	}
-	if ((strlen(filename) > 4) && ((!strcmp(filename + strlen(filename) - 4, ".bmp")) || (!strcmp(filename + strlen(filename) - 4, ".BMP")))) {
-		SDL_Surface* p = SDL_CreateRGBSurface(SDL_SWSURFACE, screen->w, screen->h, 32, 0, 0, 0, 0);
-		if (!p)
-			return -1;
-		Uint32* color = new Uint32[elementsmaxnew];
-		for (int i = elementsmaxnew - 1; i >= 0; i--)
-			color[i] = SDL_MapRGB(p->format, elements[i].r, elements[i].g, elements[i].b);
-		for (int y = 0; y < screen->h; y++)
-			for (int x = 0; x < screen->w; x++)
-				*((Uint32*)p->pixels + y * p->pitch / 4 + x) = color[*((Uint16*)screen->pixels + y * screen->pitch / 2 + x)];
-		SDL_SaveBMP(p, checkfilename(filename));
+    Element* elements = getElement(0);
+    const int elementsmaxnew = getelementsmax();
+    const std::size_t flen = strlen(filename);
 
-		delete[] color;
-		SDL_FreeSurface(p);
-	}
+    auto endsWith = [&](const char* ext) {
+        const std::size_t elen = strlen(ext);
+        return (flen >= elen) && !strcmp(filename + flen - elen, ext);
+    };
 
-	if ((strlen(filename) > 4) && ((!strcmp(filename + strlen(filename) - 4, ".png")) || (!strcmp(filename + strlen(filename) - 4, ".PNG")))) {
+    if (endsWith(".bs2") || endsWith(".BS2")) {
+        char tmp[512];
+        FILE* fp = fopen(checkfilename(filename), "wb");
+        if (!fp) return -1;
+
+        snprintf(tmp, sizeof(tmp), "RESIZE %i %i\n", screen->w - 2, screen->h - 2);
+        fputs(tmp, fp);
+        snprintf(tmp, sizeof(tmp), "DRAW 0 FILLEDRECT 0 0 %i %i\n", screen->w, screen->h);
+        fputs(tmp, fp);
+
+        for (int i = 2; i < elementsmaxnew; i++) {
+            if (!elements[i].name) continue;
+            bool first = true;
+            for (int y = 0; y < screen->h; y++) {
+                for (int x = 0; x < screen->w; x++) {
+                    if (*((Uint16*)screen->pixels + y * screen->pitch / 2 + x) != i) continue;
+                    if (first) {
+                        fputs("DRAW \"ELEMENT:", fp);
+                        fputs(elements[i].name, fp);
+                        fputs("\" POINTS 0 0 ", fp);
+                        first = false;
+                    }
+                    snprintf(tmp, sizeof(tmp), "%i %i ", x, y);
+                    fputs(tmp, fp);
+                }
+            }
+            if (!first) fputs("\n", fp);
+        }
+        fclose(fp);
+    }
+
+    if (endsWith(".bmp") || endsWith(".BMP")) {
+        SDL_Surface* p = SDL_CreateRGBSurface(SDL_SWSURFACE, screen->w, screen->h, 32, 0, 0, 0, 0);
+        if (!p) return -1;
+
+        Uint32* color = new Uint32[elementsmaxnew];
+        for (int i = elementsmaxnew - 1; i >= 0; i--)
+            color[i] = SDL_MapRGB(p->format, elements[i].r, elements[i].g, elements[i].b);
+
+        for (int y = 0; y < screen->h; y++)
+            for (int x = 0; x < screen->w; x++)
+                *((Uint32*)p->pixels + y * p->pitch / 4 + x) =
+                    color[*((Uint16*)screen->pixels + y * screen->pitch / 2 + x)];
+
+        SDL_SaveBMP(p, checkfilename(filename));
+        delete[] color;
+        SDL_FreeSurface(p);
+    }
+
+    if (endsWith(".png") || endsWith(".PNG")) {
 #ifdef USE_PNG
-		FILE* fp = fopen(checkfilename(filename), "wb");
-		if (!fp) return -1;
+        FILE* fp = fopen(checkfilename(filename), "wb");
+        if (!fp) return -1;
 
-		png_structp png_ptr;
-		png_infop info_ptr;
-		png_bytep* row_pointers;
+        png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+        if (!png_ptr) {
+            fclose(fp);
+            return -1;
+        }
 
-		png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-		if (!png_ptr) {
-			fclose(fp);
-			return -1;
-		}
-		info_ptr = png_create_info_struct(png_ptr);
-		if (!info_ptr) {
-			png_destroy_write_struct(&png_ptr, NULL);
-			fclose(fp);
-			return -1;
-		}
+        png_infop info_ptr = png_create_info_struct(png_ptr);
+        if (!info_ptr) {
+            png_destroy_write_struct(&png_ptr, nullptr);
+            fclose(fp);
+            return -1;
+        }
 
-		if (setjmp(png_jmpbuf(png_ptr))) {
-			png_destroy_write_struct(&png_ptr, &info_ptr);
-			fclose(fp);
-			return -1;
-		}
+        if (setjmp(png_jmpbuf(png_ptr))) {
+            png_destroy_write_struct(&png_ptr, &info_ptr);
+            fclose(fp);
+            return -1;
+        }
 
-		row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * screen->h);
-		if (!row_pointers) {
-			png_destroy_write_struct(&png_ptr, &info_ptr);
-			fclose(fp);
-			return -1;
-		}
+        png_bytep* row_pointers = static_cast<png_bytep*>(malloc(sizeof(png_bytep) * screen->h));
+        if (!row_pointers) {
+            png_destroy_write_struct(&png_ptr, &info_ptr);
+            fclose(fp);
+            return -1;
+        }
+        for (int y = 0; y < screen->h; y++)
+            row_pointers[y] = nullptr;
 
-		for (int y = 0; y < screen->h; y++)
-			row_pointers[y] = NULL;
+        for (int y = 0; y < screen->h; y++) {
 
-		for (int y = 0; y < screen->h; y++) {
-			// Each pixel is 3 channels * 2 bytes = 6 bytes.
-			row_pointers[y] = (png_byte*)malloc(screen->w * 6);
-			if (!row_pointers[y]) {
-				for (int j = 0; j < y; j++)
-					free(row_pointers[j]);
-				free(row_pointers);
-				png_destroy_write_struct(&png_ptr, &info_ptr);
-				fclose(fp);
-				return -1;
-			}
-			for (int x = 0; x < screen->w; x++) {
-				Uint16 t = *((Uint16*)screen->pixels + y * screen->pitch / 2 + x);
-				row_pointers[y][x * 6 + 0] = elements[t].r;
-				row_pointers[y][x * 6 + 1] = t & 0xFF;
+            row_pointers[y] = static_cast<png_byte*>(malloc(screen->w * 6));
+            if (!row_pointers[y]) {
+                for (int j = 0; j < y; j++) free(row_pointers[j]);
+                free(row_pointers);
+                png_destroy_write_struct(&png_ptr, &info_ptr);
+                fclose(fp);
+                return -1;
+            }
+            for (int x = 0; x < screen->w; x++) {
+                const Uint16 t = *((Uint16*)screen->pixels + y * screen->pitch / 2 + x);
 
-				row_pointers[y][x * 6 + 2] = elements[t].g;
-				row_pointers[y][x * 6 + 3] = (t & 0xFF00) >> 8;
+                row_pointers[y][x * 6 + 0] = elements[t].r;
+                row_pointers[y][x * 6 + 1] = static_cast<png_byte>(t & 0xFF);
+                row_pointers[y][x * 6 + 2] = elements[t].g;
+                row_pointers[y][x * 6 + 3] = static_cast<png_byte>((t & 0xFF00) >> 8);
+                row_pointers[y][x * 6 + 4] = elements[t].b;
+                row_pointers[y][x * 6 + 5] = 0;
+            }
+        }
 
-				row_pointers[y][x * 6 + 4] = elements[t].b;
-				row_pointers[y][x * 6 + 5] = 0;
-			}
-		}
+        png_init_io(png_ptr, fp);
+        png_set_IHDR(png_ptr, info_ptr,
+            static_cast<png_uint_32>(screen->w),
+            static_cast<png_uint_32>(screen->h),
+            16, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+            PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_DEFAULT);
+        png_write_info(png_ptr, info_ptr);
+        png_write_image(png_ptr, row_pointers);
+        png_write_end(png_ptr, nullptr);
 
-		png_init_io(png_ptr, fp);
-
-		png_set_IHDR(png_ptr, info_ptr, screen->w, screen->h,
-			16, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
-			PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_DEFAULT);
-
-		png_write_info(png_ptr, info_ptr);
-		png_write_image(png_ptr, row_pointers);
-		png_write_end(png_ptr, NULL);
-
-		for (int y = 0; y < screen->h; y++)
-			free(row_pointers[y]);
-		free(row_pointers);
-
-		fclose(fp);
-		png_destroy_write_struct(&png_ptr, &info_ptr);
+        for (int y = 0; y < screen->h; y++) free(row_pointers[y]);
+        free(row_pointers);
+        fclose(fp);
+        png_destroy_write_struct(&png_ptr, &info_ptr);
 #endif
-	}
-	return 0;
+    }
+
+    return 0;
 }
 
 int load(char* filename) {
@@ -224,7 +229,7 @@ int load(char* filename) {
 		}
 		SDL_FreeSurface(p);
 	}
-	// FIX #16: Second comparison corrected from ".png" to ".PNG".
+
 	if ((strlen(filename) > 4) && ((!strcmp(filename + strlen(filename) - 4, ".png")) || (!strcmp(filename + strlen(filename) - 4, ".PNG")))) {
 #ifdef USE_PNG
 		char header[8];

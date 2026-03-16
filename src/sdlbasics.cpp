@@ -262,43 +262,41 @@ void SDL_CopyRect16(SDL_Surface* screen, int x, int y, int dx, int dy, int tox, 
 }
 
 void SDL_DrawText16(SDL_Surface* screen, void* f, char* t, int x, int y, Uint16 color, int* width, int* height, int align) {
-	if (t == 0) return;
-	if (t[0] == 0) return;
+    if (t == nullptr || t[0] == '\0') return;
+
 #ifdef COMPILER_SDL_TTF
-	static SDL_Color fontcolor = { 255, 255, 255, 255 };
-	SDL_Surface* destsurf = TTF_RenderText_Solid((TTF_Font*)f, t, fontcolor);
-	if (align == 1)
-		x = x - destsurf->w / 2;
-	int xx = 0;
-	int xx_to = destsurf->clip_rect.w;
-	int yy_start = 0;
-	int yy_to = destsurf->clip_rect.h;
-	if (xx + x < 0)
-		xx = -x;
-	if (xx_to + x > screen->w)
-		xx_to = screen->w - x;
-	int dy = destsurf->clip_rect.h - y + TTF_FontDescent((TTF_Font*)f);
-	if (yy_start - dy < 0)
-		yy_start = dy;
-	if (yy_to - dy > screen->h)
-		yy_to = screen->h + dy;
-	int end = destsurf->clip_rect.h;
-	if (end - dy > screen->h)
-		end = screen->h + dy;
-	int pitch = destsurf->pitch;
-	for (; xx < xx_to; xx++) {
-		int yy = yy_start;
-		Uint8* tmp = (Uint8*)destsurf->pixels + xx;
-		for (; yy < end; yy++)
-			if (*(tmp + yy * pitch)) {
-				*((Uint16*)screen->pixels + (yy - dy) * screen->pitch / 2 + x + xx) = color;
-			}
-	}
-	if (height)
-		*height = destsurf->h;
-	if (width)
-		*width = destsurf->w;
-	SDL_FreeSurface(destsurf);
+    TTF_Font* font = reinterpret_cast<TTF_Font*>(f);
+
+    static const SDL_Color fontcolor = { 255, 255, 255, 255 };
+    SDL_Surface* destsurf = TTF_RenderText_Solid(font, t, fontcolor);
+    if (!destsurf) return;
+
+    if (align == 1) x -= destsurf->w / 2;
+
+    int xx = (x < 0) ? -x : 0;
+    int xx_to  = static_cast<int>(destsurf->clip_rect.w);
+    if (xx_to + x > screen->w) xx_to = screen->w - x;
+
+    const int dy = destsurf->clip_rect.h - y + TTF_FontDescent(font);
+
+	const int yy_start = std::max(0, dy);
+	const int yy_end = std::min(static_cast<int>(destsurf->clip_rect.h), screen->h + dy);
+
+    const int pitch = destsurf->pitch;
+
+    for (int xx_cur = xx; xx_cur < xx_to; xx_cur++) {
+        const Uint8* col_base = static_cast<const Uint8*>(destsurf->pixels) + xx_cur;
+        for (int yy = yy_start; yy < yy_end; yy++) {
+            if (*(col_base + yy * pitch)) {
+                *((Uint16*)screen->pixels + (yy - dy) * screen->pitch / 2 + x + xx_cur) = color;
+            }
+        }
+    }
+
+    if (height) *height = destsurf->h;
+    if (width) *width  = destsurf->w;
+
+    SDL_FreeSurface(destsurf);
 #endif
 }
 

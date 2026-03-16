@@ -106,8 +106,7 @@ void resize(int w, int h) {
 	outSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, w + 2, h + 2, 16, 0, 0, 0, 0);
 
 	Uint16* p = (Uint16*)outSurface->pixels, * end = p + (sandSurface->pitch / 2 * (h - 1) + w - 1);
-	for (; p < end; p++)
-		*p = 0;
+	for (; p < end; p++) *p = 0;
 
 	height = sandSurface->h - 2;
 	width = sandSurface->w;
@@ -584,37 +583,37 @@ void calc() {
 	SEEDRAND(seed->value++);
 	Uint16* o;
 	static int usedcounter = 0;
-	static int oldborder;
-	static int oldreverse;
+	static int oldborder = 0;
+	static int oldreverse = 0;
 
-	static Uint16* dont = 0;
+	static Uint16* dont = nullptr;
 	static int oldwidth = 0;
-	int s = width * 2 + 10;
+
+	const int s = width * 2 + 10;
 	if (oldwidth != width) {
-		delete (dont);
+		delete[] dont;
 		dont = new Uint16[s];
 	}
 	for (int i3 = 0; i3 < s; i3++)
 		dont[i3] = 10000;
 	oldwidth = width;
+
 	int dontp;
-	static Var* vnextInteraction = (Var*)setVar("NEXTINTERACTION", 0);
+	static Var* vnextInteraction = reinterpret_cast<Var*>(setVar("NEXTINTERACTION", 0));
 	vnextInteraction->value = 0;
+
 	if (usedcounter++ > 1000) {
 		recalcused();
 		usedcounter = 0;
 	}
-	if (rev->value == 0)
-		reverse = 1;
-	if (rev->value == 1)
-		reverse = -1;
-	if (oldreverse != reverse)
-		recalc = 3;
+
+	if (rev->value == 0) reverse = 1;
+	if (rev->value == 1) reverse = -1;
+	if (oldreverse != reverse) recalc = 3;
 	oldreverse = reverse;
 
 	if ((oldinteractions != varinteractions->value) || (olddeath != vardeath->value) || (oldgravity != vargravity->value)) {
-		if (recalc < 3)
-			recalc = 3;
+		if (recalc < 3) recalc = 3;
 		oldinteractions = varinteractions->value;
 		olddeath = vardeath->value;
 		oldgravity = vargravity->value;
@@ -622,12 +621,12 @@ void calc() {
 
 	if (recalc < 2)
 		for (int i = 0; i < sandelements; i++)
-			if (oldused[i] != used[i])
-				recalc = 2;
+			if (oldused[i] != used[i]) recalc = 2;
 	for (int i2 = 0; i2 < sandelements; i2++)
 		oldused[i2] = used[i2];
 	if (recalc)
 		precalc(recalc);
+
 	static int y, start;
 	static int r, yr, w;
 	static Uint16* end;
@@ -651,21 +650,15 @@ void calc() {
 	static int windright, windleft;
 	windright = 32768 + varwind->value * 32768 / 1000;
 	windleft = 32768 - varwind->value * 32768 / 1000;
-	if (windleft <= 0)
-		windleft = 1;
-	if (windright <= 0)
-		windright = 1;
+	if (windleft <= 0) windleft = 1;
+	if (windright <= 0) windright = 1;
 
-	if (reverse > 0)
-		y = height - 1;
-	else
-		y = 0;
+	y = (reverse > 0) ? height - 1 : 0;
+
 	while (((reverse > 0) && (y >= 0)) || ((reverse < 0) && (y < height))) {
 		static bool nospray;
-		if ((y == height - 1) || (y == 0))
-			nospray = true;
-		else
-			nospray = false;
+		nospray = (y == height - 1) || (y == 0);
+
 		if ((random = RANDOMNUMBER) % 2) {
 			r = 1;
 			yr = ypitch;
@@ -675,160 +668,146 @@ void calc() {
 		}
 		ybuf = bufp + ypitch * y;
 
-		if (rl)
-			end = ybuf;
-		else
-			end = (ybuf + width) - 1;
+		end = rl ? ybuf : (ybuf + width) - 1;
 		*end = 1;
 
-		o = (Uint16*)(ybuf + start);
+		o = reinterpret_cast<Uint16*>(ybuf + start);  // FIX: C-style cast -> reinterpret_cast
 		dontp = dont + width + 5 - o;
+
 		do {
-			if ((*(eat + (t = *o))) && (*(*(doeseatelement + t) + (*(o - r) % DOESEATELEMENTSMAX)) || *(*(doeseatelement + t) + (*(o + r) % DOESEATELEMENTSMAX)) || *(*(doeseatelement + t) + (*(o + yr) % DOESEATELEMENTSMAX)) || *(*(doeseatelement + t) + (*(o - yr) % DOESEATELEMENTSMAX))) && (*(o + dontp) != y)) {
+			if ((*(eat + (t = *o))) &&
+				(*(*(doeseatelement + t) + (*(o - r) % DOESEATELEMENTSMAX)) ||
+					*(*(doeseatelement + t) + (*(o + r) % DOESEATELEMENTSMAX)) ||
+					*(*(doeseatelement + t) + (*(o + yr) % DOESEATELEMENTSMAX)) ||
+					*(*(doeseatelement + t) + (*(o - yr) % DOESEATELEMENTSMAX))) &&
+				(*(o + dontp) != y)) {
+
 				eatcounter = 0;
 				do {
 					if (*(*(eatelement + t) + eatcounter) != 1) {
-						if (tmp2 = ((tmp = *(*(eatelement + t) + eatcounter)) == *(o - 1)) + (tmp == *(o + 1)) + ((tmp == *(o + yr)) && !nospray) + (tmp == *(o - yr))) {
-#define INTERACTION(x, dx, dy)                                                                                         \
-	if ((tmp == *(x)) && !(tmp2--))                                                                                    \
-	{                                                                                                                  \
-		if (*(*(eattrigger + t) + eatcounter))                                                                         \
-		{                                                                                                              \
-			*(used + (*(x) = *(*(eattoother + t) + eatcounter))) = true;                                               \
-			*(used + (*o = *(*(eattoself + t) + eatcounter))) = true;                                                  \
-			*(o + doutSurface) = *(color + *o);                                                                        \
-			*((x) + doutSurface) = *(color + *(x));                                                                    \
-			t = 1;                                                                                                     \
-			goto next;                                                                                                 \
-		}                                                                                                              \
-		else                                                                                                           \
-		{                                                                                                              \
-			interactionTrigger((void *)eattoother[t][eatcounter], t, tmp, o - ybuf, y + 1, o - ybuf + dx, y + dy + 1); \
-			*end = 1;                                                                                                  \
-			if (vnextInteraction->value)                                                                               \
-				vnextInteraction->value = 0;                                                                           \
-			else                                                                                                       \
-			{                                                                                                          \
-				if (*(nobias + t))                                                                                     \
-				{                                                                                                      \
-					if (rl)                                                                                            \
-					{                                                                                                  \
-						if (*(o - 1) != 1)                                                                             \
-							o--;                                                                                       \
-					}                                                                                                  \
-					else                                                                                               \
-					{                                                                                                  \
-						if (*(o + 1) != 1)                                                                             \
-							o++;                                                                                       \
-					}                                                                                                  \
-				}                                                                                                      \
-				goto next;                                                                                             \
-			}                                                                                                          \
-		}                                                                                                              \
-	}
+						if ((tmp2 = ((tmp = *(*(eatelement + t) + eatcounter)) == *(o - 1))
+							+ (tmp == *(o + 1))
+							+ ((tmp == *(o + yr)) && !nospray)
+							+ (tmp == *(o - yr)))) {
+#define INTERACTION(x, dx, dy)                                                                          \
+    if ((tmp == *(x)) && !(tmp2--)) {                                                                   \
+        if (*(*(eattrigger + t) + eatcounter)) {                                                        \
+            *(used + (*(x) = *(*(eattoother + t) + eatcounter))) = true;                                \
+            *(used + (*o   = *(*(eattoself + t) + eatcounter))) = true;                                \
+            *(o + doutSurface) = *(color + *o);                                                   \
+            *((x) + doutSurface)= *(color + *(x));                                                 \
+            t = 1;                                                                                      \
+            goto next;                                                                                  \
+        } else {                                                                                        \
+            interactionTrigger(reinterpret_cast<void*>(eattoother[t][eatcounter]), t, tmp, o - ybuf, y + 1, o - ybuf + dx, y + dy + 1); \
+            *end = 1;                                                                                   \
+            if (vnextInteraction->value)                                                                \
+                vnextInteraction->value = 0;                                                            \
+            else {                                                                                      \
+                if (*(nobias + t)) {                                                                    \
+                    if (rl) { if (*(o - 1) != 1) o--; }                                                \
+                    else    { if (*(o + 1) != 1) o++; }                                                \
+                }                                                                                       \
+                goto next;                                                                              \
+            }                                                                                           \
+        }                                                                                               \
+    }
+
 							if (*(nobias + t)) {
-								if ((RANDOMNUMBER < eatspeed[t][eatcounter])) {
+								if (RANDOMNUMBER < eatspeed[t][eatcounter]) {
 									*(o + dontp) = y - reverse;
 									tmp2 = RANDOMNUMBER % tmp2;
-									INTERACTION(o + yr, 0, yr / abs(yr))
-										INTERACTION(o - yr, 0, -yr / abs(yr))
-										INTERACTION(o - r, -r / abs(r), 0)
-										INTERACTION(o + r, r / abs(r), 0)
+									INTERACTION(o + yr, 0, yr / std::abs(yr))
+										INTERACTION(o - yr, 0, -yr / std::abs(yr))
+										INTERACTION(o - r, -r / std::abs(r), 0)
+										INTERACTION(o + r, r / std::abs(r), 0)
 								}
 							} else {
 								tmp2 = 0;
 								if (RANDOMNUMBER < eatspeed[t][eatcounter]) {
-									INTERACTION(o - r, -r / abs(r), 0)
+									INTERACTION(o - r, -r / std::abs(r), 0)
 										tmp2 = 0;
 								}
 								if (RANDOMNUMBER < eatspeed[t][eatcounter]) {
-									INTERACTION(o + r, r / abs(r), 0)
+									INTERACTION(o + r, r / std::abs(r), 0)
 										tmp2 = 0;
 								}
 								if (RANDOMNUMBER < eatspeed[t][eatcounter]) {
-									INTERACTION(o + yr, 0, yr / abs(yr))
+									INTERACTION(o + yr, 0, yr / std::abs(yr))
 										tmp2 = 0;
 								}
 								if (RANDOMNUMBER < eatspeed[t][eatcounter]) {
-									INTERACTION(o - yr, 0, -yr / abs(yr))
+									INTERACTION(o - yr, 0, -yr / std::abs(yr))
 								}
 							}
 						}
 					} else {
-#define INTERACTION_ALL(x, dx, dy)                                                                                      \
-	if ((t != *(x)) && (eatnot[t][eatcounter] != *(x)) && (1 != *(x)) && !(tmp2--))                                     \
-	{                                                                                                                   \
-		if (eattrigger[t][eatcounter])                                                                                  \
-		{                                                                                                               \
-			if (eattoother[t][eatcounter] != 1)                                                                         \
-				used[*(x) = eattoother[t][eatcounter]] = true;                                                          \
-			if (eattoself[t][eatcounter] != 1)                                                                          \
-				used[ *o = eattoself[t][eatcounter]] = true;                                                            \
-			else                                                                                                        \
-				*o = *(x);                                                                                              \
-			*(o + doutSurface) = *(color + *o);                                                                         \
-			*((x) + doutSurface) = *(color + *(x));                                                                     \
-			t = 1;                                                                                                      \
-			goto next;                                                                                                  \
-		}                                                                                                               \
-		else                                                                                                            \
-		{                                                                                                               \
-			interactionTrigger((void *)eattoother[t][eatcounter], t, *(x), o - ybuf, y + 1, o - ybuf + dx, y + dy + 1); \
-			*end = 1;                                                                                                   \
-			if (vnextInteraction->value)                                                                                \
-				vnextInteraction->value = 0;                                                                            \
-			else                                                                                                        \
-			{                                                                                                           \
-				if (*(nobias + t))                                                                                      \
-				{                                                                                                       \
-					if (rl) {																							\
-						if (*(o - 1) != 1)                                                                              \
-							o--;                                                                                        \
-					} else {																							\
-						if (*(o + 1) != 1)                                                                              \
-							o++;                                                                                        \
-					}                                                                                                   \
-				}                                                                                                       \
-				goto next;                                                                                              \
-			}                                                                                                           \
-		}                                                                                                               \
-	}
+#define INTERACTION_ALL(x, dx, dy)                                                                       \
+    if ((t != *(x)) && (eatnot[t][eatcounter] != *(x)) && (1 != *(x)) && !(tmp2--)) {                   \
+        if (eattrigger[t][eatcounter]) {                                                                 \
+            if (eattoother[t][eatcounter] != 1)                                                          \
+                used[*(x) = eattoother[t][eatcounter]] = true;                                           \
+            if (eattoself[t][eatcounter] != 1)                                                           \
+                used[*o = eattoself[t][eatcounter]]  = true;                                           \
+            else                                                                                         \
+                *o = *(x);                                                                               \
+            *(o + doutSurface) = *(color + *o);                                                        \
+            *((x) + doutSurface) = *(color + *(x));                                                      \
+            t = 1;                                                                                       \
+            goto next;                                                                                   \
+        } else {                                                                                         \
+            interactionTrigger(reinterpret_cast<void*>(eattoother[t][eatcounter]),                       \
+                               t, *(x), o - ybuf, y + 1, o - ybuf + dx, y + dy + 1);                   \
+            *end = 1;                                                                                    \
+            if (vnextInteraction->value)                                                                 \
+                vnextInteraction->value = 0;                                                             \
+            else {                                                                                       \
+                if (*(nobias + t)) {                                                                     \
+                    if (rl) { if (*(o - 1) != 1) o--; }                                                 \
+                    else    { if (*(o + 1) != 1) o++; }                                                 \
+                }                                                                                        \
+                goto next;                                                                               \
+            }                                                                                            \
+        }                                                                                               \
+    }
+
 						if (*(nobias + t)) {
-							if ((RANDOMNUMBER < eatspeed[t][eatcounter])) {
-								tmp2 = ((t != *(o - r)) && (eatnot[t][eatcounter] != *(o - r)) && (1 != *(o - r))) +
-									((t != *(o + r)) && (eatnot[t][eatcounter] != *(o + r)) && (1 != *(o + r))) +
-									((t != *(o - yr)) && (eatnot[t][eatcounter] != *(o - yr)) && (1 != *(o - yr))) +
-									((t != *(o + yr)) && (eatnot[t][eatcounter] != *(o + yr)) && (1 != *(o + yr)) && !nospray);
+							if (RANDOMNUMBER < eatspeed[t][eatcounter]) {
+								tmp2 = ((t != *(o - r)) && (eatnot[t][eatcounter] != *(o - r)) && (1 != *(o - r)))
+									+ ((t != *(o + r)) && (eatnot[t][eatcounter] != *(o + r)) && (1 != *(o + r)))
+									+ ((t != *(o - yr)) && (eatnot[t][eatcounter] != *(o - yr)) && (1 != *(o - yr)))
+									+ ((t != *(o + yr)) && (eatnot[t][eatcounter] != *(o + yr)) && (1 != *(o + yr)) && !nospray);
 								if (tmp2) {
 									*(o + dontp) = y - reverse;
 									tmp2 = RANDOMNUMBER % tmp2;
-									INTERACTION_ALL(o - r, -r / abs(r), 0)
-										INTERACTION_ALL(o + r, r / abs(r), 0)
-										INTERACTION_ALL(o + yr, 0, yr / abs(yr))
-										INTERACTION_ALL(o - yr, 0, -yr / abs(yr))
+									INTERACTION_ALL(o - r, -r / std::abs(r), 0)
+										INTERACTION_ALL(o + r, r / std::abs(r), 0)
+										INTERACTION_ALL(o + yr, 0, yr / std::abs(yr))
+										INTERACTION_ALL(o - yr, 0, -yr / std::abs(yr))
 								}
 							}
 						} else {
 							tmp2 = 0;
 							if (RANDOMNUMBER < eatspeed[t][eatcounter]) {
-								INTERACTION_ALL(o - r, -r / abs(r), 0)
+								INTERACTION_ALL(o - r, -r / std::abs(r), 0)
 									tmp2 = 0;
 							}
 							if (RANDOMNUMBER < eatspeed[t][eatcounter]) {
-								INTERACTION_ALL(o + r, r / abs(r), 0)
+								INTERACTION_ALL(o + r, r / std::abs(r), 0)
 									tmp2 = 0;
 							}
 							if (RANDOMNUMBER < eatspeed[t][eatcounter]) {
-								INTERACTION_ALL(o + yr, 0, yr / abs(yr))
+								INTERACTION_ALL(o + yr, 0, yr / std::abs(yr))
 									tmp2 = 0;
 							}
 							if (RANDOMNUMBER < eatspeed[t][eatcounter]) {
-								INTERACTION_ALL(o - yr, 0, -yr / abs(yr))
+								INTERACTION_ALL(o - yr, 0, -yr / std::abs(yr))
 							}
 						}
 					}
 				} while (eatspeed[t][++eatcounter]);
 			}
+
 			if (*(dierate + t) && ((random = (random * 3723 + 6) % 32768) <= *(dierate + t))) {
 				diecounter = 0;
 				do {
@@ -844,8 +823,8 @@ void calc() {
 							((random = (random * 7) % 32768) < w) && (*(o + dontp) != y)) ||
 						((*(weight + t) > *(weight + *op)) && (*(o + dontp) != y) && ((random = (random * 7) % 32768) < ((*(weight + t) - *(weight + *op)) / (*(viscousity + t) + *(viscousity + *op))))))) {
 					if (*(nobias + t)) *(o + dontp) = y - reverse;
-					*(o + doutSurface) = *(color + (*(o) = *(op)));
-					*(op + doutSurface) = *(color + (*(op) = t));
+					*(o + doutSurface) = *(color + (*o = *op));
+					*(op + doutSurface) = *(color + (*op = t));
 				} else if (((*(o + 1) != t) || (*(o - 1) != t)) && ((random++) % *(side + t))) {
 					i = 1;
 					do {
@@ -853,43 +832,32 @@ void calc() {
 							goright = false;
 						} else if (w > *(aweight + *(op + i))) {
 							if (w > *(aweight + *(op - i))) {
-								if (random % 2) {
-									goright = false;
-								} else {
-									goleft = false;
-									break;
-								}
+								if (random % 2) goright = false;
+								else { goleft = false; break; }
 							} else {
-								goleft = false;
-								break;
+								goleft = false; break;
 							}
 						}
 						if (w <= *(aweight + *(o - i))) {
 							goleft = false;
 						} else if (w > *(aweight + *(op - i))) {
 							if (w > *(aweight + *(op + i))) {
-								if (random % 2) {
-									goright = false;
-								} else {
-									goleft = false;
-									break;
-								}
+								if (random % 2) goright = false;
+								else { goleft = false; break; }
 							} else {
-								goright = false;
-								break;
+								goright = false; break;
 							}
 						}
 					} while (goleft && goright && i++);
+
 					if (goleft || goright) {
 						if (!goright && (random < windright)) {
-							if (i > 2)
-								i = 2;
-							*(o + doutSurface) = *(color + (*(o) = *(o - i)));
+							if (i > 2) i = 2;
+							*(o + doutSurface) = *(color + (*o = *(o - i)));
 							*(o + doutSurface - i) = *(color + (*(o - i) = t));
 						} else if (!goleft && (random < windleft)) {
-							if (i > 2)
-								i = 2;
-							*(o + doutSurface) = *(color + (*(o) = *(o + i)));
+							if (i > 2) i = 2;
+							*(o + doutSurface) = *(color + (*o = *(o + i)));
 							*(o + doutSurface + i) = *(color + (*(o + i) = t));
 						}
 					} else {
@@ -897,68 +865,72 @@ void calc() {
 					}
 				}
 			}
+
 		next:
 			if (rl) {
 #ifdef COMPILER_GCC
 				do
-					while (!(*(long*)(o - 2)))
-						o -= 2;
-				while (*(skip + *(--o)) && *(skip + *(--o)) && *(skip + *(--o)) && *(skip + *(--o)));
+					while (!(*(long*)(o - 2))) o -= 2;
+				while (*(skip + *(--o)) && *(skip + *(--o)) &&
+					*(skip + *(--o)) && *(skip + *(--o)));
 #else
 				while (!--o);
-				while (*(skip + *(o))) o--;
+				while (*(skip + *o)) o--;
 #endif
 			} else {
 #ifdef COMPILER_GCC
 				do
-					while (!(*(long*)(o + 1)))
-						o += 2;
-				while (*(skip + *(++o)) && *(skip + *(++o)) && *(skip + *(++o)) && *(skip + *(++o)));
+					while (!(*(long*)(o + 1))) o += 2;
+				while (*(skip + *(++o)) && *(skip + *(++o)) &&
+					*(skip + *(++o)) && *(skip + *(++o)));
 #else
 				while (!++o);
-				while (*(skip + *(o))) o++;
+				while (*(skip + *o)) o++;
 #endif
 			}
 		} while (o != end);
 
 		if (reverse > 0) --y;
-		else ++y;
+		else             ++y;
 	}
 
-	o = (Uint16*)(bufp - width);
-	op = (Uint16*)(bufp);
-	int delta = (height * ypitch + ypitch);
+	o = reinterpret_cast<Uint16*>(bufp - width);
+	op = reinterpret_cast<Uint16*>(bufp);
+	const int delta = height * ypitch + ypitch;
 
 	t = varborder->value;
 	if (t == 1) {
 		while (o < op) {
-			*(o) = 1;
+			*o = 1;
 			*(o++ + delta) = 1;
 		}
 	} else if (t == 0) {
 		while (o < op) {
-			*(o + doutSurface) = *(o) = 0;
+			*(o + doutSurface) = *o = 0;
 			*(o + delta + doutSurface) = *(o + delta) = 0;
 			o++;
 		}
 	} else if (t == 2) {
-		if (oldborder != t)
-			while (o < op) {
-				*(o) = 0;
-				*(o++ + delta) = 0;
+		if (oldborder != t) {
+			Uint16* o2 = reinterpret_cast<Uint16*>(bufp - width);
+			while (o2 < op) {
+				*o2 = 0;
+				*(o2++ + delta) = 0;
 			}
+		}
+
+		o = reinterpret_cast<Uint16*>(bufp - width);
 		while (o < op) {
 			if (!*(o + ypitch)) {
 				*(o + ypitch + doutSurface) = *(color + (*(o + ypitch) = *(o + delta)));
 				*(o + delta + doutSurface) = *(o + delta) = 0;
 			}
 			if (!*(o + delta - ypitch)) {
-				*(o + delta - ypitch + doutSurface) = *(color + (*(o + delta - ypitch) = *(o)));
-				*(o + doutSurface) = *(o) = 0;
+				*(o + delta - ypitch + doutSurface) = *(color + (*(o + delta - ypitch) = *o));
+				*(o + doutSurface) = *o = 0;
 			}
 			o++;
 		}
-		o = (Uint16*)(bufp - width);
 	}
 	oldborder = t;
 }

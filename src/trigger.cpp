@@ -46,34 +46,14 @@ char* strings[MAX_STRINGS];
 char* messageReplace(char* text) {
 	if (!strcmp(text, "MESSAGE")) {
 		return messagestring;
-	} else
-		return text;
+	} else return text;
 }
 
 void deleteparams(Varint** v) {
-	if (v == NULL)
-		return;
-	if (v[0])
-		delete (v[0]);
-	if (v[1])
-		delete (v[1]);
-	if (v[2])
-		delete (v[2]);
-	if (v[3])
-		delete (v[3]);
-	if (v[4])
-		delete (v[4]);
-	if (v[5])
-		delete (v[5]);
-	if (v[6])
-		delete (v[6]);
-	if (v[7])
-		delete (v[7]);
-	if (v[8])
-		delete (v[8]);
-	if (v[9])
-		delete (v[9]);
-	delete (v);
+    if (v == nullptr) return;
+    for (int i = 0; i < 10; i++)
+        delete v[i];
+    delete[] v;
 }
 
 void Action::exec() {
@@ -132,8 +112,7 @@ void addAction(char* trigger, Action* action, int owner) {
 
 int Trigger::exec() {
 	execcount++;
-	if (!actioncount)
-		return 0;
+	if (!actioncount) return 0;
 	static Var* debugtrigger = (Var*)setVar("DEBUGTRIGGER", 0);
 	static Var* debugactions = (Var*)setVar("DEBUGACTION", 0);
 	setreturn = false;
@@ -183,8 +162,7 @@ int Trigger::exec() {
 			delete (t);
 		}
 		(*it)->exec();
-		if (setreturn)
-			return globalreturn;
+		if (setreturn) return globalreturn;
 		if (actions.size() == 0) {
 			rec--;
 			return 0;
@@ -228,8 +206,7 @@ void ActionRestart::exec() {
 #ifdef COMPILER_SYSTEM
 	if (parameter) {
 		ossystem("BS2Plus.exe", parameter);
-	} else
-		ossystem("BS2Plus.exe", "");
+	} else ossystem("BS2Plus.exe", "");
 #endif
 	if (threadrunning) {
 		threadrunning = false;
@@ -545,16 +522,13 @@ void ActionFor::exec() {
 				removeparams();
 		} else
 			for (v->value = fromvalue->val(); v->value >= end; (v->value) -= s) {
-				if (params)
-					addparams(calcparams(params));
+				if (params) addparams(calcparams(params));
 				trigger->exec();
-				if (params)
-					removeparams();
+				if (params) removeparams();
 			}
 }
 
 char* ActionFor::toString() {
-
 	char* tmp = new char[1024 + strlen(value) + strlen(fromvalue->text) + strlen(tovalue->text) + strlen(trigger->name)];
 	if (function == FOR_TO)
 		sprintf(tmp, "FOR \"%s\" FROM %s TO %s DO \"%s\"", value, fromvalue->text, tovalue->text, trigger->name);

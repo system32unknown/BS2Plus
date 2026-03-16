@@ -310,84 +310,96 @@ int parseenc(char* data, int owner, char* filename) {
 }
 
 int parsefile(char* filename, int owner) {
-	if ((strlen(filename) > 4) && ((!strcmp(filename + strlen(filename) - 4, ".png")) || (!strcmp(filename + strlen(filename) - 4, ".PNG"))) ||
-		((strlen(filename) > 4) && ((!strcmp(filename + strlen(filename) - 4, ".bmp")) || (!strcmp(filename + strlen(filename) - 4, ".BMP"))))) {
-		load(filename);
-		return 0;
-	}
-	long size = 0;
-	char* data = NULL;
-	std::ifstream file;
-	file.open(checkfilename(filename), std::ios::in | std::ios::ate | std::ios::binary);
-	if (!file) {
-		char tmp[10000];
-		sprintf(tmp, "Error opening file \"%s\"", filename);
-		error(tmp, owner);
-		return 0;
-	}
-	size = file.tellg();
-	file.seekg(0, std::ios::beg);
-	data = new char[size + 2];
-	file.read(data, size);
-	data[size] = 0;
-	file.close();
-	if (data[0] == '<') {
-		if (strstr(data, "<bs2>") && strstr(data, "<bs2>")) {
-			std::ofstream savefile;
-			savefile.open(checkfilename("xml2bs2.xml"), std::ios::out | std::ios::ate | std::ios::binary);
-			savefile.write(data, strlen(data));
-			savefile.close();
-			delete (data);
-			ossystem("Wscript", "xml2bs2.js");
-			mousebuttonbug(true);
-			return parsefile("xml2bs2.bs2", owner);
-		} else {
-			char* start = data, * end;
-			while (((start = strstr(start, "<pre")) && (start = strstr(start, ">") + 1) && (end = strstr(start, "</pre>")))) {
-				char t = *end;
-				end = strstr(start, "</pre>");
-				if (end) {
-					*end = 0;
-					replacehtmlstrings(start);
-					parsechar(start, owner, filename);
-					*end = t;
-				}
-			}
-			start = data;
-			while (((start = strstr(start, "<code")) && (start = strstr(start, ">") + 1) && (end = strstr(start, "</code>")))) {
-				char t = *end;
-				end = strstr(start, "</code>");
-				if (end) {
-					*end = 0;
-					replacehtmlstrings(start);
-					parsechar(start, owner, filename);
-					*end = t;
-				}
-			}
-			start = data;
-			while (((start = strstr(start, "<td class=\"code\"")) && (start = strstr(start, ">") + 1) && (end = strstr(start, "</td>")))) {
-				replacehtmlstrings(start);
-				end = strstr(start, "</td>");
-				char t = *end;
-				*end = 0;
-				parsechar(start, owner, filename);
-				*end = t;
-			}
-		}
-	} else {
-		if ((strlen(filename) > 3) && ((!strcmp(filename + strlen(filename) - 3, ".bf")) || (!strcmp(filename + strlen(filename) - 3, ".BF")))) {
-			secretcode++;
-			char* bf = bf_exec(data);
-			parsechar(bf, owner, filename);
-			delete bf;
-			secretcode--;
-		} else if ((strlen(filename) > 5) && ((!strcmp(filename + strlen(filename) - 5, ".bs2e")) || (!strcmp(filename + strlen(filename) - 5, ".BS2E")))) {
-			parseenc(data, owner, filename);
-		} else
-			parsechar(data, owner, filename);
-	}
-	delete (data);
-	return 0;
+    const std::size_t flen = strlen(filename);
+
+    auto endsWith = [&](const char* ext) {
+        const std::size_t elen = strlen(ext);
+        return (flen >= elen) && !strcmp(filename + flen - elen, ext);
+    };
+
+    if (endsWith(".png") || endsWith(".PNG") || endsWith(".bmp") || endsWith(".BMP")) {
+        load(filename);
+        return 0;
+    }
+
+    std::ifstream file(checkfilename(filename), std::ios::in | std::ios::ate | std::ios::binary);
+    if (!file) {
+        char tmp[10000];
+        snprintf(tmp, sizeof(tmp), "Error opening file \"%s\"", filename);
+        error(tmp, owner);
+        return 0;
+    }
+
+    const long size = static_cast<long>(file.tellg());
+    file.seekg(0, std::ios::beg);
+    char* data = new char[size + 2];
+    file.read(data, size);
+    data[size] = 0;
+    file.close();
+
+    if (data[0] == '<') {
+        if (strstr(data, "<bs2>") && strstr(data, "</bs2>")) {
+            {
+                std::ofstream savefile(checkfilename("xml2bs2.xml"),
+                    std::ios::out | std::ios::ate | std::ios::binary);
+                savefile.write(data, strlen(data));
+            }
+            delete[] data;
+            ossystem("Wscript", "xml2bs2.js");
+            mousebuttonbug(true);
+            return parsefile("xml2bs2.bs2", owner);
+        } else {
+            auto parseTagContent = [&](const char* openTag, const char* closeTag) {
+                char* start = data;
+                char* end = nullptr;
+                while ((start = strstr(start, openTag)) != nullptr) {
+                    start = strstr(start, ">") + 1;
+                    if (!start) break;
+                    end = strstr(start, closeTag);
+                    if (!end) break;
+                    const char saved = *end;
+                    *end = 0;
+                    replacehtmlstrings(start);
+                    parsechar(start, owner, filename);
+                    *end = saved;
+                    start = end + 1;
+                }
+            };
+
+            parseTagContent("<pre",  "</pre>");
+            parseTagContent("<code", "</code>");
+
+            // <td class="code"> handled separately — no replacehtmlstrings reorder issue
+            char* start = data;
+            while ((start = strstr(start, "<td class=\"code\"")) != nullptr) {
+                start = strstr(start, ">") + 1;
+                if (!start) break;
+                char* end = strstr(start, "</td>");
+                if (!end) break;
+                const char saved = *end;
+                *end = 0;
+                replacehtmlstrings(start);
+                parsechar(start, owner, filename);
+                *end = saved;
+                start = end + 1;
+            }
+        }
+    } else {
+        if (endsWith(".bf") || endsWith(".BF")) {
+            secretcode++;
+            char* bf = bf_exec(data);
+            parsechar(bf, owner, filename);
+            delete[] bf;
+            secretcode--;
+        } else if (endsWith(".bs2e") || endsWith(".BS2E")) {
+            parseenc(data, owner, filename);
+        } else {
+            parsechar(data, owner, filename);
+        }
+    }
+
+    delete[] data;
+    return 0;
 }
 
 int parsechar(char* text, int owner, char* filename) {
@@ -426,13 +438,11 @@ int parseline(char* text, int linenum, int owner, char* filename) {
 			std::cout << tmp << std::endl;
 		delete (tmp);
 	}
-	if (!filename)
-		filename = "";
+	if (!filename) filename = "";
 	char* triggername = 0;
 	Token tokens(text);
 	unsigned int i = triggerstack.size();
-	if (i)
-		triggername = triggerstack.top();
+	if (i) triggername = triggerstack.top();
 	Action* action = parseaction(&tokens, owner);
 	if (action == NULL) {
 		if (i > triggerstack.size()) {

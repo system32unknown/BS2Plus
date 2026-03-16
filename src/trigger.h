@@ -630,7 +630,6 @@ struct Timer {
 	Uint32 value;
 	Trigger* trigger;
 	int* params;
-	char* toString();
 };
 
 #endif
