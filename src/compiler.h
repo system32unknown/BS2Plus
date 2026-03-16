@@ -1,8 +1,11 @@
 #ifndef COMPILER_H
 #define COMPILER_H
 
-#define COMPILER_GCC
+#if defined(_WIN32)
 #define COMPILER_WINDOWS
+#endif
+
+#define COMPILER_GCC
 #define COMPILER_SYSTEM
 #define USE_PNG
 #define COMPILER_REMOVE
