@@ -37,15 +37,7 @@ Run the following in the CLANG64 shell:
 
 ```bash
 pacman -Syu
-pacman -S \
-  mingw-w64-clang-x86_64-clang \
-  mingw-w64-clang-x86_64-cmake \
-  mingw-w64-clang-x86_64-ninja \
-  mingw-w64-clang-x86_64-SDL \
-  mingw-w64-clang-x86_64-SDL_net \
-  mingw-w64-clang-x86_64-SDL_ttf \
-  mingw-w64-clang-x86_64-zlib \
-  mingw-w64-clang-x86_64-libpng
+pacman -S git mingw-w64-clang-x86_64-{clang,cmake,ninja,SDL,SDL_net,SDL_ttf,zlib,libpng}
 ```
 
 ### 4. Clone the Repository
