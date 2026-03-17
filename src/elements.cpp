@@ -155,7 +155,7 @@ Uint16 findElement(char* elementname, bool create) {
 
     elements[i].name = new char[strlen(element) + 1];
     elements[i].icon = clearpic;
-    std::strcpy(elements[i].name, element);
+    strcpy(elements[i].name, element);
     return i;
 }
 

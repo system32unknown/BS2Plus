@@ -576,7 +576,7 @@ void drawmenu(SDL_Surface* screen) {
 		SDL_DrawLine16(screen, 0, screen->h - 18, screen->w, 0, border);
 		SDL_Rect r = {0, static_cast<Sint16>(screen->h - 17), static_cast<Uint16>(screen->w),  17};
 		SDL_FillRect(screen, &r, background);
-		std::strcpy(status_textold, status_text);
+		strcpy(status_textold, status_text);
 		SDL_DrawText16(screen, status_font, status_text, 2, screen->h - 2, border);
 	}
 #endif
