@@ -2137,8 +2137,7 @@ void ActionMessage::exec() {
 		break;
 	case MESSAGE_ADDSTRING:
 		i = varint->val();
-		if (strings[i])
-			strcpy(pos, strings[i]);
+		if (strings[i]) strcpy(pos, strings[i]);
 		break;
 	}
 }

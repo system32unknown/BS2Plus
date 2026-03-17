@@ -7,95 +7,72 @@ std::list<Group*> groups;
 std::list<int> grouporder;
 Pic* clearpic, * nopic;
 int elementsmax;
-
 char* Interaction::toString(char* e) {
-	char* tmp = new char[4096];
-	if (trigger == NULL)
-		sprintf(tmp, "INTERACTION \"%s\" \"%s\" \"%s\" \"%s\" %i", e, getElement(element)->name, getElement(toself)->name, getElement(toother)->name, rate);
-	else
-		sprintf(tmp, "INTERACTIONTRIGGER \"%s\" \"%s\" \"%s\" %i", e, getElement(element)->name, ((Trigger*)trigger)->name, rate);
-	return tmp;
+    const char* ename = getElement(element) ? getElement(element)->name : "?";
+    const char* selfname = getElement(toself) ? getElement(toself)->name : "?";
+    const char* othname = getElement(toother) ? getElement(toother)->name : "?";
+
+    char* tmp = new char[4096];
+    if (trigger == nullptr)
+		snprintf(tmp, 4096, "INTERACTION \"%s\" \"%s\" \"%s\" \"%s\" %i", e, ename, selfname, othname, rate);
+    else snprintf(tmp, 4096, "INTERACTIONTRIGGER \"%s\" \"%s\" \"%s\" %i", e, ename, reinterpret_cast<Trigger*>(trigger)->name, rate);
+    return tmp;
 }
 
 void initelements() {
-	elementsmax = 500;
-	elements = new Element[elementsmax];
-	clearpic = getPic("Clear", "0");
-	for (Uint16 i = 0; i < elementsmax; i++) {
-		elements[i].interactions = new std::list<Interaction*>();
-		elements[i].dies = new std::list<Die*>();
-		elements[i].icon = clearpic;
-	}
-	setprecalc(3);
-	clearelements();
+    elementsmax = 500;
+    elements = new Element[elementsmax];
+    clearpic = getPic("Clear", "0");
+
+    for (Uint16 i = 0; i < elementsmax; i++) {
+        elements[i].interactions = new std::list<Interaction*>();
+        elements[i].dies = new std::list<Die*>();
+        elements[i].icon = clearpic;
+    }
+    setprecalc(3);
+    clearelements();
+}
+
+static void resetElementFields(Element& el) {
+    el.weight = 0;
+    el.spray = 1;
+    el.slide = 0;
+    el.viscousity = 1;
+    el.nobias = false;
+    el.r = el.g = el.b = 0;
+    el.cr1 = el.cg1 = el.cb1 = 0;
+    el.cr2 = el.cg2 = el.cb2 = 0;
+    el.cr3 = el.cg3 = el.cb3 = 0;
+    el.dietotalrate = 0;
+    el.interactioncount = 0;
 }
 
 void clearelements() {
-	std::list<Interaction*>::iterator it;
-	std::list<Die*>::iterator it2;
-	std::list<Group*>::iterator it3;
-	elements[0].name = "Clear";
-	elements[0].weight = 1;
-	elements[0].spray = 1;
-	elements[0].viscousity = 1;
-	elements[0].nobias = false;
-	elements[0].dietotalrate = 0;
-	elements[0].r = 0;
-	elements[0].g = 0;
-	elements[0].b = 0;
-	elements[0].interactioncount = 0;
-	elements[1].name = "Nothing";
-	elements[1].weight = 9999999;
-	elements[1].spray = 1;
-	elements[1].viscousity = 1;
-	elements[1].nobias = false;
-	elements[1].dietotalrate = 0;
-	elements[1].r = 0;
-	elements[1].g = 0;
-	elements[1].b = 0;
-	elements[1].cr1 = 0;
-	elements[1].cg1 = 0;
-	elements[1].cb1 = 0;
-	elements[1].cr2 = 0;
-	elements[1].cg2 = 0;
-	elements[1].cb2 = 0;
-	elements[1].cr3 = 0;
-	elements[1].cg3 = 0;
-	elements[1].cb3 = 0;
-	elements[1].interactioncount = 0;
-	for (Uint16 i = 2; i < elementsmax; i++) {
-		elements[i].name = NULL;
-		elements[i].weight = 0;
-		elements[i].spray = 1;
-		elements[i].slide = 0;
-		elements[i].viscousity = 1;
-		elements[i].r = 0;
-		elements[i].g = 0;
-		elements[i].b = 0;
-		elements[i].nobias = false;
-		elements[i].cr1 = 0;
-		elements[i].cg1 = 0;
-		elements[i].cb1 = 0;
-		elements[i].cr2 = 0;
-		elements[i].cg2 = 0;
-		elements[i].cb2 = 0;
-		elements[i].cr3 = 0;
-		elements[i].cg3 = 0;
-		elements[i].cb3 = 0;
-		elements[i].dietotalrate = 0;
-		elements[i].interactioncount = 0;
-		for (it = elements[i].interactions->begin(); it != elements[i].interactions->end(); it++)
-			delete (*it);
-		elements[i].interactions->clear();
-		for (it2 = elements[i].dies->begin(); it2 != elements[i].dies->end(); it2++)
-			delete (*it2);
-		elements[i].dies->clear();
-	}
-	for (it3 = groups.begin(); it3 != groups.end(); it3++) {
-		(*it3)->elements.clear();
-		(*it3)->elementorder.clear();
-	}
-	setprecalc(3);
+    resetElementFields(elements[0]);
+    elements[0].name = "Clear";
+    elements[0].weight = 1;
+
+    resetElementFields(elements[1]);
+    elements[1].name = "Nothing";
+    elements[1].weight = 9999999;
+
+    for (Uint16 i = 2; i < elementsmax; i++) {
+        elements[i].name = nullptr;
+        resetElementFields(elements[i]);
+
+        for (auto* p : *elements[i].interactions) delete p;
+        elements[i].interactions->clear();
+
+        for (auto* p : *elements[i].dies) delete p;
+        elements[i].dies->clear();
+    }
+
+    for (auto* g : groups) {
+        g->elements.clear();
+        g->elementorder.clear();
+    }
+
+    setprecalc(3);
 }
 
 int getelementsmax() {
@@ -109,135 +86,101 @@ int getelementscount() {
 }
 
 Uint16 findElement(char* elementname, bool create) {
-	if (elementname == 0)
-		return 0;
-	char* element = messageReplace(elementname);
-	if (!strcmp(element, "CLEAR"))
-		return 0;
-	if (!strcmp(element, "Clear"))
-		return 0;
-	if (!strcmp(element, "DEFAULT"))
-		return 1;
-	if (!strcmp(element, "All"))
-		return 1;
-	Uint16 i = 0;
-	for (i = 0; i < strlen(element); i++)
-		if (element[i] == ':') {
-			element[i] = 0;
-			int n;
-			getVar((element + i + 1), &n);
-			unsigned int i2 = n;
-			Group* g = getGroup(findGroup(element, create, -1));
-			if ((g->elements.size() >= i2) && (i2 > 0)) {
-				std::list<int>::iterator it = g->elements.begin();
-				for (int ii = 1; ii < n; ii++)
-					it++;
-				return *it;
-			}
-		}
-	i = 0;
-	for (; elements[i].name; i++)
-		if (!strcmp(element, elements[i].name)) {
-			return i;
-		}
-	if (create == true) {
-		if (i > elementsmax - 2) {
-			if (i > 32000)
-				return 1;
-			int elementsmaxold = elementsmax;
-			elementsmax += 1500;
-			Element* oldelements = elements;
-			elements = new Element[elementsmax];
-			Uint16 i2 = 0;
-			for (; i2 < elementsmaxold; i2++) {
-				elements[i2].interactions = oldelements[i2].interactions;
-				elements[i2].dies = oldelements[i2].dies;
-				elements[i2].icon = oldelements[i2].icon;
-			}
-			for (; i2 < elementsmax; i2++) {
-				elements[i2].interactions = new std::list<Interaction*>();
-				elements[i2].dies = new std::list<Die*>();
-				elements[i2].icon = getPic("Clear", "0");
-			}
-			i2 = 0;
-			for (; i2 < elementsmaxold; i2++) {
-				elements[i2].name = oldelements[i2].name;
-				elements[i2].weight = oldelements[i2].weight;
-				elements[i2].spray = oldelements[i2].spray;
-				elements[i2].slide = oldelements[i2].slide;
-				elements[i2].viscousity = oldelements[i2].viscousity;
-				elements[i2].r = oldelements[i2].r;
-				elements[i2].g = oldelements[i2].g;
-				elements[i2].b = oldelements[i2].b;
-				elements[i2].nobias = oldelements[i2].nobias;
-				elements[i2].cr1 = oldelements[i2].cr1;
-				elements[i2].cg1 = oldelements[i2].cg1;
-				elements[i2].cb1 = oldelements[i2].cb1;
-				elements[i2].cr2 = oldelements[i2].cr2;
-				elements[i2].cg2 = oldelements[i2].cg2;
-				elements[i2].cb2 = oldelements[i2].cb2;
-				elements[i2].cr3 = oldelements[i2].cr3;
-				elements[i2].cg3 = oldelements[i2].cg3;
-				elements[i2].cb3 = oldelements[i2].cb3;
-				elements[i2].dietotalrate = oldelements[i2].dietotalrate;
-				elements[i2].interactioncount = oldelements[i2].interactioncount;
-			}
-			for (; i2 < elementsmax; i2++) {
-				elements[i2].name = NULL;
-				elements[i2].weight = 0;
-				elements[i2].spray = 1;
-				elements[i2].slide = 0;
-				elements[i2].viscousity = 1;
-				elements[i2].nobias = false;
-				elements[i2].r = 0;
-				elements[i2].g = 0;
-				elements[i2].b = 0;
-				elements[i2].cr1 = 0;
-				elements[i2].cg1 = 0;
-				elements[i2].cb1 = 0;
-				elements[i2].cr2 = 0;
-				elements[i2].cg2 = 0;
-				elements[i2].cb2 = 0;
-				elements[i2].cr3 = 0;
-				elements[i2].cg3 = 0;
-				elements[i2].cb3 = 0;
-				elements[i2].dietotalrate = 0;
-				elements[i2].interactioncount = 0;
-			}
-			setprecalc(5);
-			delete (oldelements);
-		}
-		elements[i].name = new char[strlen(element) + 1];
-		elements[i].icon = clearpic;
-		strcpy(elements[i].name, element);
-		return i;
-	}
-	return 0;
+    if (elementname == nullptr) return 0;
+
+    char* element = messageReplace(elementname);
+
+    if (!strcmp(element, "CLEAR") || !strcmp(element, "Clear")) return 0;
+    if (!strcmp(element, "DEFAULT") || !strcmp(element, "All")) return 1;
+
+    const size_t elen = strlen(element);
+    for (size_t i = 0; i < elen; i++) {
+        if (element[i] == ':') {
+            element[i] = 0;
+            int n = 0;
+            getVar(element + i + 1, &n);
+            element[i] = ':';
+            if (n > 0) {
+                Group* g = getGroup(findGroup(element, create, -1));
+                if (g && static_cast<int>(g->elements.size()) >= n) {
+                    auto it = g->elements.begin();
+                    std::advance(it, n - 1);
+                    return static_cast<Uint16>(*it);
+                }
+            }
+            return 0;
+        }
+    }
+
+    Uint16 i = 0;
+    for (; elements[i].name; i++)
+        if (!strcmp(element, elements[i].name))
+            return i;
+
+    if (!create) return 0;
+
+    if (i > elementsmax - 2) {
+        if (i > 32000) return 1;
+
+        const Uint16 elementsmaxold = static_cast<Uint16>(elementsmax);
+        elementsmax += 1500;
+        Element* oldelements = elements;
+        elements = new Element[elementsmax];
+
+        for (Uint16 i2 = 0; i2 < elementsmaxold; i2++) {
+            elements[i2] = oldelements[i2];
+        }
+
+        for (Uint16 i2 = elementsmaxold; i2 < static_cast<Uint16>(elementsmax); i2++) {
+            elements[i2].interactions = new std::list<Interaction*>();
+            elements[i2].dies = new std::list<Die*>();
+            elements[i2].icon = getPic("Clear", "0");
+            elements[i2].name = nullptr;
+            elements[i2].weight = 0;
+            elements[i2].spray = 1;
+            elements[i2].slide = 0;
+            elements[i2].viscousity = 1;
+            elements[i2].nobias = false;
+            elements[i2].r = elements[i2].g = elements[i2].b = 0;
+            elements[i2].cr1 = elements[i2].cg1 = elements[i2].cb1 = 0;
+            elements[i2].cr2 = elements[i2].cg2 = elements[i2].cb2 = 0;
+            elements[i2].cr3 = elements[i2].cg3 = elements[i2].cb3 = 0;
+            elements[i2].dietotalrate    = 0;
+            elements[i2].interactioncount = 0;
+        }
+
+        setprecalc(5);
+        delete[] oldelements;
+    }
+
+    elements[i].name = new char[strlen(element) + 1];
+    elements[i].icon = clearpic;
+    std::strcpy(elements[i].name, element);
+    return i;
 }
 
 int addInteraction(Uint16 id, Uint16 elementid, Uint16 toself, Uint16 toother, Uint16 rate, Uint16 except, void* trigger, int pos) {
-	if (elements[id].interactioncount > 32000)
-		return 0;
-	if (id == 1)
-		return 0;
-	Interaction* i = new Interaction();
-	i->element = elementid;
-	i->toself = toself;
-	i->toother = toother;
-	i->rate = rate;
-	i->except = except;
-	i->trigger = trigger;
-	if (pos == -1)
-		elements[id].interactions->push_back(i);
-	else {
-		std::list<Interaction*>::iterator it;
-		for (it = elements[id].interactions->begin(); (it != elements[id].interactions->end()) && (pos); it++)
-			pos--;
-		elements[id].interactions->insert(it, i);
-	}
-	(elements[id].interactioncount)++;
-	setprecalc(3);
-	return 0;
+    if (id == 1 || elements[id].interactioncount > 32000) return 0;
+
+    Interaction* inter  = new Interaction();
+    inter->element = elementid;
+    inter->toself = toself;
+    inter->toother = toother;
+    inter->rate = rate;
+    inter->except = except;
+    inter->trigger = trigger;
+
+    if (pos == -1) {
+        elements[id].interactions->push_back(inter);
+    } else {
+        auto it = elements[id].interactions->begin();
+        std::advance(it, std::min(pos, static_cast<int>(elements[id].interactions->size())));
+        elements[id].interactions->insert(it, inter);
+    }
+
+    elements[id].interactioncount++;
+    setprecalc(3);
+    return 0;
 }
 
 int clearInteraction(Uint16 id) {
@@ -409,33 +352,47 @@ int setElementBias(Uint16 id, bool b) {
 }
 
 int setElementCustomColor(Uint16 id, int i, int c, unsigned char b) {
-	if (id == 1)
-		return 0;
-	if ((i == 1) && (c == 1))
-		elements[id].cr1 = b;
-	if ((i == 1) && (c == 2))
-		elements[id].cg1 = b;
-	if ((i == 1) && (c == 3))
-		elements[id].cb1 = b;
-	if ((i == 2) && (c == 1))
-		elements[id].cr2 = b;
-	if ((i == 2) && (c == 2))
-		elements[id].cg2 = b;
-	if ((i == 2) && (c == 3))
-		elements[id].cb2 = b;
-	if ((i == 3) && (c == 1))
-		elements[id].cr3 = b;
-	if ((i == 3) && (c == 2))
-		elements[id].cg3 = b;
-	if ((i == 3) && (c == 3))
-		elements[id].cb3 = b;
-	setprecalc(3);
+	if (id == 1) return 0;
+
+	Element& e = elements[id];
+	bool matched = true;
+
+	switch (i) {
+	case 1:
+		switch (c) {
+		case 1: e.cr1 = b; break;
+		case 2: e.cg1 = b; break;
+		case 3: e.cb1 = b; break;
+		default: matched = false; break;
+		}
+		break;
+	case 2:
+		switch (c) {
+		case 1: e.cr2 = b; break;
+		case 2: e.cg2 = b; break;
+		case 3: e.cb2 = b; break;
+		default: matched = false; break;
+		}
+		break;
+	case 3:
+		switch (c) {
+		case 1: e.cr3 = b; break;
+		case 2: e.cg3 = b; break;
+		case 3: e.cb3 = b; break;
+		default: matched = false; break;
+		}
+		break;
+	default:
+		matched = false;
+		break;
+	}
+
+	if (matched) setprecalc(3);
 	return 0;
 }
 
 int setElementIcon(Uint16 id, Pic* icon) {
-	if (id == 1)
-		return 0;
+	if (id == 1) return 0;
 	elements[id].icon = icon;
 	return 0;
 }

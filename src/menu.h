@@ -48,7 +48,7 @@ void addButtonToMenuBar(int i, Button* button);
 void clearMenuBar(int i);
 int getmenuwidth(int i);
 void checkscroll();
-SDL_Surface* createmenu(std::list<Button*>* buttons, int align = 0, int width = 0, int height = 0, int scroll = 0, bool crop = false);
+SDL_Surface* createmenu(std::list<Button*>* buttons, int align = 0, int width = 0, int height = 0, bool crop = false);
 void showSubMenu(int stay, int align);
 void showSubMenu(int stay, int align, int x, int y);
 void hideSubMenu();
