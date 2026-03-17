@@ -8,27 +8,29 @@ Windows builds use **MSYS2** with the **CLANG64** environment, only CLANG64 is s
 
 ### 1. Installing MSYS2
 
-Download and install (MSYS2)[https://www.msys2.org].
-Start the "MSYS2 CLANG64" envionment from the Start menu.
-
-### 2. Install Dependencies
-
-Run the following in the CLANG64 bash shell:
-
+Download the latest version of (MSYS2)[https://www.msys2.org] and install.
+After installation, a terminal opens and follow the command to update the enviroment:
 ```bash
 pacman -Syu
+```
+
+When you the terminal asks you to shut down the MSYS2 after finishing the update, Proceed.
+Then start the "MSYS2 CLANG64" environment from the start menu.
+
+```bash
 pacman -S git mingw-w64-clang-x86_64-{clang,cmake,ninja,SDL,SDL_net,SDL_ttf,zlib,libpng}
 ```
 
-### 3. Clone the Repository
+### 2. Building
 
+Navigate somewhere you want to clone source code to and clone the source repo using Git.
+Before using Git, Download the latest version of (Git)[https://git-scm.com/install/] and install.
 ```bash
 git clone https://github.com/system32unknown/BS2Plus
 cd BS2CE
 ```
 
-### 4. Configure and Build
-
+Then generate the build files using Cmake and start the compile.
 ```bash
 cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build
@@ -91,15 +93,16 @@ sudo pacman -S \
   libpng
 ```
 
-### 2. Clone the Repository
+### 2. Building
 
+Navigate somewhere you want to clone source code to and clone the source repo using Git.
+Before using Git, Download the latest version of (Git)[https://git-scm.com/install/] and install.
 ```bash
 git clone https://github.com/system32unknown/BS2Plus
 cd BS2CE
 ```
 
-### 3. Configure and Build
-
+Then generate the build files using Cmake and start the compile.
 ```bash
 cmake -B build -S . -G Ninja \
   -DCMAKE_BUILD_TYPE=Release \
