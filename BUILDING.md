@@ -2,65 +2,38 @@
 
 This document describes how to compile BS2CE from source on Windows and Linux.
 
----
-
-## Requirements
-
-| Tool | Version |
-|------|---------|
-| CMake | 3.16 or newer |
-| Clang / Clang++ | Any recent version |
-| Ninja | Any recent version |
-| SDL | 1.2 |
-| SDL_net | 1.2 |
-| SDL_ttf | 1.2 |
-| zlib | Any recent version |
-| libpng | Any recent version |
-
----
-
 ## Windows
 
-Windows builds use **MSYS2** with the **CLANG64** environment. Do **not** use the MINGW64, UCRT64, or MSYS shells — only CLANG64 is supported.
+Windows builds use **MSYS2** with the **CLANG64** environment, only CLANG64 is supported.
 
-### 1. Install MSYS2
+### 1. Installing MSYS2
 
-Download and install MSYS2 from https://www.msys2.org. The default install path is `C:\msys64`.
+Download and install (MSYS2)[https://www.msys2.org].
+Start the "MSYS2 CLANG64" envionment from the Start menu.
 
-### 2. Open the CLANG64 Shell
+### 2. Install Dependencies
 
-Launch **MSYS2 CLANG64** from the Start menu (not the generic MSYS2 terminal).
-
-### 3. Install Dependencies
-
-Run the following in the CLANG64 shell:
+Run the following in the CLANG64 bash shell:
 
 ```bash
 pacman -Syu
 pacman -S git mingw-w64-clang-x86_64-{clang,cmake,ninja,SDL,SDL_net,SDL_ttf,zlib,libpng}
 ```
 
-### 4. Clone the Repository
+### 3. Clone the Repository
 
 ```bash
-git clone https://github.com/yourname/BS2CE.git
+git clone https://github.com/system32unknown/BS2Plus
 cd BS2CE
 ```
 
-### 5. Configure and Build
+### 4. Configure and Build
 
 ```bash
 cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ```
-
-### 6. Run
-
-```bash
-./build/bin/BS2Plus.exe
-```
-
-The build system automatically copies all required DLLs and asset folders (`img/`, `bs2/`, `misc/`) into `build/bin/` alongside the executable.
+When finished, there will be a "BS2Plus.exe" file in the build/bin folder.
 
 ### Custom MSYS2 Path
 
@@ -121,7 +94,7 @@ sudo pacman -S \
 ### 2. Clone the Repository
 
 ```bash
-git clone https://github.com/yourname/BS2CE.git
+git clone https://github.com/system32unknown/BS2Plus
 cd BS2CE
 ```
 
@@ -134,12 +107,7 @@ cmake -B build -S . -G Ninja \
   -DCMAKE_CXX_COMPILER=clang++
 cmake --build build
 ```
-
-### 4. Run
-
-```bash
-./build/bin/BS2Plus
-```
+When finished, there will be a "BS2Plus.exe" file in the build/bin folder.
 
 ---
 
@@ -155,22 +123,6 @@ Pass `-DCMAKE_BUILD_TYPE=<type>` during configuration:
 
 ---
 
-## Project Structure
-
-```
-BS2CE/
-├── CMakeLists.txt
-├── BUILDING.md
-├── include/          # Header files
-├── src/              # Source files
-└── Resources/
-    ├── img/          # Images (copied to build/bin/img/)
-    ├── bs2/          # Game data (copied to build/bin/)
-    └── misc/         # Misc assets (copied to build/bin/)
-```
-
----
-
 ## Troubleshooting
 
 **`SDL not found` on Windows**
@@ -181,9 +133,3 @@ All required DLLs are copied automatically from `C:\msys64\clang64\bin` after bu
 
 **Implicit template / missing header errors on Linux**
 Clang on Linux requires all standard headers to be explicitly included. Ensure files that use `std::vector`, `std::array`, `std::string`, etc. have the corresponding `#include` directive.
-
-**`ldd` — inspect runtime dependencies (Linux / MSYS2)**
-```bash
-ldd build/bin/BS2Plus        # Linux
-ldd build/bin/BS2Plus.exe    # MSYS2 CLANG64 shell
-```
