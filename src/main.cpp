@@ -28,7 +28,7 @@ SDL_Surface* screen = nullptr;
 unsigned int keydown[1024] = {};
 unsigned int keylastexec[1024] = {};
 
-const char* TITLE_GAME = "BS2CE";
+const char* TITLE_GAME = "Burning Sand 2: Community Edition";
 
 void updatescreen() {
 	msectimer();

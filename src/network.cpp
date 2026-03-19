@@ -84,7 +84,7 @@ void checknetwork() {
 				datpos[freeSlot] = 0;
 				owners[freeSlot] = ++ownercount;
 				SDLNet_TCP_AddSocket(set, sock_client[freeSlot]);
-				sendowner("BS2Plus", ownercount);
+				sendowner("BS2CE", ownercount);
 			}
 		}
 	}

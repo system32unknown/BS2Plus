@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(BS2Plus VERSION 1.0.0 LANGUAGES CXX)
+project(BS2PlBS2CEus VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -267,7 +267,7 @@ endforeach()
 #  Summary
 # ─────────────────────────────────────────────
 message(STATUS "")
-message(STATUS "=== BS2Plus Configuration (MSYS2 CLANG64 / SDL 1.2) ===")
+message(STATUS "=== BS2CE Configuration (MSYS2 CLANG64 / SDL 1.2) ===")
 message(STATUS "  Project     : ${PROJECT_NAME} v${PROJECT_VERSION}")
 message(STATUS "  C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "  Build type  : ${CMAKE_BUILD_TYPE}")

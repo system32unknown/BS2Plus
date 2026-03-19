@@ -26,8 +26,8 @@ pacman -S git mingw-w64-clang-x86_64-{clang,cmake,ninja,SDL,SDL_net,SDL_ttf,zlib
 Navigate somewhere you want to clone source code to and clone the source repo using Git.
 Before using Git, Download the latest version of [Git](https://git-scm.com/install/) and install.
 ```bash
-git clone https://github.com/system32unknown/BS2Plus
-cd BS2Plus
+git clone https://github.com/system32unknown/BS2CE
+cd BS2CE
 ```
 
 Then generate the build files using Cmake and start the compile.
@@ -35,7 +35,7 @@ Then generate the build files using Cmake and start the compile.
 cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ```
-When finished, there will be a "BS2Plus.exe" file in the build/bin folder.
+When finished, there will be a "BS2CE.exe" file in the build/bin folder.
 
 ### Custom MSYS2 Path
 
@@ -98,8 +98,8 @@ sudo pacman -S \
 Navigate somewhere you want to clone source code to and clone the source repo using Git.
 Before using Git, Download the latest version of (Git)[https://git-scm.com/install/] and install.
 ```bash
-git clone https://github.com/system32unknown/BS2Plus
-cd BS2Plus
+git clone https://github.com/system32unknown/BS2CE
+cd BS2CE
 ```
 
 Then generate the build files using Cmake and start the compile.
@@ -110,7 +110,7 @@ cmake -B build -S . -G Ninja \
   -DCMAKE_CXX_COMPILER=clang++
 cmake --build build
 ```
-When finished, there will be a "BS2Plus.exe" file in the build/bin folder.
+When finished, there will be a "BS2CE.exe" file in the build/bin folder.
 
 ---
 

@@ -531,7 +531,7 @@ Action* parseaction(Token* tokens, int owner) {
 	} else if ((function[0] == '!') && (strlen(function) > 2)) {
 		parseenc(function + 1, owner, "Encrypted");
 		action = new Action;
-	} else if (!strcmp(function, "BS2Plus")) {
+	} else if (!strcmp(function, "BS2CE")) {
 		action = new Action;
 	} else if (!strcmp(function, "ERROR")) {
 		action = new Action;

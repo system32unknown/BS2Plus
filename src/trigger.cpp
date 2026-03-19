@@ -193,8 +193,8 @@ char* ActionExit::toString() {
 void ActionRestart::exec() {
 #ifdef COMPILER_SYSTEM
 	if (parameter) {
-		ossystem("BS2Plus.exe", parameter);
-	} else ossystem("BS2Plus.exe", "");
+		ossystem("BS2CE.exe", parameter);
+	} else ossystem("BS2CE.exe", "");
 #endif
 	if (threadrunning) {
 		threadrunning = false;
