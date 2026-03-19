@@ -157,13 +157,14 @@ Pic* getPic(char* type, char* text) {
 		r = picStack.top();
 		picStack.pop();
 	} else r = new Pic();
-
-	strncpy(r->type, type, sizeof(r->type) - 1);
-	r->type[sizeof(r->type) - 1] = 0;
-	strncpy(r->text, text, sizeof(r->text) - 1);
-	r->text[sizeof(r->text) - 1] = 0;
+	strcpy(r->type, type);
+	strcpy(r->text, text);
 	r->old = nullptr;
 	r->v = nullptr;
+	r->r = nullptr;
+	r->g = nullptr;
+	r->b = nullptr;
+	r->staticint = 0;
 	return r;
 }
 
@@ -173,15 +174,14 @@ Pic* getPic(Pic* p) {
 		r = picStack.top();
 		picStack.pop();
 	} else r = new Pic();
-	strncpy(r->type, p->type, sizeof(r->type) - 1);
-	r->type[sizeof(r->type) - 1] = 0;
-	strncpy(r->text, p->text, sizeof(r->text) - 1);
-	r->text[sizeof(r->text) - 1] = 0;
+	strcpy(r->type, p->type);
+	strcpy(r->text, p->text);
 	r->r = p->r;
 	r->g = p->g;
 	r->b = p->b;
 	r->old = p->old;
 	r->v = p->v;
+	r->staticint = p->staticint;
 	return r;
 }
 

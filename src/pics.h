@@ -7,19 +7,21 @@
 struct Pic {
 	char type[255];
 	char text[255];
-	SDL_Surface* getpic(int a = 0);
-	void calc();
 	void* v;
-	void* r, * g, * b;
-	char* toString();
+	void* r;
+	void* g;
+	void* b;
 	SDL_Surface* old;
 	int staticint;
+
+	SDL_Surface* getpic(int a = 0);
+	void calc();
+	char* toString();
 };
 
 Pic* getPic(char* type, char* text);
 Pic* getPic(Pic* p);
 void delPic(Pic* p);
-
 void loadMenuFont(char* c, int s);
 
 #endif
