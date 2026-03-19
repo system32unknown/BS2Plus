@@ -229,10 +229,10 @@ void drawmenu(SDL_Surface* screen) {
 	const int maxheight = screen->h - MENU_TOP - MENU_BOTTOM;
 
 	if (redraw >= 3) {
-		menurects[0] = {static_cast<Sint16>(MENU_LEFT), 0, static_cast<Uint16>(maxwidth), static_cast<Uint16>(MENU_TOP)};
-		menurects[1] = {0, static_cast<Sint16>(MENU_TOP), static_cast<Uint16>(MENU_LEFT), static_cast<Uint16>(maxheight)};
-		menurects[2] = {static_cast<Sint16>(screen->w - MENU_RIGHT + 1), static_cast<Sint16>(MENU_TOP), static_cast<Uint16>(MENU_RIGHT), static_cast<Uint16>(maxheight)};
-		menurects[3] = {static_cast<Sint16>(MENU_LEFT), static_cast<Sint16>(screen->h - MENU_BOTTOM + 1), static_cast<Uint16>(maxwidth), static_cast<Uint16>(MENU_BOTTOM - vstatus->value * 18)};
+		menurects[0] = { static_cast<Sint16>(MENU_LEFT), 0, static_cast<Uint16>(maxwidth), static_cast<Uint16>(MENU_TOP) };
+		menurects[1] = { 0, static_cast<Sint16>(MENU_TOP), static_cast<Uint16>(MENU_LEFT), static_cast<Uint16>(maxheight) };
+		menurects[2] = { static_cast<Sint16>(screen->w - MENU_RIGHT + 1), static_cast<Sint16>(MENU_TOP), static_cast<Uint16>(MENU_RIGHT), static_cast<Uint16>(maxheight) };
+		menurects[3] = { static_cast<Sint16>(MENU_LEFT), static_cast<Sint16>(screen->h - MENU_BOTTOM + 1), static_cast<Uint16>(maxwidth), static_cast<Uint16>(MENU_BOTTOM - vstatus->value * 18) };
 
 		auto rebuildBar = [&](int idx, int align, int w, int h) {
 			if (menusurfaces[idx]) {
@@ -240,7 +240,7 @@ void drawmenu(SDL_Surface* screen) {
 				menusurfaces[idx] = nullptr;
 			}
 			menusurfaces[idx] = createmenu(&menubuttons[idx], align, w, h);
-		};
+			};
 
 		if (MENU_TOP != -1) rebuildBar(0, MENU_ALIGN_H, maxwidth, MENU_TOP);
 		if (MENU_LEFT != -1) rebuildBar(1, MENU_ALIGN_V, MENU_LEFT, maxheight);
@@ -295,34 +295,33 @@ void drawmenu(SDL_Surface* screen) {
 
 	// ── Blit menu bars (redraw >= 0 or redrawmenus) ───────────────────────────
 	if ((redraw >= 0) || redrawmenus) {
-		auto blitBar = [&](int idx, bool horizontal,
-			int sz, int menuSz, int limit) {
-				if (!menusurfaces[idx]) return;
-				SDL_Rect r = {};
-				if (horizontal) {
-					r.x = static_cast<Sint16>((scroll[idx] + 1) * 1000 * (menusurfaces[idx]->w + 1 - sz) / sz / 1000);
-					r.w = static_cast<Uint16>(sz);
-					r.h = static_cast<Uint16>(menuSz);
-					realscrollx[idx] = r.x;
-					realscrolly[idx] = 0;
-					if (r.x > menusurfaces[idx]->w - sz)
-						r.x = static_cast<Sint16>(menusurfaces[idx]->w - sz);
-				} else {
-					r.y = static_cast<Sint16>((scroll[idx] + 1) * 1000 * (menusurfaces[idx]->h + 1 - sz) / sz / 1000);
-					r.h = static_cast<Uint16>(sz);
-					r.w = static_cast<Uint16>(menuSz);
-					realscrollx[idx] = 0;
-					realscrolly[idx] = r.y;
-					if (r.y > menusurfaces[idx]->h - sz)
-						r.y = static_cast<Sint16>(menusurfaces[idx]->h - sz);
-				}
-				SDL_BlitSurface(menusurfaces[idx], &r, screen, &menurects[idx]);
+		auto blitBar = [&](int idx, bool horizontal, int sz, int menuSz) {
+			if (!menusurfaces[idx]) return;
+			SDL_Rect r = {};
+			if (horizontal) {
+				r.x = static_cast<Sint16>((scroll[idx] + 1) * 1000 * (menusurfaces[idx]->w + 1 - sz) / sz / 1000);
+				r.w = static_cast<Uint16>(sz);
+				r.h = static_cast<Uint16>(menuSz);
+				realscrollx[idx] = r.x;
+				realscrolly[idx] = 0;
+				if (r.x > menusurfaces[idx]->w - sz)
+					r.x = static_cast<Sint16>(menusurfaces[idx]->w - sz);
+			} else {
+				r.y = static_cast<Sint16>((scroll[idx] + 1) * 1000 * (menusurfaces[idx]->h + 1 - sz) / sz / 1000);
+				r.h = static_cast<Uint16>(sz);
+				r.w = static_cast<Uint16>(menuSz);
+				realscrollx[idx] = 0;
+				realscrolly[idx] = r.y;
+				if (r.y > menusurfaces[idx]->h - sz)
+					r.y = static_cast<Sint16>(menusurfaces[idx]->h - sz);
+			}
+			SDL_BlitSurface(menusurfaces[idx], &r, screen, &menurects[idx]);
 			};
 
-		if (vmenutop->value != 0) blitBar(0, true, maxwidth, MENU_TOP, 0);
-		if (vmenubottom->value != 0) blitBar(3, true, maxwidth, MENU_BOTTOM - vstatus->value * 19, 0);
-		if (vmenuleft->value != 0) blitBar(1, false, maxheight, MENU_LEFT, 0);
-		if (vmenuright->value != 0) blitBar(2, false, maxheight, MENU_RIGHT, 0);
+		if (vmenutop->value != 0) blitBar(0, true, maxwidth, MENU_TOP);
+		if (vmenubottom->value != 0) blitBar(3, true, maxwidth, MENU_BOTTOM - vstatus->value * 19);
+		if (vmenuleft->value != 0) blitBar(1, false, maxheight, MENU_LEFT);
+		if (vmenuright->value != 0) blitBar(2, false, maxheight, MENU_RIGHT);
 	}
 
 	// ── Preview draw ──────────────────────────────────────────────────────────

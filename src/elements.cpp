@@ -219,12 +219,12 @@ int clearDie(Uint16 id) {
 
 void interactionTrigger(void* trigger, Uint16 element1, Uint16 element2, int x1, int y1, int x2, int y2) {
 	if (element1 == 1 || element2 == 1) return;
-	static Var* vari1 = reinterpret_cast<Var*>(setVar("INTERACTION1", 0));
-	static Var* vari2 = reinterpret_cast<Var*>(setVar("INTERACTION2", 0));
-	static Var* varx1 = reinterpret_cast<Var*>(setVar("X1", 0));
-	static Var* vary1 = reinterpret_cast<Var*>(setVar("Y1", 0));
-	static Var* varx2 = reinterpret_cast<Var*>(setVar("X2", 0));
-	static Var* vary2 = reinterpret_cast<Var*>(setVar("Y2", 0));
+	static Var* vari1 = (Var*)setVar("INTERACTION1", 0);
+	static Var* vari2 = (Var*)setVar("INTERACTION2", 0);
+	static Var* varx1 = (Var*)setVar("X1", 0);
+	static Var* vary1 = (Var*)setVar("Y1", 0);
+	static Var* varx2 = (Var*)setVar("X2", 0);
+	static Var* vary2 = (Var*)setVar("Y2", 0);
 	vari1->value = element1;
 	vari2->value = element2;
 	varx1->value = x1;

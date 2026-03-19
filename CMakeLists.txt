@@ -134,6 +134,15 @@ endif()
 # ─────────────────────────────────────────────
 add_executable(${PROJECT_NAME} ${SOURCES})
 
+target_compile_options(${PROJECT_NAME} PRIVATE
+    -Wunused-function
+    -Wunused-label
+    -Wunused-value
+    -Wunused-variable
+    -Wunused-parameter
+    -Wunused-but-set-parameter
+)
+
 # ─────────────────────────────────────────────
 #  Include Directories
 # ─────────────────────────────────────────────

@@ -3,6 +3,7 @@
 #include <iostream>
 #include "elements.h"
 
+static constexpr double BF_PI = 3.141592654;
 SDL_Surface** stamps = 0;
 
 void SDL_DrawPoint16(SDL_Surface* screen, int x, int y, Uint16 color) {
@@ -138,13 +139,12 @@ void SDL_DrawFilledRect16(SDL_Surface* screen, int x, int y, int dx, int dy, Uin
 }
 
 void SDL_DrawCircle16(SDL_Surface* screen, int x, int y, int rx, int ry, Uint16 color) {
-	int max = (int)sqrt((float)rx) * 4 + 1;
-	int lastx, lasty, nextx, nexty;
-	lastx = 0;
-	lasty = ry;
+	const int max = (int)(sqrt((double)rx)) * 4 + 1;
+	int lastx = 0, lasty = ry;
 	for (int i = 0; i <= max; i++) {
-		nextx = (int)(sin(i * 3.141592654 / 2 / max) * rx);
-		nexty = (int)(cos(i * 3.141592654 / 2 / max) * ry);
+		const double angle = i * BF_PI / 2.0 / max;
+		const int nextx = (int)(sin(angle) * rx);
+		const int nexty = (int)(cos(angle) * ry);
 		SDL_DrawLine16(screen, x + lastx, y + lasty, nextx - lastx, nexty - lasty, color);
 		SDL_DrawLine16(screen, x + lastx, y - lasty, nextx - lastx, -nexty + lasty, color);
 		SDL_DrawLine16(screen, x - lastx, y + lasty, -nextx + lastx, nexty - lasty, color);
@@ -155,93 +155,66 @@ void SDL_DrawCircle16(SDL_Surface* screen, int x, int y, int rx, int ry, Uint16 
 }
 
 void SDL_DrawFilledCircle16(SDL_Surface* screen, int x, int y, int rx, int ry, Uint16 color) {
-	if ((rx == 0) && (ry == 0)) {
-		if ((x >= 0) && (x < screen->w) && (y >= 0) && (y < screen->h))
-			*((Uint16*)screen->pixels + y * screen->pitch / 2 + x) = color;
+	if (rx == 0 && ry == 0) {
+		if (x >= 0 && x < screen->w && y >= 0 && y < screen->h)
+			*(static_cast<Uint16*>(screen->pixels) + y * screen->pitch / 2 + x) = color;
 		return;
 	}
-	int y2 = y - ry;
-	if (y2 < 0)
-		y2 = 0;
-	int w = screen->w;
-	int dx, x2;
-	int pitch = screen->pitch / 2;
-	int end = y + ry;
-	if (end > screen->h - 1)
-		end = screen->h - 1;
-	int sr = ry * ry;
-	float factor = 1;
-	if (ry != 0)
-		factor = (float)rx / (float)ry;
+
+	const int pitch = screen->pitch / 2;
+	const int w = screen->w;
+	const int sr = ry * ry;
+	const float factor = ry ? (float)rx / (float)ry : 1.0f;
+	int y2 = (y - ry < 0) ? 0 : y - ry;
+	const int end = (y + ry > screen->h - 1) ? screen->h - 1 : y + ry;
+
 	for (; y2 <= end; y2++) {
-		dx = (int)(sqrt((float)((sr - (y2 - y) * (y2 - y)))) * factor);
-		x2 = x - dx;
-		if (x2 < 0)
-			x2 = 0;
-		for (; (x2 <= x + dx) && (x2 < w); x2++)
-			*((Uint16*)screen->pixels + y2 * pitch + x2) = color;
+		const int dx = (int)(sqrt((float)(sr - (y2 - y) * (y2 - y))) * factor);
+		int x2 = (x - dx < 0) ? 0 : x - dx;
+		Uint16* row = static_cast<Uint16*>(screen->pixels) + y2 * pitch;
+		for (; x2 <= x + dx && x2 < w; x2++) *(row + x2) = color;
 	}
 }
 
 void SDL_DrawRandomFilledCircle16(SDL_Surface* screen, int x, int y, int rx, int ry, int rate, Uint16 color) {
-	int y2 = y - ry;
-	if (y2 < 0)
-		y2 = 0;
-	int w = screen->w;
-	int dx, x2;
-	int pitch = screen->pitch / 2;
-	int sr = ry * ry;
-	int end = y + ry;
-	if (end > screen->h - 1)
-		end = screen->h - 1;
-	float factor = 1;
-	if (ry != 0)
-		factor = (float)rx / (float)ry;
+	const int pitch = screen->pitch / 2;
+	const int w = screen->w;
+	const int sr = ry * ry;
+	const float factor = ry ? (float)rx / (float)ry : 1.0f;
+	int y2 = (y - ry < 0) ? 0 : y - ry;
+	const int end = (y + ry > screen->h - 1) ? screen->h - 1 : y + ry;
+
 	for (; y2 <= end; y2++) {
-		dx = (int)(sqrt((float)((sr - (y2 - y) * (y2 - y)))) * factor);
-		x2 = x - dx;
-		if (x2 < 0)
-			x2 = 0;
-		for (; (x2 <= x + dx) && (x2 < w); x2++)
-			if (RANDOMNUMBER < rate)
-				*((Uint16*)screen->pixels + y2 * pitch + x2) = color;
+		const int dx = (int)(sqrt((float)(sr - (y2 - y) * (y2 - y))) * factor);
+		int x2 = (x - dx < 0) ? 0 : x - dx;
+		Uint16* row = static_cast<Uint16*>(screen->pixels) + y2 * pitch;
+		for (; x2 <= x + dx && x2 < w; x2++)
+			if (RANDOMNUMBER < rate) *(row + x2) = color;
 	}
 }
 
 void SDL_ReplaceFilledCircle16(SDL_Surface* screen, int x, int y, int rx, int ry, Uint16 color, Sint32 replace) {
-	int y2 = y - ry;
-	if (y2 < 0)
-		y2 = 0;
-	int w = screen->w;
-	int dx, x2;
-	int end = y + ry;
-	if (end > screen->h - 1)
-		end = screen->h - 1;
-	int sr = ry * ry;
-	float factor = 1;
-	if (ry != 0)
-		factor = (float)rx / (float)ry;
-	Element* e = 0;
-	if (replace < 0)
-		e = getElement(0);
+	const int w = screen->w;
+	const int pitch = screen->pitch / 2;
+	const int sr = ry * ry;
+	const float factor = ry ? (float)rx / (float)ry : 1.0f;
+	const Element* e = (replace < 0) ? getElement(0) : nullptr;
+	int y2 = (y - ry < 0) ? 0 : y - ry;
+	const int end = (y + ry > screen->h - 1) ? screen->h - 1 : y + ry;
+
 	for (; y2 <= end; y2++) {
-		dx = (int)(sqrt((float)((sr - (y2 - y) * (y2 - y)))) * factor);
-		x2 = x - dx;
-		if (x2 < 0)
-			x2 = 0;
+		const int dx = (int)(sqrt((float)(sr - (y2 - y) * (y2 - y))) * factor);
+		int x2 = (x - dx < 0) ? 0 : x - dx;
+		Uint16* row = static_cast<Uint16*>(screen->pixels) + y2 * pitch;
 		if (replace >= 0) {
-			for (; (x2 <= x + dx) && (x2 < w); x2++)
-				if (*((Uint16*)screen->pixels + y2 * screen->pitch / 2 + x2) == replace)
-					*((Uint16*)screen->pixels + y2 * screen->pitch / 2 + x2) = color;
-		} else {
-			if (replace == -1)
-				for (; (x2 <= x + dx) && (x2 < w); x2++)
-					if ((e[*((Uint16*)screen->pixels + y2 * screen->pitch / 2 + x2)].weight))
-						*((Uint16*)screen->pixels + y2 * screen->pitch / 2 + x2) = color;
-			if (replace == -2)
-				for (; (x2 <= x + dx) && (x2 < w); x2++)
-					if (!(e[*((Uint16*)screen->pixels + y2 * screen->pitch / 2 + x2)].weight))
-						*((Uint16*)screen->pixels + y2 * screen->pitch / 2 + x2) = color;
+			for (; x2 <= x + dx && x2 < w; x2++)
+				if (*(row + x2) == static_cast<Uint16>(replace)) *(row + x2) = color;
+		} else if (replace == -1) {
+			for (; x2 <= x + dx && x2 < w; x2++)
+				if (e[*(row + x2)].weight) *(row + x2) = color;
+		} else if (replace == -2) {
+			for (; x2 <= x + dx && x2 < w; x2++)
+				if (!e[*(row + x2)].weight) *(row + x2) = color;
 		}
 	}
 }

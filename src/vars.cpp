@@ -6,7 +6,6 @@
 #include <cstdio>
 #include <iostream>
 
-// C++17: inline constexpr replaces #define PI
 inline constexpr double PI = 3.141592654;
 
 #define get_e int e = 0; if (!getVar(tmp, &e)) e = findElement(tmp, true);

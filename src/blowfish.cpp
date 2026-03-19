@@ -1,5 +1,5 @@
+#include <cstring>
 #include <iostream>
-#include <string.h>
 #include "blowfish.h"
 
 using namespace std;
@@ -7,43 +7,39 @@ using namespace std;
 #define F(x) (((SB[0][x.byte.zero] + SB[1][x.byte.one]) ^ SB[2][x.byte.two]) + SB[3][x.byte.three])
 
 void Blowfish::Gen_Subkeys(char* Passwd) {
-	unsigned int i, j, len = strlen(Passwd);
+	const unsigned int len = strlen(Passwd);
+	if (len == 0) return;
+
 	Word Work, null0, null1;
-
-	if (len > 0) {
-		j = 0;
-		for (i = 0; i < NUM_SUBKEYS; i++) {
-			Work.byte.zero = Passwd[(j++) % len];
-			Work.byte.one = Passwd[(j++) % len];
-			Work.byte.two = Passwd[(j++) % len];
-			Work.byte.three = Passwd[(j++) % len];
-			PA[i] ^= Work.word;
-		}
-
-		null0.word = null1.word = 0;
-
-		for (i = 0; i < NUM_SUBKEYS; i += 2) {
-			BF_En(&null0, &null1);
-			PA[i] = null0.word;
-			PA[i + 1] = null1.word;
-		}
-
-		for (j = 0; j < NUM_S_BOXES; j++)
-			for (i = 0; i < NUM_ENTRIES; i += 2) {
-				BF_En(&null0, &null1);
-				SB[j][i] = null0.word;
-				SB[j][i + 1] = null1.word;
-			}
+	unsigned int j = 0;
+	for (unsigned int i = 0; i < NUM_SUBKEYS; i++) {
+		Work.byte.zero = static_cast<unsigned char>(Passwd[(j++) % len]);
+		Work.byte.one = static_cast<unsigned char>(Passwd[(j++) % len]);
+		Work.byte.two = static_cast<unsigned char>(Passwd[(j++) % len]);
+		Work.byte.three = static_cast<unsigned char>(Passwd[(j++) % len]);
+		PA[i] ^= Work.word;
 	}
 
+	null0.word = null1.word = 0;
+
+	for (unsigned int i = 0; i < NUM_SUBKEYS; i += 2) {
+		BF_En(&null0, &null1);
+		PA[i] = null0.word;
+		PA[i + 1] = null1.word;
+	}
+
+	for (unsigned int jj = 0; jj < NUM_S_BOXES; jj++)
+		for (unsigned int i = 0; i < NUM_ENTRIES; i += 2) {
+			BF_En(&null0, &null1);
+			SB[jj][i] = null0.word;
+			SB[jj][i + 1] = null1.word;
+		}
+
 	Work.word = null0.word = null1.word = 0;
-	Passwd = NULL;
-	len = 0;
 }
 
 void Blowfish::BF_En(Word* x1, Word* x2) {
 	Word w1 = *x1, w2 = *x2;
-
 	w1.word ^= PA[0];
 	w2.word ^= F(w1) ^ PA[1];
 	w1.word ^= F(w2) ^ PA[2];
@@ -62,14 +58,12 @@ void Blowfish::BF_En(Word* x1, Word* x2) {
 	w2.word ^= F(w1) ^ PA[15];
 	w1.word ^= F(w2) ^ PA[16];
 	w2.word ^= PA[17];
-
 	*x1 = w2;
 	*x2 = w1;
 }
 
 void Blowfish::BF_De(Word* x1, Word* x2) {
 	Word w1 = *x1, w2 = *x2;
-
 	w1.word ^= PA[17];
 	w2.word ^= F(w1) ^ PA[16];
 	w1.word ^= F(w2) ^ PA[15];
@@ -88,32 +82,23 @@ void Blowfish::BF_De(Word* x1, Word* x2) {
 	w2.word ^= F(w1) ^ PA[2];
 	w1.word ^= F(w2) ^ PA[1];
 	w2.word ^= PA[0];
-
 	*x1 = w2;
 	*x2 = w1;
 }
 
-Blowfish::Blowfish() {
-	Reset();
-}
-
-Blowfish::~Blowfish() {
-	Reset();
-}
+Blowfish::Blowfish() { Reset(); }
+Blowfish::~Blowfish() { Reset(); }
 
 void Blowfish::Reset() {
-	unsigned int i, j;
-
-	unsigned int PA_Init[NUM_SUBKEYS] =
-	{
+	static const unsigned int PA_Init[NUM_SUBKEYS] = {
 		0x243f6a88, 0x85a308d3, 0x13198a2e, 0x03707344,
 		0xa4093822, 0x299f31d0, 0x082efa98, 0xec4e6c89,
 		0x452821e6, 0x38d01377, 0xbe5466cf, 0x34e90c6c,
 		0xc0ac29b7, 0xc97c50dd, 0x3f84d5b5, 0xb5470917,
-		0x9216d5d9, 0x8979fb1b };
+		0x9216d5d9, 0x8979fb1b
+	};
 
-	unsigned int SB_Init[NUM_S_BOXES][NUM_ENTRIES] =
-	{
+	static const unsigned int SB_Init[NUM_S_BOXES][NUM_ENTRIES] = {
 		0xd1310ba6, 0x98dfb5ac, 0x2ffd72db, 0xd01adfb7,
 		0xb8e1afed, 0x6a267e96, 0xba7c9045, 0xf12c7f99,
 		0x24a19947, 0xb3916cf7, 0x0801f2e2, 0x858efc16,
@@ -369,75 +354,38 @@ void Blowfish::Reset() {
 		0x85cbfe4e, 0x8ae88dd8, 0x7aaaf9b0, 0x4cf9aa7e,
 		0x1948c25c, 0x02fb8a8c, 0x01c36ae4, 0xd6ebe1f9,
 		0x90d4f869, 0xa65cdea0, 0x3f09252d, 0xc208e69f,
-		0xb74e6132, 0xce77e25b, 0x578fdfe3, 0x3ac372e6 };
+		0xb74e6132, 0xce77e25b, 0x578fdfe3, 0x3ac372e6
+	};
 
-	for (i = 0; i < NUM_SUBKEYS; i++)
+	for (unsigned int i = 0; i < NUM_SUBKEYS; i++)
 		PA[i] = PA_Init[i];
 
-	for (j = 0; j < NUM_S_BOXES; j++)
-		for (i = 0; i < NUM_ENTRIES; i++)
+	for (unsigned int j = 0; j < NUM_S_BOXES; j++)
+		for (unsigned int i = 0; i < NUM_ENTRIES; i++)
 			SB[j][i] = SB_Init[j][i];
 }
 
 void Blowfish::Set_Passwd(char* Passwd) {
-	char New_Passwd[MAX_STRING];
-	unsigned int i, len;
-
-	if (Passwd == NULL) {
-		do {
-			cout << "\aEnter your password: ";
-			cin.get(New_Passwd, MAX_STRING, '\n');
-			len = strlen(New_Passwd);
-		} while (len > MAX_PASSWD);
-		Passwd = New_Passwd;
-	} else
-		len = strlen(Passwd);
-
 	Reset();
-	if (len > 0)
+	if (Passwd && strlen(Passwd) > 0)
 		Gen_Subkeys(Passwd);
-
-	for (i = 0; i < MAX_STRING; i++)
-		New_Passwd[i] = '\0';
-	Passwd = NULL;
-	len = 0;
 }
 
 void Blowfish::Encrypt(void* Ptr, unsigned int N_Bytes) {
-	unsigned int i;
-	DWord* Work;
-
 	if (N_Bytes % 8) {
 		cerr << "\aBlowfish requires the input to be a multiple of 8 bytes (64 bits) to work.\n";
 		return;
 	}
-
 	N_Bytes /= 8;
-	Work = (DWord*)Ptr;
-
-	for (i = 0; i < N_Bytes; i++) {
+	DWord* Work = static_cast<DWord*>(Ptr);
+	for (unsigned int i = 0; i < N_Bytes; i++, Work++)
 		BF_En(&Work->word0, &Work->word1);
-		Work++;
-	}
-
-	Work = NULL;
 }
 
 void Blowfish::Decrypt(void* Ptr, unsigned int N_Bytes) {
-	unsigned int i;
-	DWord* Work;
-
-	if (N_Bytes % 8) {
-		cerr << "\aBlowfish requires the input to be a multiple of 8 bytes (64bits) to work.\n";
-		return;
-	}
-
+	if (N_Bytes % 8) return;
 	N_Bytes /= 8;
-	Work = (DWord*)Ptr;
-	for (i = 0; i < N_Bytes; i++) {
+	DWord* Work = static_cast<DWord*>(Ptr);
+	for (unsigned int i = 0; i < N_Bytes; i++, Work++)
 		BF_De(&Work->word0, &Work->word1);
-		Work++;
-	}
-
-	Work = NULL;
 }

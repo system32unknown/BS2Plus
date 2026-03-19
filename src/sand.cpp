@@ -142,185 +142,148 @@ SDL_Surface* getRealSandSurface() {
 	return sandSurface;
 }
 
-void sandclick(int x, int y, int b, int c) {
-	b = 0;
-	c = 0;
-	sanddraw(element1, brush, x, y, 0, 0, 0, 0);
-}
-
 void sanddraw(Uint16 e, int b, int x, int y, int dx, int dy, int a1, int a2) {
-	static Var* vpreview = (Var*)setVar("PREVIEW", 0);
+	static Var* vpreview = reinterpret_cast<Var*>(setVar("PREVIEW", 0));
 	precalc(recalc);
-	static Element* element;
-	element = getElement(e);
-	static Uint16 color;
-	color = SDL_MapRGB(outSurface->format, element->r, element->g, element->b);
 
-	int h;
-	void* pixels;
+	const Element* element = getElement(e);
+	const Uint16 color = SDL_MapRGB(outSurface->format, element->r, element->g, element->b);
+	const bool preview = vpreview->value != 0;
+
 	switch (b) {
 	case BRUSH_FILLEDCIRCLE:
-		if (!(vpreview->value))
-			SDL_DrawFilledCircle16(sandSurface, x, y, dx, dx, e);
-		if (!mustredraw)
-			SDL_DrawFilledCircle16(outSurface, x, y - 1, dx, dx, color);
+		if (!preview) SDL_DrawFilledCircle16(sandSurface, x, y, dx, dx, e);
+		if (!mustredraw) SDL_DrawFilledCircle16(outSurface, x, y - 1, dx, dx, color);
 		break;
 	case BRUSH_CIRCLE:
-		if (!(vpreview->value))
-			SDL_DrawCircle16(sandSurface, x, y, dx, dx, e);
-		if (!mustredraw)
-			SDL_DrawCircle16(outSurface, x, y - 1, dx, dx, color);
+		if (!preview) SDL_DrawCircle16(sandSurface, x, y, dx, dx, e);
+		if (!mustredraw) SDL_DrawCircle16(outSurface, x, y - 1, dx, dx, color);
 		break;
 	case BRUSH_FILLEDRECT:
-		if (!(vpreview->value))
-			SDL_DrawFilledRect16(sandSurface, x, y, dx, dy, e);
-		if (!mustredraw)
-			SDL_DrawFilledRect16(outSurface, x, y - 1, dx, dy, color);
+		if (!preview) SDL_DrawFilledRect16(sandSurface, x, y, dx, dy, e);
+		if (!mustredraw) SDL_DrawFilledRect16(outSurface, x, y - 1, dx, dy, color);
 		break;
 	case BRUSH_RECT:
-		if (!(vpreview->value))
-			SDL_DrawRect16(sandSurface, x, y, dx, dy, e);
-		if (!mustredraw)
-			SDL_DrawRect16(outSurface, x, y - 1, dx, dy, color);
+		if (!preview) SDL_DrawRect16(sandSurface, x, y, dx, dy, e);
+		if (!mustredraw) SDL_DrawRect16(outSurface, x, y - 1, dx, dy, color);
 		break;
 	case BRUSH_LINE:
-		if (!(vpreview->value))
-			SDL_DrawLine16(sandSurface, x, y, dx, dy, e);
-		if (!mustredraw)
-			SDL_DrawLine16(outSurface, x, y - 1, dx, dy, color);
+		if (!preview) SDL_DrawLine16(sandSurface, x, y, dx, dy, e);
+		if (!mustredraw) SDL_DrawLine16(outSurface, x, y - 1, dx, dy, color);
 		break;
 	case BRUSH_FILL:
-		if (!(vpreview->value))
+		if (!preview) {
 			SDL_Fill16(sandSurface, x, y, e);
-		if (!(vpreview->value))
 			recalccolors();
+		}
 		break;
 	case REPLACE_FILLEDCIRCLE:
-		if (!(vpreview->value))
+		if (!preview) { 
 			SDL_ReplaceFilledCircle16(sandSurface, x, y, dx, dx, e, a1);
-		if (!(vpreview->value))
 			recalccolors();
+		}
 		break;
 	case REPLACE_LINE:
-		if (!(vpreview->value))
+		if (!preview) {
 			SDL_ReplaceLine16(sandSurface, x, y, dx, dy, e, a1);
-		if (!(vpreview->value))
 			recalccolors();
+		}
 		break;
-	case COPY_RECT:
-		if (x + dx >= sandSurface->w)
-			dx = sandSurface->w - x - 1;
-		if (x < 1)
-			x = 1;
-		if (y + dy > sandSurface->h - 1)
-			dy = sandSurface->h - y - 1;
-		if (y < 1)
-			y = 1;
-		if (!(vpreview->value))
+	case COPY_RECT: {
+		if (x + dx >= sandSurface->w) dx = sandSurface->w - x - 1;
+		if (x < 1) x = 1;
+		if (y + dy > sandSurface->h - 1) dy = sandSurface->h - y - 1;
+		if (y < 1) y = 1;
+		if (!preview) {
 			SDL_CopyRect16(sandSurface, x, y, dx, dy, a1, a2);
-		if (!(vpreview->value))
 			recalccolors();
-		h = outSurface->h;
-		pixels = outSurface->pixels;
+		}
+		const int saved_h = outSurface->h;
+		void* const saved_px = outSurface->pixels;
 		outSurface->h = outSurfaceh;
 		outSurface->pixels = outSurfacep;
-		if (vpreview->value)
-			SDL_CopyRect16(outSurface, x, y - 1, dx, dy, a1, a2);
-		outSurface->h = h;
-		outSurface->pixels = pixels;
+		if (preview) SDL_CopyRect16(outSurface, x, y - 1, dx, dy, a1, a2);
+		outSurface->h = saved_h;
+		outSurface->pixels = saved_px;
 		break;
-	case ROTATE_RECT:
-		if (x + dx >= sandSurface->w)
-			dx = sandSurface->w - x - 1;
+	}
+	case ROTATE_RECT: {
+		if (x + dx >= sandSurface->w) dx = sandSurface->w - x - 1;
 		if (x < 1) {
 			dx += x - 1;
 			x = 1;
 		}
-		if (y + dy >= sandSurface->h)
-			dy = sandSurface->h - y - 1;
+		if (y + dy >= sandSurface->h) dy = sandSurface->h - y - 1;
 		if (y < 1) {
 			dy += y - 1;
 			y = 1;
 		}
-		if (!(vpreview->value))
-			SDL_RotateRect16(sandSurface, x, y, dx, dy, a1);
-		h = outSurface->h;
-		pixels = outSurface->pixels;
+		if (!preview) SDL_RotateRect16(sandSurface, x, y, dx, dy, a1);
+		const int saved_h = outSurface->h;
+		void* const saved_px = outSurface->pixels;
 		outSurface->h = outSurfaceh;
 		outSurface->pixels = outSurfacep;
 		SDL_RotateRect16(outSurface, x, y, dx, dy, a1);
-		outSurface->h = h;
-		outSurface->pixels = pixels;
+		outSurface->h = saved_h;
+		outSurface->pixels = saved_px;
 		break;
+	}
 	case BRUSH_POINT:
-		if (!(vpreview->value))
-			SDL_DrawSavePoint16(sandSurface, x, y, e);
-		if (!mustredraw)
-			SDL_DrawSavePoint16(outSurface, x, y - 1, color);
+		if (!preview) SDL_DrawSavePoint16(sandSurface, x, y, e);
+		if (!mustredraw) SDL_DrawSavePoint16(outSurface, x, y - 1, color);
 		break;
 	case BRUSH_RADNOMFILLEDCIRCLE:
-		if (!(vpreview->value))
+		if (preview) SDL_DrawRandomFilledCircle16(outSurface, x, y, dx, dx, dy * 15, color);
+		else {
 			SDL_DrawRandomFilledCircle16(sandSurface, x, y, dx, dx, dy, e);
-		if (!(vpreview->value))
 			recalccolors();
-		if (vpreview->value)
-			SDL_DrawRandomFilledCircle16(outSurface, x, y, dx, dx, dy * 15, color);
+		}
 		break;
 	case COPY_STAMP:
-		if (!(vpreview->value))
+		if (!preview) {
 			SDL_CopyStamp16(sandSurface, x, y, dx, dy, a1);
-		if (!(vpreview->value))
 			recalccolors(false);
-		if (!(vpreview->value))
 			recalccolors(true);
-		if (!(vpreview->value))
 			SDL_CopyStamp16(outSurface, x, y - 1, dx, dy, a1 + MAX_STAMPS);
+		}
 		break;
 	case PASTE_STAMP:
-		if (!(vpreview->value))
+		if (preview) SDL_PasteStamp16(outSurface, x, y - 1, dx, dy, a1 + MAX_STAMPS, color);
+		else {
 			SDL_PasteStamp16(sandSurface, x, y, dx, dy, a1, e);
-		if (!(vpreview->value))
 			recalccolors();
-		if ((vpreview->value))
-			SDL_PasteStamp16(outSurface, x, y - 1, dx, dy, a1 + MAX_STAMPS, color);
+		}
 		break;
 	case BRUSH_SWAPPOINTS:
-		if (!(vpreview->value))
-			SDL_SwapPoints16(sandSurface, x, y, dx, dy, true);
-		if (!mustredraw)
-			SDL_SwapPoints16(outSurface, x, y - 1, dx, dy - 1, false);
+		if (!preview) SDL_SwapPoints16(sandSurface, x, y, dx, dy, true);
+		if (!mustredraw) SDL_SwapPoints16(outSurface, x, y - 1, dx, dy - 1, false);
 		if ((y > outSurface->h) || (y < 0) || (dy > outSurface->h) || (dy < 0))
 			recalccolors();
 		break;
 	case BRUSH_FILLEDELLIPSE:
-		if (!(vpreview->value))
-			SDL_DrawFilledCircle16(sandSurface, x, y, dx, dy, e);
-		if (!mustredraw)
-			SDL_DrawFilledCircle16(outSurface, x, y - 1, dx, dy, color);
+		if (!preview)    SDL_DrawFilledCircle16(sandSurface, x, y, dx, dy, e);
+		if (!mustredraw) SDL_DrawFilledCircle16(outSurface, x, y - 1, dx, dy, color);
 		break;
 	case BRUSH_ELLIPSE:
-		if (!(vpreview->value))
-			SDL_DrawCircle16(sandSurface, x, y, dx, dy, e);
-		if (!mustredraw)
-			SDL_DrawCircle16(outSurface, x, y - 1, dx, dy, color);
+		if (!preview) SDL_DrawCircle16(sandSurface, x, y, dx, dy, e);
+		if (!mustredraw) SDL_DrawCircle16(outSurface, x, y - 1, dx, dy, color);
 		break;
 	case REPLACE_FILLEDELLIPSE:
-		if (!(vpreview->value))
+		if (!preview) {
 			SDL_ReplaceFilledCircle16(sandSurface, x, y, dx, dy, e, a1);
-		if (!(vpreview->value))
 			recalccolors();
+		}
 		break;
 	case BRUSH_RANDOMFILLEDELLIPSE:
-		if (!(vpreview->value))
+		if (preview) SDL_DrawRandomFilledCircle16(outSurface, x, y, dx, dy, a1 * 15, color);
+		else {
 			SDL_DrawRandomFilledCircle16(sandSurface, x, y, dx, dy, a1, e);
-		if (!(vpreview->value))
 			recalccolors();
-		if (vpreview->value)
-			SDL_DrawRandomFilledCircle16(outSurface, x, y, dx, dy, a1 * 15, color);
+		}
 		break;
 	}
-	if (!(vpreview->value))
-		used[e] = true;
+
+	if (!preview) used[e] = true;
 }
 
 void sandwrite(Uint16 element, int x, int y, int size, char* text, int align) {
@@ -343,8 +306,7 @@ void sandwrite(Uint16 element, int x, int y, int size, char* text, int align) {
 }
 
 void recalccolors(bool b) {
-	if (!sandelements)
-		return;
+	if (!sandelements) return;
 	if (!b) {
 		mustredraw = true;
 		return;

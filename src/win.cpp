@@ -95,8 +95,7 @@ void sysmessage(SDL_SysWMmsg* msg) {
 
 void ossystem(char* cmd, char* parameters, bool wait, bool hidden) {
 	if (parameters) {
-		SHELLEXECUTEINFOA t;
-		ZeroMemory(&t, sizeof(SHELLEXECUTEINFOA));
+		SHELLEXECUTEINFOA t = {};
 		t.cbSize = sizeof(SHELLEXECUTEINFOA);
 		t.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_FLAG_DDEWAIT;
 		t.hwnd = GetActiveWindow();
@@ -153,12 +152,10 @@ char* getStringFromClipboard() {
 }
 
 char* opendialog(char* filter, char* defaultname) {
-	OPENFILENAMEA ofn;
-	char* szFile = new char[260];
-	ZeroMemory(&ofn, sizeof(OPENFILENAMEA));
-	ZeroMemory(szFile, 260);
+	char* szFile = new char[260]();
 	if (defaultname) strncpy(szFile, defaultname, 259);
 
+	OPENFILENAMEA ofn = {};
 	ofn.lStructSize = sizeof(OPENFILENAMEA);
 	ofn.hwndOwner = GetActiveWindow();
 	ofn.lpstrFile = szFile;
@@ -178,12 +175,10 @@ char* opendialog(char* filter, char* defaultname) {
 }
 
 char* savedialog(char* filter, char* defaultname) {
-	OPENFILENAMEA ofn;
-	char* szFile = new char[260];
-	ZeroMemory(&ofn, sizeof(OPENFILENAMEA));
-	ZeroMemory(szFile, 260);
+	char* szFile = new char[260]();
 	if (defaultname) strncpy(szFile, defaultname, 259);
 
+	OPENFILENAMEA ofn = {};
 	ofn.lStructSize = sizeof(OPENFILENAMEA);
 	ofn.hwndOwner = GetActiveWindow();
 	ofn.hInstance = reinterpret_cast<HINSTANCE>(GetCurrentProcess());
@@ -198,8 +193,7 @@ char* savedialog(char* filter, char* defaultname) {
 	ofn.lpstrDefExt = "";
 
 	mousebuttonbug(true);
-	if (GetSaveFileNameA(&ofn) && strlen(szFile))
-		return szFile;
+	if (GetSaveFileNameA(&ofn) && szFile[0]) return szFile;
 
 	delete[] szFile;
 	return nullptr;

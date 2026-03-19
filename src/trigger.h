@@ -150,21 +150,23 @@ struct Trigger {
 	char* name;
 	int actioncount;
 	int execcount;
+	long deleted;
 	std::list<Action*> actions;
+
 	int exec();
 	inline void exec(int x, int y, int b, int c) {
-		static Var* vx = (Var*)setVar("X", 0);
-		static Var* vy = (Var*)setVar("Y", 0);
-		static Var* vb = (Var*)setVar("BUTTON", 0);
-		static Var* vc = (Var*)setVar("CLICKED", 0);
+		static Var* vx = (Var*)(setVar("X", 0));
+		static Var* vy = (Var*)(setVar("Y", 0));
+		static Var* vb = (Var*)(setVar("BUTTON", 0));
+		static Var* vc = (Var*)(setVar("CLICKED", 0));
 		vx->value = x;
 		vy->value = y;
 		vb->value = b;
 		vc->value = c;
-		this->exec();
-	};
-	long deleted;
-	inline bool operator<(const Trigger& t) {
+		exec();
+	}
+
+	inline bool operator<(const Trigger&) const {
 		return true;
 	}
 };

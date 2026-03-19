@@ -29,11 +29,11 @@ void replaceall(char* c, char* search, char replace, char fill = ' ') {
 	}
 }
 
-void removeall(char* c, char* search, char fill = ' ') {
+void removeall(char* c, const char* search, char fill) {
+	const int len = static_cast<int>(strlen(search));
+	const char* end = c + strlen(c) - len;
 	char* pos;
-	int len = strlen(search);
-	char* end = c + strlen(c) - len;
-	while (pos = strstr(c, search)) {
+	while ((pos = strstr(c, search)) != nullptr) {
 		char* t;
 		for (t = pos; t < end; t++) *t = *(t + len);
 		for (int i = 0; i < len; i++) *(t++) = fill;
@@ -138,7 +138,7 @@ bool checkfile(char* text, bool doexit) {
 
 #ifdef COMPILER_SYSTEM
 		if (!cached || refresh) {
-			ossystem(dlCmd, nullptr, true, false);
+			ossystem(dlCmd, nullptr);
 			mousebuttonbug(true);
 		}
 #endif
@@ -242,24 +242,26 @@ void Token::reset() {
 }
 
 char* Token::getuntillast() {
-	int lastpos = 0;
-	int lastlastpos = 0;
-	int lastlastlastpos = 0;
-	char* tmp;
-	while (tmp = getToken(true)) {
-		delete (tmp);
-		lastlastlastpos = lastlastpos;
-		lastlastpos = lastpos;
-		lastpos = pos;
+	int cur = 0, prev = 0, pprev = 0;
+
+	while (true) {
+		char* tmp = getToken(true);
+		if (!tmp) break;
+		delete[] tmp;
+		pprev = prev;
+		prev = cur;
+		cur = pos;
 	}
-	pos = lastlastlastpos;
-	if ((pos >= length) || !pos)
-		return 0;
-	char a = text[pos];
-	text[pos] = 0;
+
+	pos = pprev;
+	if (!pos || pos >= length)
+		return nullptr;
+
+	const char saved = text[pos];
+	text[pos] = '\0';
 	char* t = new char[strlen(text) + 1];
 	strcpy(t, text);
-	text[pos] = a;
+	text[pos] = saved;
 	return t;
 }
 
@@ -416,47 +418,54 @@ int parsechar(char* text, int owner, char* filename) {
 }
 
 int parseline(char* text, int linenum, int owner, char* filename) {
-	char* tmp;
 	static Var* debugparser = (Var*)setVar("DEBUGPARSER", 0);
-	if (debugparser->value) {
-		tmp = new char[strlen(text) + 512];
-		sprintf(tmp, "parsing line: messageid: %i, filename: %s, line: %i, line: %s", owner, filename, linenum, text);
-		if (!secretcode) std::cout << tmp << std::endl;
-		delete (tmp);
-	}
+
 	if (!filename) filename = "";
-	char* triggername = 0;
+
+	if (debugparser->value) {
+		const size_t len = strlen(text) + 512;
+		char* tmp = new char[len];
+		snprintf(tmp, len, "parsing line: messageid: %i, filename: %s, line: %i, line: %s", owner, filename, linenum, text);
+		if (!secretcode) std::cout << tmp << std::endl;
+		delete[] tmp;
+	}
+
+	const unsigned int i = static_cast<unsigned int>(triggerstack.size());
+	char* triggername = i ? triggerstack.top() : nullptr;
+
 	Token tokens(text);
-	unsigned int i = triggerstack.size();
-	if (i) triggername = triggerstack.top();
 	Action* action = parseaction(&tokens, owner);
-	if (action == NULL) {
+
+	auto debugAction = [&](Action* a) {
+		if (!debugparser->value) return;
+		const size_t len = strlen(text) + 512;
+		char* tmp = new char[len];
+		char* str = a->toString();
+		snprintf(tmp, len, "parsed action: messageid: %i, filename: %s, line: %i, action: %s", owner, filename, linenum, str);
+		if (!secretcode) std::cout << tmp << std::endl;
+		delete[] str;
+		delete[] tmp;
+		};
+
+	if (!action) {
 		if (i > triggerstack.size()) {
-			if (triggerstack.size() == 0) {
-				if (debugparser->value) {
-					tmp = new char[strlen(text) + 512];
-					char* string = (actionstack.top())->toString();
-					sprintf(tmp, "parsed action: messageid: %i, filename: %s, line: %i, action: %s", owner, filename, linenum, string);
-					if (!secretcode) std::cout << tmp << std::endl;
-					delete (string);
-					delete (tmp);
-				}
-				(actionstack.top())->exec();
-				delete (actionstack.top());
+			if (triggerstack.empty()) {
+				debugAction(actionstack.top());
+				actionstack.top()->exec();
+				delete actionstack.top();
 				actionstack.pop();
 			}
-		} else if (drawobjectaction == (Action*)-1)
-			drawobjectaction = 0;
-		else if (!drawobjectaction) {
+		} else if (drawobjectaction == reinterpret_cast<Action*>(-1)) {
+			drawobjectaction = nullptr;
+		} else if (!drawobjectaction) {
 #if LOGLEVEL >= 3
-			tmp = new char[strlen(text) + 512];
-			if (filename == 0)
-				sprintf(tmp, "ERROR in line %i: %s", linenum, text);
-			else
-				sprintf(tmp, "ERROR in file %s in line %i: %s", filename, linenum, text);
-			if (!secretcode)
-				error(tmp, owner);
-			delete (tmp);
+			const size_t len = strlen(text) + 512;
+			char* tmp = new char[len];
+			if (!filename || !filename[0])
+				snprintf(tmp, len, "ERROR in line %i: %s", linenum, text);
+			else snprintf(tmp, len, "ERROR in file %s in line %i: %s", filename, linenum, text);
+			if (!secretcode) error(tmp, owner);
+			delete[] tmp;
 #endif
 		}
 	} else {
@@ -465,16 +474,9 @@ int parseline(char* text, int linenum, int owner, char* filename) {
 		} else if (i < triggerstack.size()) {
 			actionstack.push(action);
 		} else {
-			if (debugparser->value) {
-				tmp = new char[strlen(text) + 512];
-				char* string = action->toString();
-				sprintf(tmp, "parsed action: messageid: %i, filename: %s, line: %i, action: %s", owner, filename, linenum, string);
-				if (!secretcode) std::cout << tmp << std::endl;
-				delete (string);
-				delete (tmp);
-			}
+			debugAction(action);
 			action->exec();
-			delete (action);
+			delete action;
 		}
 	}
 	return 0;

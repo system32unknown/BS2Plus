@@ -1,6 +1,9 @@
 #ifndef COMPILER_H
 #define COMPILER_H
 
+#include <cstdlib>
+#include <cstdint>
+
 #if defined(_WIN32)
 #define COMPILER_WINDOWS
 #endif
@@ -21,19 +24,20 @@
 #define SEEDRAND srand
 
 inline int myrand() {
-	static int randseed = 0;
-	randseed = randseed * 43 + 777;
-	return randseed % 32768;
+    static int randseed = 0;
+    randseed = randseed * 43 + 777;
+    return randseed % 32768;
 }
 
-extern unsigned long int randseed;
+extern uint32_t randseed;
 
 inline int crand() {
-	randseed = randseed * 1103515245 + 12345;
-	return ((int)((randseed / 65536) % 32768));
+    randseed = randseed * 1103515245u + 12345u;
+    return static_cast<int>((randseed / 65536u) % 32768u);
 }
 
 inline void seedrand(int seed) {
-	randseed = (unsigned long)seed;
+    randseed = static_cast<uint32_t>(seed);
 }
+
 #endif

@@ -142,9 +142,9 @@ int main(int argc, char* argv[]) {
 	static Var* lastfps = reinterpret_cast<Var*>(setVar("FPS", 0));
 
 #if defined(_WIN32)
-	(Var*)setVar("WINDOWS", 1);
+	setVar("WINDOWS", 1);
 #else
-	(Var*)setVar("WINDOWS", 0);
+	setVar("WINDOWS", 0);
 #endif
 	static Var* keycode = reinterpret_cast<Var*>(setVar("SHOWKEYCODE", 0));
 	static Var* keyrepeatdelay = reinterpret_cast<Var*>(setVar("KEYREPEATDELAY", SDL_DEFAULT_REPEAT_DELAY / 10));
@@ -332,7 +332,6 @@ int main(int argc, char* argv[]) {
 		Uint8* keystate = SDL_GetKeyState(nullptr);
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
-			const int k = event.key.keysym.sym;
 			switch (event.type) {
 			case SDL_QUIT:
 				findTrigger("QUIT", 0)->exec();
