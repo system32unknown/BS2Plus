@@ -1,3 +1,6 @@
 [submodule "utils/hex2bmp"]
 	path = utils/hex2bmp
 	url = https://github.com/system32unknown/Hex2Bmp
+[submodule "mods"]
+	path = mods
+	url = https://github.com/system32unknown/Burning-Sand-2-Mods
