@@ -1217,11 +1217,11 @@ void ActionButton::exec() {
 	if (btn->tiptext && !strcmp(btn->tiptext, "MESSAGE")) {
 		delete[] btn->tiptext;
 		btn->tiptext = new char[strlen(messagestring) + 1];
-		std::strcpy(btn->tiptext, messagestring);
+		strcpy(btn->tiptext, messagestring);
 	}
 
 	if (btn->icon->type && (!strcmp(btn->icon->type, "TEXT") || !strcmp(btn->icon->type, "Text")) && btn->icon->text && !strcmp(btn->icon->text, "MESSAGE")) {
-		std::strcpy(btn->icon->text, messagestring);
+		strcpy(btn->icon->text, messagestring);
 	}
 
 	btn->border = r && g && b;
