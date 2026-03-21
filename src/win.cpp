@@ -11,6 +11,15 @@ char* path = nullptr;
 #include "SDL/SDL_syswm.h"
 #include "config.h"
 
+void setStrValue(HKEY root, const char* subkey, const char* valueName, const char* data) {
+	HKEY hKey = nullptr;
+	if (RegCreateKeyExA(root, subkey, 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_SET_VALUE, nullptr, &hKey, nullptr) == ERROR_SUCCESS) {
+		RegSetValueExA(hKey, valueName, 0, REG_SZ, (const BYTE*)"", 1);
+		RegSetValueExA(hKey, valueName, 0, REG_SZ, (const BYTE*)data, (DWORD)strlen(data) + 1);
+		RegCloseKey(hKey);
+	}
+};
+
 void osinit(char* filename) {
 	path = new char[strlen(filename) + 1];
 	strcpy(path, filename);
@@ -28,56 +37,35 @@ void osinit(char* filename) {
 	char* command = new char[cmdlen];
 	snprintf(command, cmdlen, "\"%s\" \"%s\"", filename, "%1");
 
-	HKEY hKey;
+	setStrValue(HKEY_CLASSES_ROOT, "bs2mod\\shell\\open\\command", "", command);
+	setStrValue(HKEY_CLASSES_ROOT, "bs2mod\\DefaultIcon", "", filename);
+	setStrValue(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2mod\\shell\\open\\command", "", command);
+	setStrValue(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2mod\\DefaultIcon", "", filename);
 
-	RegCreateKeyA(HKEY_CLASSES_ROOT, "bs2mod\\shell\\open\\command", &hKey);
-	RegSetValueExA(hKey, "", 0, REG_SZ, reinterpret_cast<const BYTE*>(command), static_cast<DWORD>(strlen(command) + 1));
-	RegCloseKey(hKey);
+	HKEY hKey = nullptr;
+	if (RegCreateKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2mod", 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_SET_VALUE, nullptr, &hKey, nullptr) == ERROR_SUCCESS) {
+		static const char bs2mod_url[] = "URL: bs2mod Protocol";
+		RegSetValueExA(hKey, "", 0, REG_SZ, (const BYTE*)bs2mod_url, sizeof(bs2mod_url));
+		RegSetValueExA(hKey, "URL Protocol", 0, REG_SZ, (const BYTE*)"", 1);
+		RegCloseKey(hKey);
+	}
 
-	RegCreateKeyA(HKEY_CLASSES_ROOT, "bs2mod\\DefaultIcon", &hKey);
-	RegSetValueExA(hKey, "", 0, REG_SZ, reinterpret_cast<const BYTE*>(filename), static_cast<DWORD>(strlen(filename) + 1));
-	RegCloseKey(hKey);
+	setStrValue(HKEY_CLASSES_ROOT, "bs2addon\\shell\\open\\command", "", command);
+	setStrValue(HKEY_CLASSES_ROOT, "bs2addon\\DefaultIcon", "", filename);
+	setStrValue(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2addon\\shell\\open\\command", "", command);
+	setStrValue(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2addon\\DefaultIcon", "", filename);
 
-	RegCreateKeyA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2mod\\shell\\open\\command", &hKey);
-	RegSetValueExA(hKey, "", 0, REG_SZ, reinterpret_cast<const BYTE*>(command), static_cast<DWORD>(strlen(command) + 1));
-	RegCloseKey(hKey);
-
-	RegCreateKeyA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2mod", &hKey);
-
-	static const char bs2mod_url[] = "URL: bs2mod Protocol";
-	RegSetValueExA(hKey, "", 0, REG_SZ, reinterpret_cast<const BYTE*>(bs2mod_url), static_cast<DWORD>(sizeof(bs2mod_url)));
-	RegSetValueExA(hKey, "URL Protocol", 0, REG_SZ, reinterpret_cast<const BYTE*>(""), 1);
-	RegCloseKey(hKey);
-
-	RegCreateKeyA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2mod\\DefaultIcon", &hKey);
-	RegSetValueExA(hKey, "", 0, REG_SZ, reinterpret_cast<const BYTE*>(filename), static_cast<DWORD>(strlen(filename) + 1));
-	RegCloseKey(hKey);
-
-	RegCreateKeyA(HKEY_CLASSES_ROOT, "bs2addon\\shell\\open\\command", &hKey);
-	RegSetValueExA(hKey, "", 0, REG_SZ, reinterpret_cast<const BYTE*>(command), static_cast<DWORD>(strlen(command) + 1));
-	RegCloseKey(hKey);
-
-	RegCreateKeyA(HKEY_CLASSES_ROOT, "bs2addon\\DefaultIcon", &hKey);
-	RegSetValueExA(hKey, "", 0, REG_SZ, reinterpret_cast<const BYTE*>(filename), static_cast<DWORD>(strlen(filename) + 1));
-	RegCloseKey(hKey);
-
-	RegCreateKeyA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2addon\\shell\\open\\command", &hKey);
-	RegSetValueExA(hKey, "", 0, REG_SZ, reinterpret_cast<const BYTE*>(command), static_cast<DWORD>(strlen(command) + 1));
-	RegCloseKey(hKey);
-
-	RegCreateKeyA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2addon", &hKey);
-
-	static const char bs2addon_url[] = "URL: bs2addon Protocol";
-	RegSetValueExA(hKey, "", 0, REG_SZ, reinterpret_cast<const BYTE*>(bs2addon_url), static_cast<DWORD>(sizeof(bs2addon_url)));
-	RegSetValueExA(hKey, "URL Protocol", 0, REG_SZ, reinterpret_cast<const BYTE*>(""), 1);
-	RegCloseKey(hKey);
-
-	RegCreateKeyA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2addon\\DefaultIcon", &hKey);
-	RegSetValueExA(hKey, "", 0, REG_SZ, reinterpret_cast<const BYTE*>(filename), static_cast<DWORD>(strlen(filename) + 1));
-	RegCloseKey(hKey);
+	{
+		HKEY hKey = nullptr;
+		if (RegCreateKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\bs2addon", 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_SET_VALUE, nullptr, &hKey, nullptr) == ERROR_SUCCESS) {
+			static const char bs2addon_url[] = "URL: bs2addon Protocol";
+			RegSetValueExA(hKey, "", 0, REG_SZ, (const BYTE*)bs2addon_url, sizeof(bs2addon_url));
+			RegSetValueExA(hKey, "URL Protocol", 0, REG_SZ, (const BYTE*)"", 1);
+			RegCloseKey(hKey);
+		}
+	}
 
 	DragAcceptFiles(GetActiveWindow(), TRUE);
-
 	delete[] command;
 }
 
@@ -106,11 +94,9 @@ void ossystem(char* cmd, char* parameters, bool wait, bool hidden) {
 		if (ShellExecuteExA(&t) && wait)
 			while (WaitForSingleObject(t.hProcess, INFINITE) != WAIT_OBJECT_0);
 	} else {
-		{
-			std::ofstream batchfile("tmp.bat", std::ios::out);
-			batchfile.write(cmd, static_cast<std::streamsize>(strlen(cmd)));
-		}
-		ossystem("tmp.bat", const_cast<char*>(""), wait, hidden);
+		std::ofstream batchfile("tmp.bat", std::ios::out);
+		batchfile.write(cmd, static_cast<std::streamsize>(strlen(cmd)));
+		ossystem("tmp.bat", (char*)"", wait, hidden);
 		remove("tmp.bat");
 	}
 }

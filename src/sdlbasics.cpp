@@ -188,8 +188,8 @@ void SDL_ReplaceFilledCircle16(SDL_Surface* screen, int x, int y, int rx, int ry
 }
 
 void SDL_CopyRect16(SDL_Surface* screen, int x, int y, int dx, int dy, int tox, int toy) {
-	SDL_Rect srcrect = { static_cast<Sint16>(x),   static_cast<Sint16>(y),
-						 static_cast<Uint16>(dx),  static_cast<Uint16>(dy) };
+	SDL_Rect srcrect = { static_cast<Sint16>(x), static_cast<Sint16>(y),
+						 static_cast<Uint16>(dx), static_cast<Uint16>(dy) };
 	SDL_Rect dstrect = { static_cast<Sint16>(tox), static_cast<Sint16>(toy), 0, 0 };
 
 	SDL_Surface* tmp = SDL_CreateRGBSurface(SDL_SWSURFACE, dx, dy, 16, 0, 0, 0, 0);

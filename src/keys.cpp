@@ -6,7 +6,7 @@
 std::list<Key*> keys;
 
 void addkey(char* name, int keycode) {
-	for (auto* k : keys)
+	for (Key* k : keys)
 		if (k->code == keycode) return;
 
 	Key* key = new Key();
@@ -17,7 +17,7 @@ void addkey(char* name, int keycode) {
 
 void execkey(char* type, int keycode) {
 	const size_t typelen = strlen(type);
-	for (auto* k : keys) {
+	for (Key* k : keys) {
 		if (k->code == keycode) {
 			const size_t len = typelen + strlen(k->name) + 1;
 			char* tmp = new char[len];

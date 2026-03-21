@@ -93,7 +93,7 @@ void checknetwork() {
 
 void sendowner(char* text, int owner, int size) {
 #ifdef COMPILER_SDL_NET
-	if (size == -1) size = static_cast<int>(strlen(text));
+	if (size == -1) size = (int)strlen(text);
 
 	static const char newline[] = "\n";
 

@@ -263,7 +263,7 @@ int load(char* filename) {
 		const png_size_t  img_rowbytes = png_get_rowbytes(png_ptr, info_ptr);
 		const int bit_depth = png_get_bit_depth(png_ptr, info_ptr);
 		const int channels = png_get_channels(png_ptr, info_ptr);
-		const png_size_t  pixel_bytes = static_cast<png_size_t>(bit_depth / 8) * channels;
+		const png_size_t pixel_bytes = static_cast<png_size_t>(bit_depth / 8) * channels;
 
 		resize(static_cast<int>(img_width) - 2, static_cast<int>(img_height) - 2);
 		SDL_Surface* screen = getRealSandSurface();

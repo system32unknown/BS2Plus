@@ -119,11 +119,9 @@ int main(int argc, char* argv[]) {
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-	char* defaultconfigfile = "config.bs2"; {
-		std::ifstream inp(checkfilename("myconfig.bs2"), std::ifstream::in);
-		if (inp) defaultconfigfile = "myconfig.bs2";
-	}
-
+	char* defaultconfigfile = "config.bs2";
+	std::ifstream inp(checkfilename("myconfig.bs2"), std::ifstream::in);
+	if (inp) defaultconfigfile = "myconfig.bs2";
 	initmenu(screen);
 
 	setVar("BSVERSION", 2);
@@ -181,11 +179,9 @@ int main(int argc, char* argv[]) {
 	parsechar("KEYCODE 27 ESC\n", 0);
 	parsechar("KEYCODE 32 SPACE\n", 0);
 
-	{
-		std::string welcome = "Welcome to ";
-		welcome += TITLE_GAME;
-		print(welcome.data(), 0);
-	}
+	std::string welcome = "Welcome to ";
+	welcome += TITLE_GAME;
+	print(welcome.data(), 0);
 	consolenews = false;
 
 	SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
@@ -348,11 +344,11 @@ int main(int argc, char* argv[]) {
 				const int kd = event.key.keysym.sym;
 				if (!keydown[kd]) {
 					execkey("KEY_", kd);
-					keydown[kd] = static_cast<unsigned int>(keyrepeatdelay->value);
+					keydown[kd] = (unsigned int)keyrepeatdelay->value;
 				} else {
 					if (keydown[kd] <= 1) {
 						execkey("KEYREPEAT_", kd);
-						keydown[kd] = static_cast<unsigned int>(keyrepeatrate->value);
+						keydown[kd] = (unsigned int)keyrepeatrate->value;
 					} else keydown[kd]--;
 				}
 				break;

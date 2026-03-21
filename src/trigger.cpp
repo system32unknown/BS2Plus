@@ -429,27 +429,27 @@ ActionGetVar::~ActionGetVar() {
 }
 
 void ActionGetFile::exec() {
-	long size = 0;
-	char* data = NULL;
-	std::ifstream file;
-	file.open(checkfilename(filename), std::ios::in | std::ios::ate | std::ios::binary);
+	std::ifstream file(checkfilename(filename), std::ios::in | std::ios::ate | std::ios::binary);
 	if (!file) {
 		char tmp[10000];
-		sprintf(tmp, "Error opening file \"%s\"", filename);
+		snprintf(tmp, sizeof(tmp), "Error opening file \"%s\"", filename);
 		error(tmp, owner);
 		return;
 	}
-	size = file.tellg();
+
+	const long size = (long)file.tellg();
 	file.seekg(0, std::ios::beg);
-	data = new char[size + 2];
+
+	char* data = new char[size + 2];
 	file.read(data, size);
-	data[size] = 0;
+	data[size] = '\0';
 	file.close();
+
 	char out[256];
-	sprintf(out, "{%s} %i", filename, (int)size);
+	std::snprintf(out, sizeof(out), "{%s} %i", filename, (int)size);
 	print(out, owner);
-	print(data, owner, size);
-	delete (data);
+	print(data, owner, (int)size);
+	delete[] data;
 }
 
 char* ActionGetFile::toString() {
@@ -505,19 +505,24 @@ ActionWhile::~ActionWhile() {
 
 void ActionFor::exec() {
 	Var* v = (Var*)setVar(value, 0);
-	int end = tovalue->val();
-	int s = step->val();
-	if (function == FOR_TO)
-		for (v->value = fromvalue->val(); v->value <= end; (v->value) += s) {
+	const int end = tovalue->val();
+	const int s = step->val();
+
+	if (s <= 0) return;
+
+	if (function == FOR_TO) {
+		for (v->value = fromvalue->val(); v->value <= end; v->value += s) {
 			if (params) addparams(calcparams(params));
 			trigger->exec();
 			if (params) removeparams();
-		} else
-			for (v->value = fromvalue->val(); v->value >= end; (v->value) -= s) {
-				if (params) addparams(calcparams(params));
-				trigger->exec();
-				if (params) removeparams();
-			}
+		}
+	} else {
+		for (v->value = fromvalue->val(); v->value >= end; v->value -= s) {
+			if (params) addparams(calcparams(params));
+			trigger->exec();
+			if (params) removeparams();
+		}
+	}
 }
 
 char* ActionFor::toString() {
@@ -894,8 +899,8 @@ ActionInteraction::~ActionInteraction() {
 	for (auto* p : elements1) delete[] p;
 	for (auto* p : elements2) delete[] p;
 	for (auto* p : toselfs) delete[] p;
-	for (auto* p : toothers)  delete[] p;
-	for (auto* p : rates) delete  p;
+	for (auto* p : toothers) delete[] p;
+	for (auto* p : rates) delete p;
 	delete[] except;
 	delete at;
 }
@@ -960,7 +965,7 @@ void ActionSave::exec() {
 				save(getRealSandSurface(), text);
 		} else {
 			char* t = messageReplace(filename);
-			checkfile(t, true);
+			checkfile(t);
 			save(getRealSandSurface(), t);
 		}
 		break;
@@ -969,7 +974,7 @@ void ActionSave::exec() {
 		break;
 	case ACTION_SAVE_STAMP:
 		t = messageReplace(filename);
-		checkfile(t, true);
+		checkfile(t);
 		if ((id->val() > 0) && (id->val() < MAX_STAMPS))
 			if (stamps[id->val()])
 				SDL_SaveBMP(stamps[id->val()], checkfilename(t));
@@ -1039,7 +1044,7 @@ void ActionFile::exec() {
 #ifdef COMPILER_REMOVE
 	if (function == ACTION_FILE_DELETE) {
 		char* t = messageReplace(filename);
-		checkfile(t, true);
+		checkfile(t);
 		remove(t);
 	}
 #endif
@@ -1055,7 +1060,7 @@ void ActionFile::exec() {
 			}
 		} else {
 			char* t = messageReplace(filename);
-			checkfile(t, true);
+			checkfile(t);
 			if ((param) && !strcmp(param, "NEW")) {
 				remove(checkfilename(filename));
 			}
@@ -1107,7 +1112,7 @@ void ActionLoad::exec() {
 			}
 		} else {
 			char* t = messageReplace(filename);
-			checkfile(t, true);
+			checkfile(t);
 			load(t);
 		}
 		break;
@@ -1116,7 +1121,7 @@ void ActionLoad::exec() {
 		break;
 	case ACTION_SAVE_STAMP:
 		t = messageReplace(filename);
-		checkfile(t, true);
+		checkfile(t);
 		if ((id->val() > 0) && (id->val() < MAX_STAMPS))
 			stamps[id->val()] = SDL_LoadBMP(checkfilename(t));
 		break;
@@ -1130,7 +1135,7 @@ void ActionLoad::exec() {
 				fglayer = SDL_LoadBMP(checkfilename(text));
 			}
 		} else {
-			checkfile(filename, true);
+			checkfile(filename);
 			fglayer = SDL_LoadBMP(checkfilename(filename));
 		}
 		break;
@@ -1144,7 +1149,7 @@ void ActionLoad::exec() {
 				bglayer = SDL_LoadBMP(checkfilename(text));
 			}
 		} else {
-			checkfile(filename, true);
+			checkfile(filename);
 			bglayer = SDL_LoadBMP(checkfilename(filename));
 		}
 		break;
@@ -1161,75 +1166,69 @@ void ActionLoad::exec() {
 }
 
 char* ActionLoad::toString() {
-	char* tmp = 0;
+	char* tmp = nullptr;
 	switch (screenid) {
 	case ACTION_SAVE_SCREEN_SAND:
 		tmp = new char[1024];
-		sprintf(tmp, "LOAD SAND \"%s\"", filename);
+		snprintf(tmp, 1024, "LOAD SAND \"%s\"", filename);
 		break;
 	case ACTION_QUICKSAVE_SCREEN_SAND:
 		tmp = new char[1024];
-		sprintf(tmp, "LOAD QUICKSAND \"%s\"", ((Varint*)filename)->text);
+		snprintf(tmp, 1024, "LOAD QUICKSAND \"%s\"", reinterpret_cast<Varint*>(filename)->text);
 		break;
 	case ACTION_SAVE_STAMP:
 		tmp = new char[1024];
-		sprintf(tmp, "LOAD STAMP \"%s\" %s", filename, id->text);
+		snprintf(tmp, 1024, "LOAD STAMP \"%s\" %s", filename, id->text);
 		break;
 	case ACTION_SAVE_FGLAYER:
 		tmp = new char[1024];
-		sprintf(tmp, "LOAD FGLAYER \"%s\"", filename);
+		snprintf(tmp, 1024, "LOAD FGLAYER \"%s\"", filename);
 		break;
 	case ACTION_SAVE_BGLAYER:
 		tmp = new char[1024];
-		sprintf(tmp, "LOAD BGLAYER \"%s\"", filename);
+		snprintf(tmp, 1024, "LOAD BGLAYER \"%s\"", filename);
 		break;
 	case ACTION_SAVE_FONT:
 		tmp = new char[1024];
-		sprintf(tmp, "LOAD FONT \"%s\"", filename);
+		snprintf(tmp, 1024, "LOAD FONT \"%s\"", filename);
 		break;
 	case ACTION_SAVE_MENUFONT:
 		tmp = new char[1024];
-		sprintf(tmp, "LOAD MENUFONT \"%s\" %s", filename, id->text);
+		snprintf(tmp, 1024, "LOAD MENUFONT \"%s\" %s", filename, id->text);
 		break;
 	}
 	return tmp;
 }
 
 ActionLoad::~ActionLoad() {
-	delete (id);
+	delete id;
 }
-
 void ActionButton::exec() {
 	Button* btn = new Button((Button*)button);
+
 	if (tiptype) {
-		int i;
+		int i = 0;
 		getVar(btn->tiptext, &i);
-		if (tiptype == 1)
-			btn->tiptext = getElement(i)->name;
-		if (tiptype == 2)
-			btn->tiptext = getGroup(i)->name;
+
+		if (tiptype == ACTION_BUTTON_TIPTYPE_ELEMENT) btn->tiptext = getElement(i)->name;
+		else if (tiptype == ACTION_BUTTON_TIPTYPE_GROUP) btn->tiptext = getGroup(i)->name;
 	}
+
 	if (btn->tiptext && !strcmp(btn->tiptext, "MESSAGE")) {
-		delete (btn->tiptext);
+		delete[] btn->tiptext;
 		btn->tiptext = new char[strlen(messagestring) + 1];
-		strcpy(btn->tiptext, messagestring);
+		std::strcpy(btn->tiptext, messagestring);
 	}
-	if (btn->icon->type && ((!strcmp(btn->icon->type, "TEXT")) || (!strcmp(btn->icon->type, "Text"))) && btn->icon->text && !strcmp(btn->icon->text, "MESSAGE")) {
-		strcpy(btn->icon->text, messagestring);
+
+	if (btn->icon->type && (!strcmp(btn->icon->type, "TEXT") || !strcmp(btn->icon->type, "Text")) && btn->icon->text && !strcmp(btn->icon->text, "MESSAGE")) {
+		std::strcpy(btn->icon->text, messagestring);
 	}
-	btn->border = true;
-	if (r)
-		btn->r = r->val();
-	else
-		btn->border = false;
-	if (g)
-		btn->g = g->val();
-	else
-		btn->border = false;
-	if (b)
-		btn->b = b->val();
-	else
-		btn->border = false;
+
+	btn->border = r && g && b;
+	if (r) btn->r = r->val();
+	if (g) btn->g = g->val();
+	if (b) btn->b = b->val();
+
 	btn->params = calcparams(params);
 	btn->icon->calc();
 	addButtonToMenuBar(bar, btn);
@@ -1901,8 +1900,7 @@ void ActionList::exec() {
 	}
 	case ACTION_LIST_GROUPS: {
 		print("(GROUP)", owner);
-		const int groups = countGroups();
-		for (int i = 0; i < groups; i++)
+		for (int i = 0; i < countGroups(); i++)
 			print(getGroup(i)->name, owner);
 		print("(END)", owner);
 		break;
@@ -1928,8 +1926,7 @@ void ActionList::exec() {
 		snprintf(tmp, sizeof(tmp), "(ELEMENTGROUP:%s)", element);
 		print(tmp, owner);
 		const int i2 = findElement(element);
-		const int groups = countGroups();
-		for (int i = 0; i < groups; i++)
+		for (int i = 0; i < countGroups(); i++)
 			if (isElementInGroup(getGroup(i), i2))
 				print(getGroup(i)->name, owner);
 		print("(END)", owner);
@@ -2041,57 +2038,51 @@ char* ActionList::toString() {
 }
 
 ActionList::~ActionList() {}
-
 void ActionMessage::exec() {
-	char* pos = (messagestring + strlen(messagestring));
-	static Element* e;
+	char* pos = messagestring + strlen(messagestring);
 	int i;
+
 	switch (function) {
 	case MESSAGE_CLEAR:
-		messagestring[0] = 0;
+		messagestring[0] = '\0';
 		break;
 	case MESSAGE_ADDTEXT:
 		strcpy(pos, message);
 		break;
-	case MESSAGE_ADDNUMBER:
+	case MESSAGE_ADDNUMBER: {
 		char t[256];
-		sprintf(t, "%i", varint->val());
+		snprintf(t, sizeof(t), "%i", varint->val());
 		strcpy(pos, t);
 		break;
-	case MESSAGE_ADDELEMENT:
-		e = getElement(varint->val());
-		if (e)
-			strcpy(pos, e->name);
+	}
+	case MESSAGE_ADDELEMENT: {
+		const Element* e = getElement(varint->val());
+		if (e) strcpy(pos, e->name);
 		break;
-	case MESSAGE_ADDELEMENTTEXT:
-		e = getElement(varint->val());
-		if ((e) && e->icon && !strcmp(e->icon->type, "TEXT") && e->icon->text)
+	}
+	case MESSAGE_ADDELEMENTTEXT: {
+		const Element* e = getElement(varint->val());
+		if (e && e->icon && !strcmp(e->icon->type, "TEXT") && e->icon->text)
 			strcpy(pos, e->icon->text);
 		break;
-	case MESSAGE_ADDGROUP:
-		strcpy(pos, getGroup(varint->val())->name);
+	}
+	case MESSAGE_ADDGROUP: {
+		const Group* g = getGroup(varint->val());
+		if (g) strcpy(pos, g->name);
 		break;
+	}
 	case MESSAGE_SEND:
-		if (varint->ok)
-			print(messagestring, varint->val());
-		else
-			print(messagestring, owner);
+		print(messagestring, varint->ok ? varint->val() : owner);
 		break;
 	case MESSAGE_SAVE:
-		savefile.write(messagestring, strlen(messagestring));
+		savefile.write(messagestring, (std::streamsize)strlen(messagestring));
 		savefile.write("\n", 1);
 		break;
 	case MESSAGE_EXEC:
-		if (varint->ok)
-			parseline(messagestring, 1, varint->val(), "MESSAGE");
-		else
-			parseline(messagestring, 1, owner, "MESSAGE");
+		parseline(messagestring, 1, varint->ok ? varint->val() : owner, "MESSAGE");
 		break;
 	case MESSAGE_SENDTEXT:
-		if (varint->ok)
-			print(message, varint->val());
-		else
-			print(message, owner);
+		print(message, varint->ok ? varint->val() : owner);
 		break;
 	case MESSAGE_BS1:
 		messagebox(message, "Message");
@@ -2109,15 +2100,14 @@ void ActionMessage::exec() {
 			batchfile.open(checkfilename("tmp.cmd"), std::ios::out);
 			batchfile.write(messagestring, strlen(messagestring));
 			batchfile.close();
-			ossystem("tmp.cmd", 0);
-			remove("tmp.cmd");
+			ossystem("tmp.cmd", nullptr);
+			std::remove("tmp.cmd");
 		}
 #endif
 		break;
 	case MESSAGE_SAVESTRING:
 		i = varint->val();
-		if (strings[i])
-			delete strings[i];
+		delete[] strings[i];
 		strings[i] = new char[strlen(messagestring) + 1];
 		strcpy(strings[i], messagestring);
 		break;
@@ -2129,81 +2119,95 @@ void ActionMessage::exec() {
 }
 
 char* ActionMessage::toString() {
-	char* tmp = 0;
+	char* tmp = nullptr;
+	std::size_t len;
+
 	switch (function) {
 	case MESSAGE_CLEAR:
 		tmp = new char[1024];
-		sprintf(tmp, "MESSAGE CLEAR");
+		snprintf(tmp, 1024, "MESSAGE CLEAR");
 		break;
 	case MESSAGE_ADDTEXT:
-		tmp = new char[1024 + strlen(message)];
-		sprintf(tmp, "MESSAGE ADDTEXT \"%s\"", message);
+		len = 1024 + strlen(message);
+		tmp = new char[len];
+		snprintf(tmp, len, "MESSAGE ADDTEXT \"%s\"", message);
 		break;
 	case MESSAGE_ADDNUMBER:
-		tmp = new char[1024 + strlen(varint->text)];
-		sprintf(tmp, "MESSAGE ADDNUMBER %s", varint->text);
+		len = 1024 + strlen(varint->text);
+		tmp = new char[len];
+		snprintf(tmp, len, "MESSAGE ADDNUMBER %s", varint->text);
 		break;
 	case MESSAGE_ADDELEMENT:
-		tmp = new char[1024 + strlen(varint->text)];
-		sprintf(tmp, "MESSAGE ADDELENEMT %s", varint->text);
+		len = 1024 + strlen(varint->text);
+		tmp = new char[len];
+		snprintf(tmp, len, "MESSAGE ADDELEMENT %s", varint->text);
 		break;
 	case MESSAGE_ADDSTRING:
-		tmp = new char[1024 + strlen(varint->text)];
-		sprintf(tmp, "MESSAGE ADDSTRING %s", varint->text);
+		len = 1024 + strlen(varint->text);
+		tmp = new char[len];
+		snprintf(tmp, len, "MESSAGE ADDSTRING %s", varint->text);
 		break;
 	case MESSAGE_SAVESTRING:
-		tmp = new char[1024 + strlen(varint->text)];
-		sprintf(tmp, "MESSAGE SAVESTRING %s", varint->text);
+		len = 1024 + strlen(varint->text);
+		tmp = new char[len];
+		snprintf(tmp, len, "MESSAGE SAVESTRING %s", varint->text);
 		break;
 	case MESSAGE_ADDGROUP:
-		tmp = new char[1024 + strlen(varint->text)];
-		sprintf(tmp, "MESSAGE ADDGROUP %s", varint->text);
+		len = 1024 + strlen(varint->text);
+		tmp = new char[len];
+		snprintf(tmp, len, "MESSAGE ADDGROUP %s", varint->text);
 		break;
 	case MESSAGE_SEND:
 		if (varint->ok) {
-			tmp = new char[1024 + strlen(varint->text)];
-			sprintf(tmp, "MESSAGE SEND %s", varint->text);
+			len = 1024 + strlen(varint->text);
+			tmp = new char[len];
+			snprintf(tmp, len, "MESSAGE SEND %s", varint->text);
 		} else {
 			tmp = new char[1024];
-			sprintf(tmp, "MESSAGE SEND");
+			snprintf(tmp, 1024, "MESSAGE SEND");
 		}
 		break;
 	case MESSAGE_SAVE:
 		tmp = new char[1024];
-		sprintf(tmp, "MESSAGE SAVE");
+		snprintf(tmp, 1024, "MESSAGE SAVE");
 		break;
 	case MESSAGE_EXEC:
 		if (varint->ok) {
-			tmp = new char[1024 + strlen(varint->text)];
-			sprintf(tmp, "MESSAGE EXEC %s", varint->text);
+			len = 1024 + strlen(varint->text);
+			tmp = new char[len];
+			snprintf(tmp, len, "MESSAGE EXEC %s", varint->text);
 		} else {
 			tmp = new char[1024];
-			sprintf(tmp, "MESSAGE EXEC");
+			snprintf(tmp, 1024, "MESSAGE EXEC");
 		}
 		break;
 	case MESSAGE_SENDTEXT:
 		if (varint->ok) {
-			tmp = new char[1024 + strlen(message) + strlen(varint->text)];
-			sprintf(tmp, "MESSAGE SENDTEXT \"%s\" %s", message, varint->text);
+			len = 1024 + strlen(message) + strlen(varint->text);
+			tmp = new char[len];
+			snprintf(tmp, len, "MESSAGE SENDTEXT \"%s\" %s", message, varint->text);
 		} else {
-			tmp = new char[1024 + strlen(message)];
-			sprintf(tmp, "MESSAGE SENDTEXT \"%s\"", message);
+			len = 1024 + strlen(message);
+			tmp = new char[len];
+			snprintf(tmp, len, "MESSAGE SENDTEXT \"%s\"", message);
 		}
 		break;
 	case MESSAGE_BS1:
-		tmp = new char[1024 + strlen(message)];
-		sprintf(tmp, "Message \"%s\"", message);
+		len = 1024 + strlen(message);
+		tmp = new char[len];
+		snprintf(tmp, len, "Message \"%s\"", message);
 		break;
 	case MESSAGE_MESSAGEBOX:
 		tmp = new char[1024];
-		sprintf(tmp, "MESSAGE MESSAGEBOX");
+		snprintf(tmp, 1024, "MESSAGE MESSAGEBOX");
 		break;
 	case MESSAGE_ADDLINE:
 		tmp = new char[1024];
-		sprintf(tmp, "MESSAGE ADDLINE");
+		snprintf(tmp, 1024, "MESSAGE ADDLINE");
+		break;
 	case MESSAGE_SYSTEM:
 		tmp = new char[1024];
-		sprintf(tmp, "MESSAGE SYSTEM");
+		snprintf(tmp, 1024, "MESSAGE SYSTEM");
 		break;
 	}
 	return tmp;
@@ -2243,7 +2247,7 @@ void ActionInclude::exec() {
 		}
 	} else {
 		char* t = messageReplace(filename);
-		checkfile(t, true);
+		checkfile(t);
 		parsefile(t, owner);
 	}
 }
@@ -2296,15 +2300,16 @@ void ActionMenu::exec() {
 char* ActionMenu::toString() {
 	char* tmp = new char[1024];
 	if (action == ACTION_MENU_CLEAR) {
-		char* w = 0;
+		const char* w = nullptr;
 		if (bar == MENU_BAR_TOP) w = "TOP";
-		if (bar == MENU_BAR_LEFT) w = "LEFT";
-		if (bar == MENU_BAR_RIGHT) w = "RIGHT";
-		if (bar == MENU_BAR_BOTTOM) w = "BOTTOM";
-		if (bar == MENU_BAR_SUB) w = "SUB";
-
-		sprintf(tmp, "MENU %s CLEAR", w);
-	} else sprintf(tmp, "MENU REFRESH");
+		else if (bar == MENU_BAR_LEFT) w = "LEFT";
+		else if (bar == MENU_BAR_RIGHT) w = "RIGHT";
+		else if (bar == MENU_BAR_BOTTOM) w = "BOTTOM";
+		else if (bar == MENU_BAR_SUB) w = "SUB";
+		snprintf(tmp, 1024, "MENU %s CLEAR", w ? w : "");
+	} else {
+		snprintf(tmp, 1024, "MENU REFRESH");
+	}
 	return tmp;
 }
 
@@ -2314,7 +2319,7 @@ void ActionSubMenu::exec() {
 	if (function) {
 		hideSubMenu();
 	} else {
-		if ((x->ok) && (y->ok))
+		if (x->ok && y->ok)
 			showSubMenu(stay, align, x->val(), y->val());
 		else showSubMenu(stay, align);
 	}
@@ -2323,19 +2328,15 @@ void ActionSubMenu::exec() {
 char* ActionSubMenu::toString() {
 	char* tmp = new char[1024];
 	if (function) {
-		sprintf(tmp, "SUBMENU CLOSE");
+		snprintf(tmp, 1024, "SUBMENU CLOSE");
+	} else if (stay) {
+		if (x->ok && y->ok)
+			snprintf(tmp, 1024, "SUBMENU %s %s STAY", x->text, y->text);
+		else snprintf(tmp, 1024, "SUBMENU STAY");
 	} else {
-		if (stay) {
-			if ((x->ok) && (y->ok))
-				sprintf(tmp, "SUBMENU %s %s STAY", x->text, y->text);
-			else
-				sprintf(tmp, "SUBMENU STAY");
-		} else {
-			if ((x->ok) && (y->ok))
-				sprintf(tmp, "SUBMENU %s %s", x->text, y->text);
-			else
-				sprintf(tmp, "SUBMENU");
-		}
+		if (x->ok && y->ok)
+			snprintf(tmp, 1024, "SUBMENU %s %s", x->text, y->text);
+		else snprintf(tmp, 1024, "SUBMENU");
 	}
 	return tmp;
 }

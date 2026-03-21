@@ -828,6 +828,7 @@ TRIGGER menubottom {
 	IF (circledrawingtool == 1) <MENU BOTTOM ADD TEXT "Circle" FILE circle2.bmp circletools>
 	IF (circledrawingtool == 2) <MENU BOTTOM ADD TEXT "Double circle" FILE circle3.bmp circletools>
 	IF (circledrawingtool == 3) <MENU BOTTOM ADD TEXT "Multi circle" FILE circle4.bmp circletools>
+	IF (circledrawingtool == 4) <MENU BOTTOM ADD TEXT "Random Circle" FILE randomcircle.bmp circletools>
 	IF (linedrawingtool == 0) <MENU BOTTOM ADD TEXT "Horizontal line" FILE horizontal.bmp linetools>
 	IF (linedrawingtool == 1) <MENU BOTTOM ADD TEXT "Vertical line" FILE vertical.bmp linetools>
 	IF (linedrawingtool == 2) <MENU BOTTOM ADD TEXT "Diagonal line" FILE angel45.bmp linetools>
@@ -846,7 +847,6 @@ TRIGGER menubottom {
 	IF (specialdrawingtool == 9) <MENU BOTTOM ADD TEXT "Point Reflection" FILE pointreflection.bmp specialtools>
 	IF (specialdrawingtool == 10) <MENU BOTTOM ADD TEXT "Flip horizontally" FILE fliph.bmp specialtools>
 	IF (specialdrawingtool == 11) <MENU BOTTOM ADD TEXT "Flip vertically" FILE flipv.bmp specialtools>
-	IF (specialdrawingtool == 12) <MENU BOTTOM ADD TEXT "Random Circle" FILE randomcircle.bmp specialtools>
 	MENU BOTTOM ADD TEXT "Write" FILE text.bmp usewrite
 	MENU BOTTOM ADD TEXT "" SEPERATOR 0 <>
 	IF (usesizeselector == 0) sizebuttons
@@ -945,6 +945,22 @@ TRIGGER circletools {
 		MENU SUB ADD TEXT "Circle" FILE circle2.bmp circletoolsmenuselected 1
 		MENU SUB ADD TEXT "Double circle" FILE circle3.bmp circletoolsmenuselected 2
 		MENU SUB ADD TEXT "Multi circle" FILE circle4.bmp circletoolsmenuselected 3
+		MENU SUB ADD TEXT "Random Circle" FILE randomcircle.bmp {
+			EXEC circletoolsmenuselected 4
+			IF (BUTTON == 4) {
+				MENU SUB CLEAR
+				MENU SUB ADD TEXT "0.01%" FILE 1.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 1)>
+				MENU SUB ADD TEXT "0.05%" FILE 2.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 5)>
+				MENU SUB ADD TEXT "0.1%" FILE 3.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 10)>
+				MENU SUB ADD TEXT "0.2%" FILE 4.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 20)>
+				MENU SUB ADD TEXT "0.5%" FILE 5.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 50)>
+				MENU SUB ADD TEXT "1.0%" FILE 6.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 100)>
+				MENU SUB ADD TEXT "1.5%" FILE 7.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 150)>
+				MENU SUB ADD TEXT "2.0%" FILE 8.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 200)>
+				MENU SUB ADD TEXT "2.5%" FILE 9.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 250)>
+				SUBMENU
+			}
+		}
 		SUBMENU
 	}
 }
@@ -955,6 +971,7 @@ TRIGGER circletoolsmenuselected {
 	IF (($0 == 2) && (BUTTON == 4)) doublecirclemenu
 	IF (($0 == 2) && (BUTTON == 2)) doublecirclemenu2
 	IF ($0 == 3) usemulticircle
+	IF ($0 == 4) userandomfilledcircle
 	SET circledrawingtool $0
 	EXEC menubottom
 }
@@ -1083,23 +1100,6 @@ TRIGGER specialtools {
 				SUBMENU
 			}
 		}
-
-		MENU SUB ADD TEXT "Random Circle" FILE randomcircle.bmp {
-			EXEC specialtoolsmenuselected 12
-			IF (BUTTON == 4) {
-				MENU SUB CLEAR
-				MENU SUB ADD TEXT "0.01%" FILE 1.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 1)>
-				MENU SUB ADD TEXT "0.05%" FILE 2.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 5)>
-				MENU SUB ADD TEXT "0.1%" FILE 3.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 10)>
-				MENU SUB ADD TEXT "0.2%" FILE 4.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 20)>
-				MENU SUB ADD TEXT "0.5%" FILE 5.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 50)>
-				MENU SUB ADD TEXT "1.0%" FILE 6.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 100)>
-				MENU SUB ADD TEXT "1.5%" FILE 7.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 150)>
-				MENU SUB ADD TEXT "2.0%" FILE 8.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 200)>
-				MENU SUB ADD TEXT "2.5%" FILE 9.bmp <SET RANDOMDRAWRATE (32512 / 10000 * 250)>
-				SUBMENU
-			}
-		}
 		SUBMENU
 	}
 }
@@ -1117,7 +1117,6 @@ TRIGGER specialtoolsmenuselected {
 	IF ($0 == 9) usepointreflection
 	IF ($0 == 10) usefliph
 	IF ($0 == 11) useflipv
-	IF ($0 == 12) userandomfilledcircle
 	SET specialdrawingtool $0
 	EXEC menubottom
 }
